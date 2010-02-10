@@ -9,7 +9,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collections;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -61,25 +61,23 @@ public class MosaicPainter {
 		int tileX = 0;
 		int tileY = 0;
 		int done = 1;
-		
-		Random random = new Random();
+		int index = 0;
 		
 		mosaic = new ImageIcon(new BufferedImage(imageWidth, imageHeight, BufferedImage.TYPE_INT_RGB));
 		
 		ArrayList<String> randomList = new ArrayList<String>(itcList);
+		Collections.shuffle(randomList);
 		
 		for(int i=0; i<mosaicWidth; i++){
 			for(int j=0; j<mosaicHeight; j++){
-				int randomIndex = random.nextInt(randomList.size());
 				
-				Image image = handleITC(randomList.get(randomIndex), tileWidth, tileHeight);
+				Image image = handleITC(randomList.get(index), tileWidth, tileHeight);
 				mosaic.getImage().getGraphics().drawImage(image, tileX, tileY, mosaic.getImageObserver());
 				
 				float progress = ((float)done)/((float)mosaicHeight*(float)mosaicWidth);
 				Supervisor.getInstance().reportProgress("Adding tile to (" + tileX + "," + tileY + ")", progress);
 				
-				randomList.remove(randomIndex);
-				
+				index++;
 				tileY += tileHeight;
 				done++;
 			}
