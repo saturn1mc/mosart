@@ -74,7 +74,7 @@ public class MosArt {
 		
 		MosArt aa = new MosArt();
 
-		aa.setMosaicProperties(2650, 1024, 20, 20);
+		aa.setMosaicProperties(2650, 2650, 20, 20);
 		aa.chooseTargetFile("D:\\Mes Documents\\test.png");
 		
 		File dir = aa.chooseAlbumArtDirectory();
@@ -83,8 +83,12 @@ public class MosArt {
 			try {
 				ImageIcon image = aa.getPainter().createMosaic(aa.getBaseReader().getITCs(dir));
 				
+				Supervisor.getInstance().reportTask("Writing image...");
+				
 				ImageIO.write((BufferedImage)image.getImage(), "PNG", new File(aa.getTargetFilename()));
 				JOptionPane.showMessageDialog(null, "Wallpaper available in : " + aa.getTargetFilename(), "Done !", JOptionPane.INFORMATION_MESSAGE);
+				
+				Supervisor.getInstance().reportTask("Image saved");
 				
 //				JFrame frame = new JFrame("Result");
 //				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
