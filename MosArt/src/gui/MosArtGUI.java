@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
@@ -8,8 +10,10 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JTextField;
 
 public class MosArtGUI extends JFrame {
 
@@ -17,18 +21,29 @@ public class MosArtGUI extends JFrame {
 	 * Generated SVUID
 	 */
 	private static final long serialVersionUID = -1328087492843746960L;
+	private static final int PATH_FIELD_WIDTH = 400;
+	private static final int DIM_FIELD_WIDTH = 30;
+	private static final int FIELD_HEIGHT = 15;
 
 	private MosArt worker;
 
-	private JProgressBar globalProgressBar;
-	private JProgressBar progressBar;
+	private JProgressBar mainProgressBar;
+	private JProgressBar subProgressBar;
 
-	private JButton sourceButton;
-	private JButton targetButton;
+	private JTextField sourceField;
+	private JTextField targetField;
+
+	private JTextField imgWidthField;
+	private JTextField imgHeightField;
+	private JTextField tileWidthField;
+	private JTextField tileHeightField;
+
 	private JButton genButton;
 
-	private void buildSourceButton() {
-		sourceButton = new JButton("...");
+	private JPanel buildSourcePanel() {
+
+		// Button
+		JButton sourceButton = new JButton("...");
 
 		MouseAdapter sourceMouse = new MouseAdapter() {
 			@Override
@@ -54,10 +69,24 @@ public class MosArtGUI extends JFrame {
 		};
 
 		sourceButton.addMouseListener(sourceMouse);
+
+		// Text field
+		sourceField = new JTextField();
+		sourceField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT));
+
+		// Panel
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+
+		panel.add(new JLabel("Artwork directory : "));
+		panel.add(sourceField);
+		panel.add(sourceButton);
+
+		return panel;
 	}
 
-	private void buildTargetButton() {
-		targetButton = new JButton("...");
+	private JPanel buildTargetPanel() {
+		JButton targetButton = new JButton("...");
 
 		MouseAdapter targetMouse = new MouseAdapter() {
 			@Override
@@ -75,45 +104,114 @@ public class MosArtGUI extends JFrame {
 		};
 
 		targetButton.addMouseListener(targetMouse);
+
+		// Text field
+		targetField = new JTextField();
+		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT));
+
+		// Panel
+		JPanel panel = new JPanel();
+		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+
+		panel.add(new JLabel("Save in : "));
+		panel.add(targetField);
+		panel.add(targetButton);
+
+		return panel;
 	}
 
-	private void buildGenButton() {
+	private JButton buildGenButton() {
 		genButton = new JButton("Go!");
 
 		MouseAdapter genMouse = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 
-				// TODO CHANGER AVEC LES PREFS UTILISATEUR
-				worker.setMosaicProperties(800, 600, 4, 4);
-				//
-				
+				worker.setMosaicProperties(Integer.parseInt(imgWidthField
+						.getText()),
+						Integer.parseInt(imgHeightField.getText()), Integer
+								.parseInt(tileWidthField.getText()), Integer
+								.parseInt(tileHeightField.getText()));
+
 				genButton.setEnabled(false);
 				worker.execute();
 			}
 		};
 
 		genButton.addMouseListener(genMouse);
+
+		return genButton;
 	}
 
+	private JPanel buildDimensionsPanel(){
+		
+		// Image dimensions 
+		JPanel imgWpanel = new JPanel();
+		imgWpanel.setLayout(new BoxLayout(imgWpanel, BoxLayout.LINE_AXIS));
+		imgWpanel.add(new JLabel("Wallpaper width"));
+		imgWidthField = new JTextField();
+		imgWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
+		imgWpanel.add(imgWidthField);
+		
+		JPanel imgHpanel = new JPanel();
+		imgHpanel.setLayout(new BoxLayout(imgHpanel, BoxLayout.LINE_AXIS));
+		imgHpanel.add(new JLabel("Wallpaper height"));
+		imgHeightField = new JTextField();
+		imgHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
+		imgHpanel.add(imgHeightField);
+		
+		JPanel imgPanel = new JPanel();
+		imgPanel.setLayout(new BoxLayout(imgPanel, BoxLayout.PAGE_AXIS));
+		imgPanel.add(imgWpanel);
+		imgPanel.add(imgHpanel);
+		
+		// Tile counts
+		JPanel tWcountPanel = new JPanel();
+		tWcountPanel.setLayout(new BoxLayout(tWcountPanel, BoxLayout.LINE_AXIS));
+		tWcountPanel.add(new JLabel("Covers on width"));
+		tileWidthField = new JTextField();
+		tileWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
+		tWcountPanel.add(tileWidthField);
+		
+		JPanel tHcountPanel = new JPanel();
+		tHcountPanel.setLayout(new BoxLayout(tHcountPanel, BoxLayout.LINE_AXIS));
+		tHcountPanel.add(new JLabel("Covers on height"));
+		tileWidthField = new JTextField();
+		tileWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
+		tWcountPanel.add(tileWidthField);
+		
+		JPanel tilePanel = new JPanel();
+		tilePanel.setLayout(new BoxLayout(tilePanel, BoxLayout.PAGE_AXIS));
+		tilePanel.add(tWcountPanel);
+		tilePanel.add(tHcountPanel);
+		
+		// Dimensions panel
+		JPanel dimensionsPanel = new JPanel();
+		dimensionsPanel.setLayout(new BoxLayout(dimensionsPanel, BoxLayout.LINE_AXIS));
+		dimensionsPanel.add(imgPanel);
+		dimensionsPanel.add(tilePanel);
+		
+		return dimensionsPanel;
+	}
+	
 	private void buildProgressBars() {
-		globalProgressBar = new JProgressBar(0, 3);
-		globalProgressBar.setStringPainted(true);
+		mainProgressBar = new JProgressBar(0, 3);
+		mainProgressBar.setStringPainted(true);
 
-		progressBar = new JProgressBar(0, 100);
-		progressBar.setStringPainted(true);
+		subProgressBar = new JProgressBar(0, 100);
+		subProgressBar.setStringPainted(true);
 	}
 
 	private void buildWorker() {
 		this.worker = new MosArt();
 	}
 
-	public JProgressBar getProgressBar() {
-		return progressBar;
+	public JProgressBar getSubProgressBar() {
+		return subProgressBar;
 	}
 
-	public JProgressBar getGlobalProgressBar() {
-		return globalProgressBar;
+	public JProgressBar getMainProgressBar() {
+		return mainProgressBar;
 	}
 
 	public JButton getGenButton() {
@@ -121,28 +219,21 @@ public class MosArtGUI extends JFrame {
 	}
 
 	public String getTarget() {
-		// TODO a changer
-		return "TODO recuperer target dans un champ utilisateur";
+		return targetField.getText();
 	}
 
 	public MosArtGUI() {
 
 		buildWorker();
-		buildSourceButton();
-		buildTargetButton();
+
 		buildGenButton();
 		buildProgressBars();
 
-		// A virer
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
-		panel.add(sourceButton);
-		panel.add(targetButton);
-		panel.add(genButton);
-		panel.add(globalProgressBar);
-		panel.add(progressBar);
-		this.getContentPane().add(panel);
-		//
+		this.getContentPane().add(buildSourcePanel(), BorderLayout.CENTER);
+		this.getContentPane().add(buildTargetPanel(), BorderLayout.CENTER);
+		this.getContentPane().add(buildDimensionsPanel(), BorderLayout.EAST);
+		this.getContentPane().add(mainProgressBar, BorderLayout.SOUTH);
+		this.getContentPane().add(subProgressBar, BorderLayout.SOUTH);
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
