@@ -100,6 +100,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 
 				float progress = ((float) done)
 						/ ((float) mosaicHeight * (float) mosaicWidth);
+				
 				Supervisor.getInstance().reportProgress(
 						"Adding tile to (" + tileX + "," + tileY + ")",
 						progress);

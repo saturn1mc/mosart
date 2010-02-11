@@ -13,6 +13,8 @@ import writers.MosaicPainter;
 
 public class MosArt extends SwingWorker<File, String> {
 
+	public static final int TASK_COUNT = 3;
+	
 	private ITCBaseReader baseReader;
 	private MosaicPainter painter;
 	private String targetFilename;
@@ -74,12 +76,17 @@ public class MosArt extends SwingWorker<File, String> {
 
 		return result;
 	}
-
+	
 	@Override
 	protected void process(List<String> chunks) {
-		for (String task : chunks) {
+		for(String task : chunks){
 			Supervisor.getInstance().reportMainProgress(task);
 		}
+	}
+	
+	@Override
+	protected void done() {
+		Supervisor.getInstance().reportMainTaskFinished();
 	}
 
 	/**
