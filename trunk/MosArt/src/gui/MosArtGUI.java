@@ -25,6 +25,9 @@ public class MosArtGUI extends JFrame {
 	private static final int DIM_FIELD_WIDTH = 30;
 	private static final int FIELD_HEIGHT = 15;
 
+	private static final int DEFAULT_IMG_DIM = 800;
+	private static final int DEFAULT_TILE_COUNT = 5;
+	
 	private MosArt worker;
 
 	private JProgressBar mainProgressBar;
@@ -150,6 +153,7 @@ public class MosArtGUI extends JFrame {
 		imgWpanel.setLayout(new BoxLayout(imgWpanel, BoxLayout.LINE_AXIS));
 		imgWpanel.add(new JLabel("Wallpaper width"));
 		imgWidthField = new JTextField();
+		imgWidthField.setText(Integer.toString(DEFAULT_IMG_DIM));
 		imgWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
 		imgWpanel.add(imgWidthField);
 		
@@ -157,6 +161,7 @@ public class MosArtGUI extends JFrame {
 		imgHpanel.setLayout(new BoxLayout(imgHpanel, BoxLayout.LINE_AXIS));
 		imgHpanel.add(new JLabel("Wallpaper height"));
 		imgHeightField = new JTextField();
+		imgHeightField.setText(Integer.toString(DEFAULT_IMG_DIM));
 		imgHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
 		imgHpanel.add(imgHeightField);
 		
@@ -170,15 +175,17 @@ public class MosArtGUI extends JFrame {
 		tWcountPanel.setLayout(new BoxLayout(tWcountPanel, BoxLayout.LINE_AXIS));
 		tWcountPanel.add(new JLabel("Covers on width"));
 		tileWidthField = new JTextField();
+		tileWidthField.setText(Integer.toString(DEFAULT_TILE_COUNT));
 		tileWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
 		tWcountPanel.add(tileWidthField);
 		
 		JPanel tHcountPanel = new JPanel();
 		tHcountPanel.setLayout(new BoxLayout(tHcountPanel, BoxLayout.LINE_AXIS));
 		tHcountPanel.add(new JLabel("Covers on height"));
-		tileWidthField = new JTextField();
-		tileWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
-		tWcountPanel.add(tileWidthField);
+		tileHeightField = new JTextField();
+		tileHeightField.setText(Integer.toString(DEFAULT_TILE_COUNT));
+		tileHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT));
+		tWcountPanel.add(tileHeightField);
 		
 		JPanel tilePanel = new JPanel();
 		tilePanel.setLayout(new BoxLayout(tilePanel, BoxLayout.PAGE_AXIS));
