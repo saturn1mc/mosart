@@ -28,15 +28,21 @@ public class Supervisor {
 			JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
 					+ gui.getTarget(), "Done", JOptionPane.INFORMATION_MESSAGE);
 
+			gui.getMainProgressBar().setIndeterminate(false);
+			gui.getMainProgressBar().setValue(
+					gui.getMainProgressBar().getMaximum());
+			gui.getMainProgressBar().setString("Done");
+			gui.getMainProgressBar().repaint();
+
 			gui.getGenButton().setEnabled(true);
 		}
 	}
 
 	public synchronized void reportMainProgress(String task) {
 		if (gui != null) {
-			gui.getGlobalProgressBar().setIndeterminate(true);
-			gui.getGlobalProgressBar().setString(task);
-			gui.getGlobalProgressBar().repaint();
+			gui.getMainProgressBar().setIndeterminate(true);
+			gui.getMainProgressBar().setString(task);
+			gui.getMainProgressBar().repaint();
 		} else {
 			System.out.println(task);
 		}
@@ -44,9 +50,9 @@ public class Supervisor {
 
 	public synchronized void reportTask(String task) {
 		if (gui != null) {
-			gui.getProgressBar().setIndeterminate(true);
-			gui.getProgressBar().setString(task);
-			gui.getProgressBar().repaint();
+			gui.getSubProgressBar().setIndeterminate(true);
+			gui.getSubProgressBar().setString(task);
+			gui.getSubProgressBar().repaint();
 		} else {
 			System.out.println(task);
 		}
@@ -54,11 +60,11 @@ public class Supervisor {
 
 	public synchronized void reportProgress(String message, float progress) {
 		if (gui != null) {
-			gui.getProgressBar().setIndeterminate(false);
-			gui.getProgressBar()
+			gui.getSubProgressBar().setIndeterminate(false);
+			gui.getSubProgressBar()
 					.setString((progress * 100f) + "% - " + message);
-			gui.getProgressBar().setValue(100 * (int) progress);
-			gui.getProgressBar().repaint();
+			gui.getSubProgressBar().setValue((int)(100f * progress));
+			gui.getSubProgressBar().repaint();
 		} else {
 			System.out.println((progress * 100f) + "% - " + message);
 		}
