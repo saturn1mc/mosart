@@ -5,6 +5,7 @@ import itc.ITCBaseReader;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -21,7 +22,7 @@ public class MosArt {
 	
 	public MosArt() {
 		baseReader = new ITCBaseReader();
-		painter = new MosaicPainter();
+		painter = null;
 	}
 	
 	public ITCBaseReader getBaseReader() {
@@ -36,7 +37,7 @@ public class MosArt {
 		return targetFilename;
 	}
 	
-	public File chooseAlbumArtDirectory() {
+	public File chooseSourceDir() {
 		JFileChooser fc = new JFileChooser();
 		fc.setDialogType(JFileChooser.OPEN_DIALOG);
 		fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -57,9 +58,9 @@ public class MosArt {
 	}
 	
 	public void setMosaicProperties(int imageWidth, int imageHeight, int mosaicWidth,
-			int mosaicHeight) {
+			int mosaicHeight, ArrayList<String> itcList) {
 		
-		painter = new MosaicPainter(imageWidth, imageHeight, mosaicWidth, mosaicHeight);
+		painter = new MosaicPainter(imageWidth, imageHeight, mosaicWidth, mosaicHeight, itcList);
 		
 	}
 	
@@ -73,15 +74,18 @@ public class MosArt {
 	public static void main(String[] args) {
 		
 		MosArt aa = new MosArt();
-
-		aa.setMosaicProperties(2650, 2650, 20, 20);
+		
 		aa.chooseTargetFile("D:\\Mes Documents\\test.png");
 		
-		File dir = aa.chooseAlbumArtDirectory();
+		File dir = aa.chooseSourceDir();
 
 		if (dir != null) {
 			try {
-				ImageIcon image = aa.getPainter().createMosaic(aa.getBaseReader().getITCs(dir));
+				
+				aa.setMosaicProperties(2650, 2650, 20, 20, aa.getBaseReader().getITCs(dir));
+				aa.getPainter().execute();
+				
+				ImageIcon image = aa.getPainter().get();
 				
 				Supervisor.getInstance().reportTask("Writing image...");
 				
@@ -100,7 +104,7 @@ public class MosArt {
 //				frame.setLocationRelativeTo(null);
 //				frame.setVisible(true);
 				
-			} catch (IOException e) {
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
