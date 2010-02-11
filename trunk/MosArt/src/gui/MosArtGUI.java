@@ -1,11 +1,14 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -14,6 +17,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 public class MosArtGUI extends JFrame {
 
@@ -65,12 +70,15 @@ public class MosArtGUI extends JFrame {
 		};
 
 		sourceButton.addMouseListener(sourceMouse);
-
+		sourceButton.setAlignmentX(RIGHT_ALIGNMENT);
+		
 		// Text field
 		sourceField = new JTextField();
 		sourceField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 
+		sourceField.setAlignmentX(RIGHT_ALIGNMENT);
+		
 		// Panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -131,7 +139,8 @@ public class MosArtGUI extends JFrame {
 		};
 
 		launchButton.addMouseListener(genMouse);
-
+		launchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+		
 		return launchButton;
 	}
 
@@ -140,7 +149,7 @@ public class MosArtGUI extends JFrame {
 		// Image dimensions
 		JPanel imgWpanel = new JPanel();
 		imgWpanel.setLayout(new BoxLayout(imgWpanel, BoxLayout.LINE_AXIS));
-		imgWpanel.add(new JLabel("Wallpaper width"));
+		imgWpanel.add(new JLabel("Wallpaper width : "));
 		imgWidthField = new JTextField();
 		imgWidthField.setText(Integer.toString(DEFAULT_IMG_DIM));
 		imgWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
@@ -149,7 +158,7 @@ public class MosArtGUI extends JFrame {
 
 		JPanel imgHpanel = new JPanel();
 		imgHpanel.setLayout(new BoxLayout(imgHpanel, BoxLayout.LINE_AXIS));
-		imgHpanel.add(new JLabel("Wallpaper height"));
+		imgHpanel.add(new JLabel("Wallpaper height : "));
 		imgHeightField = new JTextField();
 		imgHeightField.setText(Integer.toString(DEFAULT_IMG_DIM));
 		imgHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
@@ -165,7 +174,7 @@ public class MosArtGUI extends JFrame {
 		JPanel tWcountPanel = new JPanel();
 		tWcountPanel
 				.setLayout(new BoxLayout(tWcountPanel, BoxLayout.LINE_AXIS));
-		tWcountPanel.add(new JLabel("Covers on width"));
+		tWcountPanel.add(new JLabel("Covers on width : "));
 		tileWidthField = new JTextField();
 		tileWidthField.setText(Integer.toString(DEFAULT_TILE_COUNT));
 		tileWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
@@ -175,7 +184,7 @@ public class MosArtGUI extends JFrame {
 		JPanel tHcountPanel = new JPanel();
 		tHcountPanel
 				.setLayout(new BoxLayout(tHcountPanel, BoxLayout.LINE_AXIS));
-		tHcountPanel.add(new JLabel("Covers on height"));
+		tHcountPanel.add(new JLabel("Covers on height : "));
 		tileHeightField = new JTextField();
 		tileHeightField.setText(Integer.toString(DEFAULT_TILE_COUNT));
 		tileHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
@@ -211,18 +220,26 @@ public class MosArtGUI extends JFrame {
 
 		centerPanel.add(buildSourcePanel());
 		centerPanel.add(buildTargetPanel());
+		
+		centerPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Paths", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(centerPanel, BorderLayout.CENTER);
 	}
 
 	private void buildSouthPanel() {
 		JPanel southPanel = new JPanel();
-		southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.PAGE_AXIS));
+		southPanel.setLayout(new BoxLayout(southPanel, BoxLayout.Y_AXIS));
 
 		southPanel.add(launchButton);
 		southPanel.add(mainProgressBar);
 		southPanel.add(subProgressBar);
 
+		southPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Creation", TitledBorder.LEFT, TitledBorder.TOP));
+		
 		this.getContentPane().add(southPanel, BorderLayout.SOUTH);
 	}
 
@@ -231,6 +248,10 @@ public class MosArtGUI extends JFrame {
 		eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.PAGE_AXIS));
 
 		eastPanel.add(buildDimensionsPanel());
+		
+		eastPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
