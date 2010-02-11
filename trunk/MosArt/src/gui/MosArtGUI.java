@@ -3,13 +3,11 @@ package gui;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
-import java.util.concurrent.ExecutionException;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 
@@ -66,14 +64,12 @@ public class MosArtGUI extends JFrame {
 			public void mousePressed(MouseEvent e) {
 				JFileChooser fc = new JFileChooser();
 				fc.setDialogType(JFileChooser.SAVE_DIALOG);
-				//fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
 				fc.setMultiSelectionEnabled(false);
 
 				int returnVal = fc.showOpenDialog(null);
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					worker.setTargetFilename(fc.getSelectedFile().getPath()
-							+ "Mosaic.png");
+					worker.setTargetFilename(fc.getSelectedFile().getPath());
 				}
 			}
 		};
@@ -89,61 +85,55 @@ public class MosArtGUI extends JFrame {
 			public void mousePressed(MouseEvent e) {
 
 				// TODO CHANGER AVEC LES PREFS UTILISATEUR
-				worker.setMosaicProperties(2650, 2650, 20, 20);
+				worker.setMosaicProperties(800, 600, 4, 4);
 				//
+				
 				genButton.setEnabled(false);
 				worker.execute();
-				
-				try {
-					File result = worker.get();
-					JOptionPane.showMessageDialog(MosArtGUI.this,
-							"Wallpaper saved to : " + result.getPath(), "Ok",
-							JOptionPane.INFORMATION_MESSAGE);
-					
-					genButton.setEnabled(true);
-					
-				} catch (InterruptedException ie) {
-					JOptionPane.showMessageDialog(MosArtGUI.this,
-							"Interruption exception", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				} catch (ExecutionException ee) {
-					JOptionPane.showMessageDialog(MosArtGUI.this,
-							"Execution exception", "Error",
-							JOptionPane.ERROR_MESSAGE);
-				}
-
 			}
 		};
 
 		genButton.addMouseListener(genMouse);
 	}
-	
-	private void buildProgressBars(){
+
+	private void buildProgressBars() {
 		globalProgressBar = new JProgressBar(0, 3);
 		globalProgressBar.setStringPainted(true);
-		
+
 		progressBar = new JProgressBar(0, 100);
 		progressBar.setStringPainted(true);
+	}
+
+	private void buildWorker() {
+		this.worker = new MosArt();
 	}
 
 	public JProgressBar getProgressBar() {
 		return progressBar;
 	}
-	
+
 	public JProgressBar getGlobalProgressBar() {
 		return globalProgressBar;
 	}
-	
+
+	public JButton getGenButton() {
+		return genButton;
+	}
+
+	public String getTarget() {
+		// TODO a changer
+		return "TODO recuperer target dans un champ utilisateur";
+	}
+
 	public MosArtGUI() {
 
-		this.worker = new MosArt();
-
+		buildWorker();
 		buildSourceButton();
 		buildTargetButton();
 		buildGenButton();
 		buildProgressBars();
-		
-		//A virer
+
+		// A virer
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
 		panel.add(sourceButton);
@@ -153,14 +143,19 @@ public class MosArtGUI extends JFrame {
 		panel.add(progressBar);
 		this.getContentPane().add(panel);
 		//
-		
+
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
 		this.setLocationRelativeTo(null);
 	}
-	
+
 	public static void main(String[] args) {
-		MosArtGUI gui = new MosArtGUI();
-		gui.setVisible(true);
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				MosArtGUI gui = new MosArtGUI();
+				Supervisor.getInstance().registerGUI(gui);
+				gui.setVisible(true);
+			}
+		});
 	}
 }
