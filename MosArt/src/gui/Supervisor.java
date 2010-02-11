@@ -25,16 +25,16 @@ public class Supervisor {
 
 	public void reportMainTaskFinished() {
 		if (gui != null) {
-			JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
-					+ gui.getTarget(), "Done", JOptionPane.INFORMATION_MESSAGE);
-
 			gui.getMainProgressBar().setIndeterminate(false);
 			gui.getMainProgressBar().setValue(
 					gui.getMainProgressBar().getMaximum());
 			gui.getMainProgressBar().setString("Done");
 			gui.getMainProgressBar().repaint();
 
-			gui.getGenButton().setEnabled(true);
+			gui.getLaunchButton().setEnabled(true);
+			
+			JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
+					+ gui.getTarget(), "Done", JOptionPane.INFORMATION_MESSAGE);
 		}
 	}
 
