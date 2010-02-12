@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
@@ -13,6 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
@@ -29,8 +31,8 @@ public class MosArtGUI extends JFrame {
 	private static final int DIM_FIELD_WIDTH = 30;
 	private static final int FIELD_HEIGHT = 10;
 
-	private static final int DEFAULT_IMG_DIM = 800;
-	private static final int DEFAULT_TILE_COUNT = 5;
+	private static final int DEFAULT_IMG_DIM = 3000;
+	private static final int DEFAULT_TILE_COUNT = 30;
 
 	private MosArt worker;
 
@@ -44,6 +46,10 @@ public class MosArtGUI extends JFrame {
 	private JTextField imgHeightField;
 	private JTextField tileWidthField;
 	private JTextField tileHeightField;
+
+	private enum DimInputs {
+		IMG_HEIGHT, IMG_WIDTH, TILE_HEIGHT, TILE_WIDTH
+	};
 
 	private JButton launchButton;
 
@@ -70,14 +76,14 @@ public class MosArtGUI extends JFrame {
 
 		sourceButton.addMouseListener(sourceMouse);
 		sourceButton.setAlignmentX(RIGHT_ALIGNMENT);
-		
+
 		// Text field
 		sourceField = new JTextField();
 		sourceField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 
 		sourceField.setAlignmentX(RIGHT_ALIGNMENT);
-		
+
 		// Panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -131,15 +137,21 @@ public class MosArtGUI extends JFrame {
 		MouseAdapter genMouse = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				buildWorker();
-				launchButton.setEnabled(false);
-				worker.execute();
+				if (checking()) {
+					buildWorker();
+					launchButton.setEnabled(false);
+					worker.execute();
+				} else {
+					JOptionPane.showMessageDialog(MosArtGUI.this,
+							"Please check inputs", "Can't start",
+							JOptionPane.WARNING_MESSAGE);
+				}
 			}
 		};
 
 		launchButton.addMouseListener(genMouse);
 		launchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-		
+
 		return launchButton;
 	}
 
@@ -219,10 +231,10 @@ public class MosArtGUI extends JFrame {
 
 		centerPanel.add(buildSourcePanel());
 		centerPanel.add(buildTargetPanel());
-		
-		centerPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Paths", TitledBorder.LEFT, TitledBorder.TOP));
+
+		centerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.LOWERED), "Paths",
+				TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(centerPanel, BorderLayout.CENTER);
 	}
@@ -235,10 +247,10 @@ public class MosArtGUI extends JFrame {
 		southPanel.add(mainProgressBar);
 		southPanel.add(subProgressBar);
 
-		southPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Creation", TitledBorder.LEFT, TitledBorder.TOP));
-		
+		southPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.LOWERED), "Creation",
+				TitledBorder.LEFT, TitledBorder.TOP));
+
 		this.getContentPane().add(southPanel, BorderLayout.SOUTH);
 	}
 
@@ -247,10 +259,10 @@ public class MosArtGUI extends JFrame {
 		eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.PAGE_AXIS));
 
 		eastPanel.add(buildDimensionsPanel());
-		
-		eastPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
+
+		eastPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
+				.createEtchedBorder(EtchedBorder.LOWERED), "Dimensions",
+				TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
@@ -265,6 +277,119 @@ public class MosArtGUI extends JFrame {
 
 		this.worker.setTargetFilename(targetField.getText());
 		this.worker.setSourceDirectory(new File(sourceField.getText()));
+	}
+
+	private boolean checking() {
+
+		boolean allFilled = true;
+
+		if (sourceField.getText().isEmpty()) {
+			sourceField.setBackground(Color.RED);
+			allFilled = false;
+		} else {
+			sourceField.setBackground(Color.WHITE);
+		}
+
+		if (targetField.getText().isEmpty()) {
+			targetField.setBackground(Color.RED);
+			allFilled = false;
+		} else {
+			targetField.setBackground(Color.WHITE);
+		}
+
+		if (imgHeightField.getText().isEmpty()) {
+			imgHeightField.setBackground(Color.RED);
+			allFilled = false;
+		} else {
+			imgHeightField.setBackground(Color.WHITE);
+		}
+
+		if (imgWidthField.getText().isEmpty()) {
+			imgWidthField.setBackground(Color.RED);
+			allFilled = false;
+		} else {
+			imgWidthField.setBackground(Color.WHITE);
+		}
+
+		if (tileHeightField.getText().isEmpty()
+				&& !tileHeightField.getText().isEmpty()) {
+			tileHeightField.setBackground(Color.RED);
+			allFilled = false;
+		} else {
+			tileHeightField.setBackground(Color.WHITE);
+		}
+
+		if (tileWidthField.getText().isEmpty()
+				&& !tileWidthField.getText().isEmpty()) {
+			tileWidthField.setBackground(Color.RED);
+			allFilled = false;
+		} else {
+			tileWidthField.setBackground(Color.WHITE);
+		}
+
+		boolean allCorrect = true;
+
+		if (allFilled) {
+			// Dimensions
+			DimInputs dimension = DimInputs.IMG_HEIGHT;
+
+			try {
+				dimension = DimInputs.IMG_HEIGHT;
+				if (Integer.parseInt(imgHeightField.getText()) < 0) {
+					imgHeightField.setBackground(Color.RED);
+					allCorrect = false;
+				} else {
+					imgHeightField.setBackground(Color.WHITE);
+				}
+
+				dimension = DimInputs.IMG_WIDTH;
+				if (Integer.parseInt(imgWidthField.getText()) < 0) {
+					imgWidthField.setBackground(Color.RED);
+					allCorrect = false;
+				} else {
+					imgWidthField.setBackground(Color.WHITE);
+				}
+
+				dimension = DimInputs.TILE_HEIGHT;
+				if (Integer.parseInt(tileHeightField.getText()) < 0) {
+					tileHeightField.setBackground(Color.RED);
+					allCorrect = false;
+				} else {
+					tileHeightField.setBackground(Color.WHITE);
+				}
+
+				dimension = DimInputs.TILE_WIDTH;
+				if (Integer.parseInt(tileWidthField.getText()) < 0) {
+					tileWidthField.setBackground(Color.RED);
+					allCorrect = false;
+				} else {
+					tileWidthField.setBackground(Color.WHITE);
+				}
+			} catch (NumberFormatException e) {
+
+				switch (dimension) {
+				case IMG_HEIGHT:
+					imgHeightField.setBackground(Color.RED);
+					break;
+
+				case IMG_WIDTH:
+					imgWidthField.setBackground(Color.RED);
+					break;
+
+				case TILE_HEIGHT:
+					tileHeightField.setBackground(Color.RED);
+					break;
+
+				case TILE_WIDTH:
+					tileWidthField.setBackground(Color.RED);
+					break;
+				}
+
+				return false;
+			}
+		}
+
+		return allFilled && allCorrect;
 	}
 
 	public JProgressBar getSubProgressBar() {
@@ -284,6 +409,8 @@ public class MosArtGUI extends JFrame {
 	}
 
 	public MosArtGUI() {
+
+		super("MosArt");
 
 		buildLaunchButton();
 		buildProgressBars();

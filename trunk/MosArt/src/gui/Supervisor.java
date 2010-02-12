@@ -29,12 +29,34 @@ public class Supervisor {
 			gui.getMainProgressBar().setValue(
 					gui.getMainProgressBar().getMaximum());
 			gui.getMainProgressBar().setString("Done");
-			gui.getMainProgressBar().repaint();
 
 			gui.getLaunchButton().setEnabled(true);
-			
+
 			JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
 					+ gui.getTarget(), "Done", JOptionPane.INFORMATION_MESSAGE);
+		} else {
+			System.out.println("Wallpaper saved to : " + gui.getTarget());
+		}
+	}
+
+	public void reportCrash(String reason) {
+		if (gui != null) {
+			gui.getMainProgressBar().setIndeterminate(false);
+			gui.getMainProgressBar().setValue(
+					gui.getMainProgressBar().getMinimum());
+			gui.getMainProgressBar().setString("Error");
+
+			gui.getSubProgressBar().setIndeterminate(false);
+			gui.getSubProgressBar().setValue(
+					gui.getMainProgressBar().getMinimum());
+			gui.getSubProgressBar().setString("Error");
+
+			gui.getLaunchButton().setEnabled(true);
+
+			JOptionPane.showMessageDialog(gui, reason, "Error",
+					JOptionPane.ERROR_MESSAGE);
+		} else {
+			System.out.println("Program crashed : " + reason);
 		}
 	}
 
@@ -42,7 +64,6 @@ public class Supervisor {
 		if (gui != null) {
 			gui.getMainProgressBar().setIndeterminate(true);
 			gui.getMainProgressBar().setString(task);
-			gui.getMainProgressBar().repaint();
 		} else {
 			System.out.println(task);
 		}
@@ -52,7 +73,6 @@ public class Supervisor {
 		if (gui != null) {
 			gui.getSubProgressBar().setIndeterminate(true);
 			gui.getSubProgressBar().setString(task);
-			gui.getSubProgressBar().repaint();
 		} else {
 			System.out.println(task);
 		}
@@ -61,12 +81,11 @@ public class Supervisor {
 	public synchronized void reportProgress(String message, float progress) {
 		if (gui != null) {
 			gui.getSubProgressBar().setIndeterminate(false);
-			gui.getSubProgressBar()
-					.setString((progress * 100f) + "% - " + message);
-			gui.getSubProgressBar().setValue((int)(100f * progress));
-			gui.getSubProgressBar().repaint();
+			gui.getSubProgressBar().setString(
+					Math.round(progress * 100f) + "% - " + message);
+			gui.getSubProgressBar().setValue((int) (100f * progress));
 		} else {
-			System.out.println((progress * 100f) + "% - " + message);
+			System.out.println(Math.round(progress * 100f) + "% - " + message);
 		}
 	}
 }
