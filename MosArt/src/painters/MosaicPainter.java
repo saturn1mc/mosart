@@ -76,7 +76,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	}
 
 	public ImageIcon createMosaic() throws IOException {
-
+		
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
 		int tileX = 0;
@@ -91,10 +91,14 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		Collections.shuffle(randomList);
 
 		for (int i = 0; i < mosaicWidth; i++) {
+			
+			tileY = 0;
+			
 			for (int j = 0; j < mosaicHeight; j++) {
 
 				Image image = handleITC(randomList.get(index), tileWidth,
 						tileHeight);
+				
 				mosaic.getImage().getGraphics().drawImage(image, tileX, tileY,
 						mosaic.getImageObserver());
 
@@ -105,12 +109,11 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 						"Adding tile to (" + tileX + "," + tileY + ")",
 						progress);
 
-				index++;
+				index = ((index+1)%randomList.size());
 				tileY += tileHeight;
 				done++;
 			}
-
-			tileY = 0;
+			
 			tileX += tileWidth;
 		}
 

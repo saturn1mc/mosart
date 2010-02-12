@@ -13,9 +13,8 @@ import javax.swing.SwingWorker;
 
 import painters.MosaicPainter;
 
-
 public class MosArt extends SwingWorker<File, String> {
-	
+
 	private ITCBaseReader baseReader;
 	private MosaicPainter painter;
 	private String targetFilename;
@@ -50,30 +49,49 @@ public class MosArt extends SwingWorker<File, String> {
 		}
 
 	}
-	
+
 	public ITCBaseReader getBaseReader() {
 		return baseReader;
 	}
-	
+
 	public MosaicPainter getPainter() {
 		return painter;
 	}
-	
-	public File paint() throws IOException{
+
+	public File paint() throws IOException {
+
+		File result = null;
+
 		// Read base
-		Supervisor.getInstance().reportMainProgress("(1/3) Reading artwork directories");
+		Supervisor.getInstance().reportMainProgress(
+				"(1/3) Reading artwork directories");
 		ArrayList<String> itcList = baseReader.getITCs();
-		
-		// Paint
-		Supervisor.getInstance().reportMainProgress("(2/3) Generating wallpaper");
-		painter.setITCList(itcList);
-		ImageIcon mosaic = painter.createMosaic();
-		
-		// Save image
-		Supervisor.getInstance().reportMainProgress("(3/3) Saving work to " + targetFilename);
-		File result = new File(targetFilename);
-		ImageIO.write((BufferedImage) mosaic.getImage(), "PNG", result);
-		
+
+		if (itcList != null && itcList.size() > 0) {
+			// Paint
+			Supervisor.getInstance().reportMainProgress(
+					"(2/3) Generating wallpaper");
+			painter.setITCList(itcList);
+			ImageIcon mosaic = painter.createMosaic();
+
+			// Save image
+			Supervisor.getInstance().reportMainProgress(
+					"(3/3) Saving work to " + targetFilename);
+			result = new File(targetFilename);
+			ImageIO.write((BufferedImage) mosaic.getImage(), "PNG", result);
+		} else {
+			if (itcList == null) {
+				Supervisor.getInstance().reportCrash(
+						"Error during artwork directory analysis");
+			} else if (itcList.size() == 0) {
+				Supervisor.getInstance().reportCrash("No iTunes covers found");
+			}
+		}
+
+		if (result != null) {
+			Supervisor.getInstance().reportMainTaskFinished();
+		}
+
 		return result;
 	}
 
@@ -81,10 +99,4 @@ public class MosArt extends SwingWorker<File, String> {
 	protected File doInBackground() throws Exception {
 		return paint();
 	}
-	
-	@Override
-	protected void done() {
-		Supervisor.getInstance().reportMainTaskFinished();
-	}
-
 }
