@@ -11,7 +11,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
 
-import writers.MosaicPainter;
+import painters.MosaicPainter;
+
 
 public class MosArt extends SwingWorker<File, String> {
 	
