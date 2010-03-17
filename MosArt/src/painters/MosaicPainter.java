@@ -25,7 +25,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	private int mosaicWidth;
 	private int mosaicHeight;
 
-	private ArrayList<String> itcList;
+	private ArrayList<String> imageList;
 
 	private ImageIcon mosaic;
 
@@ -35,7 +35,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	}
 
 	public MosaicPainter(int imageWidth, int imageHeight, int mosaicWidth,
-			int mosaicHeight, ArrayList<String> itcList) {
+			int mosaicHeight, ArrayList<String> imageList) {
 		super();
 
 		this.imageWidth = imageWidth;
@@ -43,24 +43,24 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		this.mosaicWidth = mosaicWidth;
 		this.mosaicHeight = mosaicHeight;
 
-		this.itcList = itcList;
+		this.imageList = imageList;
 
 		this.parser = new ITCParser();
 	}
 
 	public void setProperties(int imageWidth, int imageHeight, int mosaicWidth,
-			int mosaicHeight, ArrayList<String> itcList) {
+			int mosaicHeight, ArrayList<String> imageList) {
 
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 		this.mosaicWidth = mosaicWidth;
 		this.mosaicHeight = mosaicHeight;
 
-		this.itcList = itcList;
+		this.imageList = imageList;
 	}
 	
-	public void setITCList(ArrayList<String> itcList){
-		this.itcList = itcList;
+	public void setITCList(ArrayList<String> imageList){
+		this.imageList = imageList;
 	}
 
 	private Image handleITC(String filename, int targetWidth, int targetHeight)
@@ -87,7 +87,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		mosaic = new ImageIcon(new BufferedImage(imageWidth, imageHeight,
 				BufferedImage.TYPE_INT_RGB));
 
-		ArrayList<String> randomList = new ArrayList<String>(itcList);
+		ArrayList<String> randomList = new ArrayList<String>(imageList);
 		Collections.shuffle(randomList);
 
 		for (int i = 0; i < mosaicWidth; i++) {
