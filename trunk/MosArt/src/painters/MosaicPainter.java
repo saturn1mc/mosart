@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Stack;
 
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
@@ -82,13 +83,11 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		int tileX = 0;
 		int tileY = 0;
 		int done = 1;
-		int index = 0;
 
 		mosaic = new ImageIcon(new BufferedImage(imageWidth, imageHeight,
 				BufferedImage.TYPE_INT_RGB));
 
-		ArrayList<String> randomList = new ArrayList<String>(imageList);
-		Collections.shuffle(randomList);
+		Stack<String> randomList = new Stack<String>();
 
 		for (int i = 0; i < mosaicWidth; i++) {
 			
@@ -96,7 +95,12 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 			
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				Image image = handleITC(randomList.get(index), tileWidth,
+				if(randomList.isEmpty()){
+					randomList.addAll(imageList);
+					Collections.shuffle(randomList);
+				}
+				
+				Image image = handleITC(randomList.pop(), tileWidth,
 						tileHeight);
 				
 				mosaic.getImage().getGraphics().drawImage(image, tileX, tileY,
@@ -109,7 +113,6 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 						"Adding tile to (" + tileX + "," + tileY + ")",
 						progress);
 
-				index = ((index+1)%randomList.size());
 				tileY += tileHeight;
 				done++;
 			}
