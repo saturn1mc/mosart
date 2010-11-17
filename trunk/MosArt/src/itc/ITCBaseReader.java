@@ -1,5 +1,7 @@
 package itc;
 
+import gui.Supervisor;
+
 import java.io.File;
 import java.util.ArrayList;
 
@@ -23,10 +25,9 @@ public class ITCBaseReader extends SwingWorker<ArrayList<String>, String> {
 
 	public ArrayList<String> getITCs() {
 
-		//publish("Looking for ITCs in : " + artworkDirectory.getPath());
-
 		for (File file : artworkDirectory.listFiles()) {
 			if (file.isDirectory()) {
+				Supervisor.getInstance().reportTask("Handling directory : " + file.getPath());
 				handleDirectory(file);
 			} else {
 				handleFile(file);
@@ -38,20 +39,20 @@ public class ITCBaseReader extends SwingWorker<ArrayList<String>, String> {
 
 	private void handleDirectory(File directory) {
 
-		//publish("Analyzing : " + directory.getPath());
-
 		for (File file : directory.listFiles()) {
 			if (file.isDirectory()) {
+				Supervisor.getInstance().reportTask("Handling directory : " + file.getPath());
 				handleDirectory(file);
 			} else {
+				
 				handleFile(file);
 			}
 		}
 	}
 
 	private void handleFile(File file) {
-
-		//publish("Analyzing : " + file.getPath());
+		
+		Supervisor.getInstance().reportTask("Handling file : " + file.getPath());
 
 		if (file.getPath().endsWith(ITC_EXT)
 				|| file.getPath().endsWith(ITC2_EXT)) {
