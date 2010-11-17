@@ -83,7 +83,7 @@ public class MosArtGUI extends JFrame {
 				FIELD_HEIGHT));
 
 		sourceField.setAlignmentX(RIGHT_ALIGNMENT);
-
+		
 		// Panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
