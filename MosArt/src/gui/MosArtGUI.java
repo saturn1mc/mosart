@@ -268,7 +268,9 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void buildWorker() {
-		this.worker = new MosArt();
+		if(worker == null){
+			this.worker = new MosArt();
+		}
 
 		this.worker.setMosaicProperties(Integer.parseInt(imgWidthField
 				.getText()), Integer.parseInt(imgHeightField.getText()),

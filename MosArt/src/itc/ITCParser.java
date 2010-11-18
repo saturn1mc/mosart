@@ -16,76 +16,10 @@ public class ITCParser {
 	public static final int[] imageSignatureBMP = { 0x42, 0x4D };
 	public static final int[] imageSignatureGIF = { 0x47, 0x49, 0x46 };
 	
-	private int headerLength;
-	private int metadataLength;
-
-	private String itch;
-	private String artw;
-	private String item;
-
-	private String libraryPersistentId;
-	private String trackPersistentId;
-
-	private String downloadIndicator;
-	private String fileFormatIndicator;
-
-	private int width;
-	private int height;
-
-	private byte[] imageData;
-	
 	public ITCParser() {
 		super();
 	}
 	
-	public int getHeaderLength() {
-		return headerLength;
-	}
-
-	public int getMetadataLength() {
-		return metadataLength;
-	}
-
-	public String getItch() {
-		return itch;
-	}
-
-	public String getArtw() {
-		return artw;
-	}
-
-	public String getItem() {
-		return item;
-	}
-
-	public String getLibraryPersistentId() {
-		return libraryPersistentId;
-	}
-
-	public String getTrackPersistentId() {
-		return trackPersistentId;
-	}
-
-	public String getDownloadIndicator() {
-		return downloadIndicator;
-	}
-
-	public String getFileFormatIndicator() {
-		return fileFormatIndicator;
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
-	}
-
-	public byte[] getImageData() {
-		return imageData;
-	}
-
 	public static int[] getImagesignaturepng() {
 		return imageSignaturePNG;
 	}
@@ -100,7 +34,7 @@ public class ITCParser {
 		return in.readInt();
 	}
 
-	private void readHeader(BufferedInputStream strm) throws IOException {
+	private void readHeader(BufferedInputStream strm, ITCArtwork art) throws IOException {
 		// Mark position
 		strm.mark(Integer.MAX_VALUE);
 
@@ -109,25 +43,25 @@ public class ITCParser {
 
 		// Self-describing header length
 		strm.read(bytes);
-		this.headerLength = byteArrayToInt(bytes);
+		art.setHeaderLength(byteArrayToInt(bytes));
 
 		// Itch
 		strm.read(bytes);
-		this.itch = new String(bytes);
+		art.setItch(new String(bytes));
 
 		// 16 bytes of disposable info
 		strm.skip(16);
 
 		// Artw
 		strm.read(bytes);
-		this.artw = new String(bytes);
+		art.setArtw(new String(bytes));
 
 		// Reset position to end of header (beginning of "null buffer")
 		strm.reset();
-		strm.skip(this.headerLength);
+		strm.skip(art.getHeaderLength());
 	}
 
-	public void readMetadata(BufferedInputStream strm) throws IOException {
+	private void readMetadata(BufferedInputStream strm, ITCArtwork art) throws IOException {
 		// Mark position
 		strm.mark(Integer.MAX_VALUE);
 		
@@ -139,56 +73,56 @@ public class ITCParser {
 
 		// Item
 		strm.read(bytes);
-		this.item = new String(bytes);
+		art.setItem(new String(bytes));
 
 		// Read the entire length of the data header
 		strm.read(bytes);
-		this.metadataLength = byteArrayToInt(bytes);
+		art.setMetadataLength(byteArrayToInt(bytes));
 
 		// 16 bytes of disposable info
 		strm.skip(16);
 
 		// If header length is 216 rather than 212, consume another 4 bytes
 		// before getting more information
-		if (this.metadataLength == 216) {
+		if (art.getMetadataLength() == 216) {
 			strm.skip(4);
 		}
 
 		// Get the library and track persistent Id's
 		bytes = new byte[8];
 		strm.read(bytes);
-		this.libraryPersistentId = Arrays.toString(bytes);
+		art.setLibraryPersistentId(Arrays.toString(bytes));
 
 		strm.read(bytes);
-		this.trackPersistentId = Arrays.toString(bytes);
+		art.setTrackPersistentId(Arrays.toString(bytes));
 
 		// Read the download/persistence indicator
 		bytes = new byte[4];
 		strm.read(bytes);
-		this.downloadIndicator = new String(bytes); // "down" or "locl"
+		art.setDownloadIndicator(new String(bytes)); // "down" or "locl"
 
 		// Read the pseudo-file format
 		strm.read(bytes);
-		this.fileFormatIndicator = new String(bytes);
+		art.setFileFormatIndicator(new String(bytes));
 
 		// 4 bytes of disposable info
 		strm.skip(4);
 
 		// Read width and height of image
 		strm.read(bytes);
-		this.width = byteArrayToInt(bytes);
+		art.setWidth(byteArrayToInt(bytes));
 
 		strm.read(bytes);
-		this.height = byteArrayToInt(bytes);
+		art.setHeight(byteArrayToInt(bytes));
 
 		// Reset position to end of header (beginning of "null buffer")
 		strm.reset();
-		strm.skip(this.metadataLength);
+		strm.skip(art.getMetadataLength());
 	}
 
-	private void readImageData(BufferedInputStream strm) throws IOException {
-		strm.read(imageData);
-		checkSignature(imageData);
+	private void readImageData(BufferedInputStream strm, ITCArtwork art) throws IOException {
+		strm.read(art.getImageData());
+		checkSignature(art.getImageData());
 	}
 
 	private boolean matchSignature(byte[] imagedata, int[] signature){
@@ -236,18 +170,23 @@ public class ITCParser {
 		
 		return null;
 	}
-
-	public void parse(File file) throws IOException {
+	
+	public ITCArtwork parse(File file) throws IOException {
+		
+		ITCArtwork art = new ITCArtwork();
+		
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
-		readHeader(fistream);
-		readMetadata(fistream);
+		readHeader(fistream, art);
+		readMetadata(fistream, art);
 
-		int imageBytesCount = (int) file.length() - headerLength - metadataLength;
-		imageData = new byte[imageBytesCount];
-		readImageData(fistream);
+		int imageBytesCount = (int) file.length() - art.getHeaderLength() - art.getMetadataLength();
+		art.setImageData(new byte[imageBytesCount]);
+		readImageData(fistream, art);
 
 		fistream.close();
+		
+		return art;
 	}
 }

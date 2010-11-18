@@ -1,6 +1,7 @@
 package painters;
 
 import gui.Supervisor;
+import itc.ITCArtwork;
 import itc.ITCParser;
 
 import java.awt.Image;
@@ -67,10 +68,9 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	private Image handleITC(String filename, int targetWidth, int targetHeight)
 			throws IOException {
 
-		parser.parse(new File(filename));
+		ITCArtwork art = parser.parse(new File(filename));
 
-		BufferedImage image = ImageIO.read(new ByteArrayInputStream(parser
-				.getImageData()));
+		BufferedImage image = ImageIO.read(new ByteArrayInputStream(art.getImageData()));
 
 		return image.getScaledInstance(targetWidth, targetHeight,
 				Image.SCALE_SMOOTH);

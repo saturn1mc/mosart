@@ -1,6 +1,7 @@
 package gui;
 
 import itc.ITCBaseReader;
+import itl.ITLCollection;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,11 +16,13 @@ import painters.MosaicPainter;
 
 public class MosArt extends SwingWorker<File, String> {
 
+	private ITLCollection collection;
 	private ITCBaseReader baseReader;
 	private MosaicPainter painter;
 	private String targetFilename;
 
 	public MosArt() {
+		collection = new ITLCollection();
 		baseReader = null;
 		painter = null;
 		targetFilename = null;
@@ -48,14 +51,6 @@ public class MosArt extends SwingWorker<File, String> {
 					mosaicHeight, null);
 		}
 
-	}
-
-	public ITCBaseReader getBaseReader() {
-		return baseReader;
-	}
-
-	public MosaicPainter getPainter() {
-		return painter;
 	}
 
 	public File paint() throws IOException {
