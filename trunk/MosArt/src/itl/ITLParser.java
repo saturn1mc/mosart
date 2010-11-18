@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.text.ParseException;
 
 public class ITLParser {
 
@@ -14,6 +14,7 @@ public class ITLParser {
 	private static final int STATE_LIBRARY = 2;
 	private static final int STATE_TRACK = 3;
 	private static final int STATE_FIELD_CONTENT = 4;
+	private static final int STATE_IGNORE = 5;
 
 	private static final char MARK_START = '<';
 	private static final char MARK_STOP = '>';
@@ -29,129 +30,140 @@ public class ITLParser {
 
 	private BufferedReader reader;
 	private char[] currentChar;
+	private String currentField;
 	private ITLSong currentSong;
 
 	private int state;
-	private ArrayList<ITLSong> songs;
 
 	public ITLParser() {
 		state = STATE_INITIAL;
-		songs = new ArrayList<ITLSong>();
 		currentChar = new char[1];
 	}
 
-	public ArrayList<ITLSong> parseITL(String iTunesLibrary){
+	public void parseITL(String iTunesLibrary, ITLCollection collection) {
 		try {
 			reader = new BufferedReader(new FileReader(iTunesLibrary));
 			String tag = nextTag();
-			
-			while(tag != null){
-				
+
+			while (tag != null) {
+
 				switch (state) {
-				case STATE_INITIAL :
-					
-					if(tag.equalsIgnoreCase(openTag(DICT))){
+				case STATE_INITIAL:
+
+					if (tag.equalsIgnoreCase(openTag(DICT))) {
 						state = STATE_HEADER;
 					}
-					
+
 					break;
 
-				case STATE_HEADER :
-					
-					if(tag.equalsIgnoreCase(openTag(DICT))){
+				case STATE_HEADER:
+
+					if (tag.equalsIgnoreCase(openTag(DICT))) {
 						state = STATE_LIBRARY;
 					}
-					
+
 					break;
-					
-				case STATE_LIBRARY :
-					
-					if(tag.equalsIgnoreCase(openTag(KEY))){
-						currentSong = new ITLSong(getTagContent());
-						songs.add(currentSong);
-					}
-					
-					if(tag.equalsIgnoreCase(openTag(DICT))){
+
+				case STATE_LIBRARY:
+
+					if (tag.equalsIgnoreCase(openTag(KEY))) {
+						currentSong = new ITLSong();
+					} else if (tag.equalsIgnoreCase(openTag(DICT))) {
 						state = STATE_TRACK;
-						break;
+					} else if (tag.equalsIgnoreCase(closeTag(DICT))) {
+						// End of library
+						state = STATE_IGNORE;
 					}
-					
+
 					break;
-				
-				case STATE_TRACK :
-					
-					if(tag.equalsIgnoreCase(openTag(KEY))){
+
+				case STATE_TRACK:
+
+					if (tag.equalsIgnoreCase(openTag(KEY))) {
+						currentField = getTagContent();
 						state = STATE_FIELD_CONTENT;
-						break;
-					}
-					
-					if(tag.equalsIgnoreCase(closeTag(DICT))){
+					} else if (tag.equalsIgnoreCase(closeTag(DICT))) {
+						collection.add(currentSong);
 						state = STATE_LIBRARY;
-						break;
 					}
-					
+
 					break;
-					
-				case STATE_FIELD_CONTENT :
-					
-					if(tag.equalsIgnoreCase(closeTag(INTG))){
-						state = STATE_TRACK;
-						break;
+
+				case STATE_FIELD_CONTENT:
+
+					try {
+						// Opening field
+						if (tag.equalsIgnoreCase(openTag(INTG))) {
+							currentSong.set(currentField, getTagContent());
+						} else if (tag.equalsIgnoreCase(openTag(STRG))) {
+							currentSong.set(currentField, getTagContent());
+						} else if (tag.equalsIgnoreCase(openTag(DATE))) {
+							currentSong.set(currentField, getTagContent());
+						}
+						// Closing field
+						else if (tag.equalsIgnoreCase(closeTag(INTG))) {
+							state = STATE_TRACK;
+						} else if (tag.equalsIgnoreCase(closeTag(STRG))) {
+							state = STATE_TRACK;
+						} else if (tag.equalsIgnoreCase(closeTag(DATE))) {
+							state = STATE_TRACK;
+						} else if (tag.equalsIgnoreCase(closeTag(TRUE))) {
+							currentSong.set(currentField, TRUE);
+							state = STATE_TRACK;
+						} else if (tag.equalsIgnoreCase(closeTag(FALSE))) {
+							currentSong.set(currentField, FALSE);
+							state = STATE_TRACK;
+						}
+					} catch (ParseException e) {
+						e.printStackTrace();
+					} catch (ITLException e) {
+						e.printStackTrace();
 					}
-					
-					if(tag.equalsIgnoreCase(closeTag(STRG))){
-						state = STATE_TRACK;
-						break;
-					}
-					
-					if(tag.equalsIgnoreCase(closeTag(DATE))){
-						state = STATE_TRACK;
-						break;
-					}
-					
-					if(tag.equalsIgnoreCase(closeTag(TRUE))){
-						state = STATE_TRACK;
-						break;
-					}
-					
-					if(tag.equalsIgnoreCase(closeTag(FALSE))){
-						state = STATE_TRACK;
-						break;
-					}
-					
+
 					break;
-					
+
+				case STATE_IGNORE:
+					// Nothing
+					break;
+
 				default:
-					//Nothing
+					// Nothing
 					break;
 				}
-				
-				//Read next tag
+
+				// Read next tag
 				tag = nextTag();
 			}
-			
+
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		return songs;
 	}
 
 	private String openTag(String tagID) {
-		return MARK_START + tagID + MARK_STOP;
+		String openTag = new String();
+		openTag += MARK_START;
+		openTag += tagID;
+		openTag += MARK_STOP;
+		return openTag;
 	}
-	
+
 	private String closeTag(String tagID) {
-		return MARK_START + CLOSE_SIGN + tagID + MARK_STOP;
+		String closeTag = new String();
+		closeTag += MARK_START;
+		closeTag += CLOSE_SIGN;
+		closeTag += tagID;
+		closeTag += MARK_STOP;
+		return closeTag;
 	}
 
 	private String nextTag() throws IOException {
 
-		if (reader.read(currentChar) > 0) {
+		if (reader.ready()) {
 			String tag = new String();
-			
+
 			while (currentChar[0] != MARK_START) {
 				if (reader.read(currentChar) < 0) {
 					break;
@@ -169,19 +181,22 @@ public class ITLParser {
 
 			return tag;
 		}
-		
+
 		return null;
 	}
 
 	private String getTagContent() throws IOException {
 		String content = new String();
 
-		while (currentChar[0] != MARK_STOP) {
+		if (reader.read(currentChar) > 0) {
 
-			content += currentChar[0];
+			while (currentChar[0] != MARK_START) {
 
-			if (reader.read(currentChar) < 0) {
-				break;
+				content += currentChar[0];
+
+				if (reader.read(currentChar) < 0) {
+					break;
+				}
 			}
 		}
 
@@ -189,10 +204,10 @@ public class ITLParser {
 	}
 
 	public static void main(String[] args) {
+		ITLCollection collection = new ITLCollection();
 		ITLParser spe = new ITLParser();
-		for (ITLSong song : spe.parseITL("D:\\iTunes Music Library.xml")) {
-			System.out.println(song);
-		}
+		spe.parseITL("D:\\iTunes Music Library.xml", collection);
+
 	}
 
 }

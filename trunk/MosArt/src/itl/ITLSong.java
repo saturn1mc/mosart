@@ -1,8 +1,6 @@
 package itl;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.util.Date;
 
 public class ITLSong {
 	
@@ -10,6 +8,7 @@ public class ITLSong {
 	private final static String NAME = "Name";
 	private final static String ARTIST = "Artist";
 	private final static String ALBUM_ARTIST = "Album Artist";
+	private final static String COMPOSER = "Composer";
 	private final static String ALBUM = "Album";
 	private final static String GENRE = "Genre";
 	private final static String KIND = "Kind";
@@ -29,14 +28,22 @@ public class ITLSong {
 	private final static String PLAY_DATE = "Play Date";
 	private final static String PLAY_DATE_UTC = "Play Date UTC";
 	private final static String RELEASE_DATE = "Release Date";
+	private final static String SKIP_COUNT = "Skip Count";
+	private final static String SKIP_DATE = "Skip Date";
+	private final static String ARTWORK_COUNT = "Artwork Count";
 	private final static String PERSISTENT_ID = "Persistent ID";
 	private final static String TRACK_TYPE = "Track Type";
 	private final static String PURCHASED = "Purchased";
+	private final static String LOCATION = "Location";
+	private final static String FILE_FOLDER_COUNT = "File Folder Count";
+	private final static String LIBRARY_FOLDER_COUNT = "Library Folder Count";
 	
-	private String id;
+	
+	private int id;
 	private String name;
 	private String artist;
 	private String albumArtist;
+	private String composer;
 	private String album;
 	private String genre;
 	private String kind;
@@ -47,29 +54,33 @@ public class ITLSong {
 	private int trackNumber;
 	private int trackCount;
 	private int year;
-	private Date dateModified;
-	private Date dateAdded;
+	private String dateModified;
+	private String dateAdded;
 	private String bitRate;
 	private int sampleRate;
 	private boolean gapless;
 	private int playCount;
-	private Date playDate;
-	private Date dateUTC;
-	private Date releaseDate;
+	private String playDate;
+	private String dateUTC;
+	private String releaseDate;
+	private int skipCount;
+	private String skipDate;
+	private int artworkCount;
 	private String persistentID;
 	private String trackType;
 	private boolean purchased;
 	private String location;
-	private String fileFolderCount;
-	private String libraryFolderCount;
+	private int fileFolderCount;
+	private int libraryFolderCount;
 	
-	public ITLSong(String id){
-		this.id = id;
+	public ITLSong(){
+		//Nothing
+		super();
 	}
 	
 	public void set(String field, String value) throws ParseException, ITLException{
 		if(field.equalsIgnoreCase(TRACK_ID)){
-			id = value;
+			id = Integer.parseInt(value);
 		}
 		else if(field.equalsIgnoreCase(NAME)){
 			name = value;
@@ -79,6 +90,9 @@ public class ITLSong {
 		}
 		else if(field.equalsIgnoreCase(ALBUM_ARTIST)){
 			albumArtist = value;
+		}
+		else if(field.equalsIgnoreCase(COMPOSER)){
+			composer = value;
 		}
 		else if(field.equalsIgnoreCase(ALBUM)){
 			album = value;
@@ -111,10 +125,10 @@ public class ITLSong {
 			year = Integer.parseInt(value);
 		}
 		else if(field.equalsIgnoreCase(DATE_MODIFIED)){
-			dateModified = DateFormat.getDateInstance().parse(value);
+			dateModified = value;
 		}
 		else if(field.equalsIgnoreCase(DATE_ADDED)){
-			dateAdded = DateFormat.getDateInstance().parse(value);
+			dateAdded = value;
 		}
 		else if(field.equalsIgnoreCase(BIT_RATE)){
 			bitRate = value;
@@ -129,16 +143,25 @@ public class ITLSong {
 			playCount = Integer.parseInt(value);
 		}
 		else if(field.equalsIgnoreCase(PLAY_DATE)){
-			playDate = DateFormat.getDateInstance().parse(value);
+			playDate = value;
 		}
 		else if(field.equalsIgnoreCase(PLAY_DATE_UTC)){
-			dateUTC = DateFormat.getDateInstance().parse(value);
+			dateUTC = value;
 		}
 		else if(field.equalsIgnoreCase(RELEASE_DATE)){
-			releaseDate = DateFormat.getDateInstance().parse(value);
+			releaseDate = value;
 		}
 		else if(field.equalsIgnoreCase(PERSISTENT_ID)){
 			persistentID = value;
+		}
+		else if(field.equalsIgnoreCase(SKIP_COUNT)){
+			skipCount = Integer.parseInt(value);
+		}
+		else if(field.equalsIgnoreCase(SKIP_DATE)){
+			skipDate = value;
+		}
+		else if(field.equalsIgnoreCase(ARTWORK_COUNT)){
+			artworkCount = Integer.parseInt(value);
 		}
 		else if(field.equalsIgnoreCase(TRACK_TYPE)){
 			trackType = value;
@@ -146,14 +169,21 @@ public class ITLSong {
 		else if(field.equalsIgnoreCase(PURCHASED)){
 			purchased = Boolean.parseBoolean(value);
 		}
-		else{
-			throw new ITLException("Field '" + value + "' unknown");
+		else if(field.equalsIgnoreCase(LOCATION)){
+			location = value;
 		}
-		
-		
+		else if(field.equalsIgnoreCase(FILE_FOLDER_COUNT)){
+			fileFolderCount = Integer.parseInt(value);
+		}
+		else if(field.equalsIgnoreCase(LIBRARY_FOLDER_COUNT)){
+			libraryFolderCount = Integer.parseInt(value);
+		}
+		else{
+			throw new ITLException("Field '" + field + "' unknown");
+		}
 	}
 	
-	public String getId() {
+	public int getID() {
 		return id;
 	}
 
@@ -169,6 +199,10 @@ public class ITLSong {
 		return albumArtist;
 	}
 
+	public String getComposer() {
+		return composer;
+	}
+	
 	public String getAlbum() {
 		return album;
 	}
@@ -209,11 +243,11 @@ public class ITLSong {
 		return year;
 	}
 
-	public Date getDateModified() {
+	public String getDateModified() {
 		return dateModified;
 	}
 
-	public Date getDateAdded() {
+	public String getDateAdded() {
 		return dateAdded;
 	}
 
@@ -233,16 +267,36 @@ public class ITLSong {
 		return playCount;
 	}
 
-	public Date getPlayDate() {
+	public String getPlayDate() {
 		return playDate;
 	}
 
-	public Date getPlayDateUTC() {
+	public String getPlayDateUTC() {
 		return dateUTC;
 	}
 
-	public Date getReleaseDate() {
+	public String getReleaseDate() {
 		return releaseDate;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String getDateUTC() {
+		return dateUTC;
+	}
+
+	public int getSkipCount() {
+		return skipCount;
+	}
+
+	public String getSkipDate() {
+		return skipDate;
+	}
+
+	public int getArtworkCount() {
+		return artworkCount;
 	}
 
 	public String getPersistentID() {
@@ -261,11 +315,11 @@ public class ITLSong {
 		return location;
 	}
 
-	public String getFileFolderCount() {
+	public int getFileFolderCount() {
 		return fileFolderCount;
 	}
 
-	public String getLibraryFolderCount() {
+	public int getLibraryFolderCount() {
 		return libraryFolderCount;
 	}
 
