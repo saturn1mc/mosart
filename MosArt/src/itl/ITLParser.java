@@ -92,7 +92,7 @@ public class ITLParser {
 				case STATE_FIELD_CONTENT:
 
 					try {
-						// Opening field
+						// Opening fields
 						if (tag.equalsIgnoreCase(openTag(INTG))) {
 							currentSong.set(currentField, getTagContent());
 						} else if (tag.equalsIgnoreCase(openTag(STRG))) {
@@ -100,20 +100,24 @@ public class ITLParser {
 						} else if (tag.equalsIgnoreCase(openTag(DATE))) {
 							currentSong.set(currentField, getTagContent());
 						}
-						// Closing field
+						// Lone fields
+						else if (tag.equalsIgnoreCase(loneTag(TRUE))) {
+							currentSong.set(currentField, TRUE);
+							state = STATE_TRACK;
+						} else if (tag.equalsIgnoreCase(loneTag(FALSE))) {
+							currentSong.set(currentField, FALSE);
+							state = STATE_TRACK;
+						}
+						
+						// Closing fields
 						else if (tag.equalsIgnoreCase(closeTag(INTG))) {
 							state = STATE_TRACK;
 						} else if (tag.equalsIgnoreCase(closeTag(STRG))) {
 							state = STATE_TRACK;
 						} else if (tag.equalsIgnoreCase(closeTag(DATE))) {
 							state = STATE_TRACK;
-						} else if (tag.equalsIgnoreCase(closeTag(TRUE))) {
-							currentSong.set(currentField, TRUE);
-							state = STATE_TRACK;
-						} else if (tag.equalsIgnoreCase(closeTag(FALSE))) {
-							currentSong.set(currentField, FALSE);
-							state = STATE_TRACK;
 						}
+						
 					} catch (ParseException e) {
 						e.printStackTrace();
 					} catch (ITLException e) {
@@ -158,9 +162,18 @@ public class ITLParser {
 		closeTag += MARK_STOP;
 		return closeTag;
 	}
+	
+	private String loneTag(String tagID){
+		String loneTag = new String();
+		loneTag += MARK_START;
+		loneTag += tagID;
+		loneTag += CLOSE_SIGN;
+		loneTag += MARK_STOP;
+		return loneTag;
+	}
 
 	private String nextTag() throws IOException {
-
+		
 		if (reader.ready()) {
 			String tag = new String();
 
@@ -202,12 +215,4 @@ public class ITLParser {
 
 		return content;
 	}
-
-	public static void main(String[] args) {
-		ITLCollection collection = new ITLCollection();
-		ITLParser spe = new ITLParser();
-		spe.parseITL("D:\\iTunes Music Library.xml", collection);
-
-	}
-
 }
