@@ -35,12 +35,25 @@ public class ITLParser {
 
 	private int state;
 
-	public ITLParser() {
-		state = STATE_INITIAL;
-		currentChar = new char[1];
+	private static ITLParser singleton;
+
+	private ITLParser() {
+		// Nothing
+		super();
+	}
+
+	public ITLParser getInstance() {
+		if (singleton == null) {
+			singleton = new ITLParser();
+		}
+
+		return singleton;
 	}
 
 	public void parseITL(String iTunesLibrary, ITLCollection collection) {
+		state = STATE_INITIAL;
+		currentChar = new char[1];
+
 		try {
 			reader = new BufferedReader(new FileReader(iTunesLibrary));
 			String tag = nextTag();
@@ -108,7 +121,7 @@ public class ITLParser {
 							currentSong.set(currentField, FALSE);
 							state = STATE_TRACK;
 						}
-						
+
 						// Closing fields
 						else if (tag.equalsIgnoreCase(closeTag(INTG))) {
 							state = STATE_TRACK;
@@ -117,7 +130,7 @@ public class ITLParser {
 						} else if (tag.equalsIgnoreCase(closeTag(DATE))) {
 							state = STATE_TRACK;
 						}
-						
+
 					} catch (ParseException e) {
 						e.printStackTrace();
 					} catch (ITLException e) {
@@ -162,8 +175,8 @@ public class ITLParser {
 		closeTag += MARK_STOP;
 		return closeTag;
 	}
-	
-	private String loneTag(String tagID){
+
+	private String loneTag(String tagID) {
 		String loneTag = new String();
 		loneTag += MARK_START;
 		loneTag += tagID;
@@ -173,7 +186,7 @@ public class ITLParser {
 	}
 
 	private String nextTag() throws IOException {
-		
+
 		if (reader.ready()) {
 			String tag = new String();
 
