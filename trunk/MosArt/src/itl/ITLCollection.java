@@ -12,7 +12,6 @@ public class ITLCollection {
 	}
 	
 	public void add(ITLSong song){
-		System.out.println("Adding : " + song.getID() + ", " + song.getAlbum() + ", " + song.getName());
 		songs.put(song.getID(), song);
 		albums.put(song.getAlbum(), song);
 	}
