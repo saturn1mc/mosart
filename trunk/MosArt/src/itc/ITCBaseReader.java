@@ -5,25 +5,30 @@ import gui.Supervisor;
 import java.io.File;
 import java.util.ArrayList;
 
-import javax.swing.SwingWorker;
-
-public class ITCBaseReader extends SwingWorker<ArrayList<String>, String> {
+public class ITCBaseReader {
 	public static final String ITC_EXT = ".itc";
 	public static final String ITC2_EXT = ".itc2";
 
-	private File artworkDirectory;
 	private ArrayList<String> itcList;
+	
+	private static ITCBaseReader singleton;
 
-	public ITCBaseReader(File artworkDirectory) {
-		this.artworkDirectory = artworkDirectory;
+	private ITCBaseReader() {
+		super();
 		itcList = new ArrayList<String>();
 	}
-	
-	public void setArtworkDirectory(File artDir){
-		this.artworkDirectory = artDir;
-	}
 
-	public ArrayList<String> getITCs() {
+	public static ITCBaseReader getInstance() {
+		if (singleton == null) {
+			singleton = new ITCBaseReader();
+		}
+
+		return singleton;
+	}
+	
+	public ArrayList<String> getITCs(String artworkDir) {
+		File artworkDirectory =  new File(artworkDir);
+		
 		itcList.clear();
 		
 		for (File file : artworkDirectory.listFiles()) {
@@ -59,11 +64,5 @@ public class ITCBaseReader extends SwingWorker<ArrayList<String>, String> {
 				|| file.getPath().endsWith(ITC2_EXT)) {
 			itcList.add(file.getPath());
 		}
-	}
-	
-	
-	@Override
-	protected ArrayList<String> doInBackground() throws Exception {
-		return getITCs();
 	}
 }
