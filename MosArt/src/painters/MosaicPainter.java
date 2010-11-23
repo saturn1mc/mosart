@@ -7,7 +7,6 @@ import itc.ITCParser;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +24,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	private int mosaicWidth;
 	private int mosaicHeight;
 
-	private ArrayList<String> imageList;
+	private ArrayList<ITCArtwork> artworks;
 
 	private ImageIcon mosaic;
 
@@ -35,7 +34,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	}
 
 	public MosaicPainter(int imageWidth, int imageHeight, int mosaicWidth,
-			int mosaicHeight, ArrayList<String> imageList) {
+			int mosaicHeight, ArrayList<ITCArtwork> artworks) {
 		super();
 
 		this.imageWidth = imageWidth;
@@ -43,30 +42,32 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		this.mosaicWidth = mosaicWidth;
 		this.mosaicHeight = mosaicHeight;
 
-		this.imageList = imageList;
+		this.artworks = artworks;
 	}
 
 	public void setProperties(int imageWidth, int imageHeight, int mosaicWidth,
-			int mosaicHeight, ArrayList<String> imageList) {
+			int mosaicHeight, ArrayList<ITCArtwork> artworks) {
 
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
 		this.mosaicWidth = mosaicWidth;
 		this.mosaicHeight = mosaicHeight;
 
-		this.imageList = imageList;
+		this.artworks = artworks;
 	}
 	
-	public void setITCList(ArrayList<String> imageList){
-		this.imageList = imageList;
+	public void setArtworkList(ArrayList<ITCArtwork> artworks){
+		this.artworks = artworks;
 	}
 
-	private Image handleITC(String filename, int targetWidth, int targetHeight)
+	private Image handleITC(ITCArtwork artwork, int targetWidth, int targetHeight)
 			throws IOException {
 
-		ITCArtwork art = ITCParser.getInstance().extractArtwork(new File(filename));
+		if(!artwork.isFullyParsed()){
+			ITCParser.getInstance().completeArtwork(artwork);
+		}
 
-		BufferedImage image = ImageIO.read(new ByteArrayInputStream(art.getImageData()));
+		BufferedImage image = ImageIO.read(new ByteArrayInputStream(artwork.getImageData()));
 
 		return image.getScaledInstance(targetWidth, targetHeight,
 				Image.SCALE_SMOOTH);
@@ -83,7 +84,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		mosaic = new ImageIcon(new BufferedImage(imageWidth, imageHeight,
 				BufferedImage.TYPE_INT_RGB));
 
-		Stack<String> randomList = new Stack<String>();
+		Stack<ITCArtwork> randomList = new Stack<ITCArtwork>();
 
 		for (int i = 0; i < mosaicWidth; i++) {
 			
@@ -92,7 +93,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 			for (int j = 0; j < mosaicHeight; j++) {
 
 				if(randomList.isEmpty()){
-					randomList.addAll(imageList);
+					randomList.addAll(artworks);
 					Collections.shuffle(randomList);
 				}
 				

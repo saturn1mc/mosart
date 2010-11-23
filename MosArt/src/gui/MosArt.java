@@ -27,7 +27,7 @@ public class MosArt extends SwingWorker<File, String> {
 	private String sourceDirectory;
 
 	public MosArt() {
-		collection = new ITLCollection();
+		collection = null;
 		painter = null;
 		targetFilename = null;
 	}
@@ -106,9 +106,7 @@ public class MosArt extends SwingWorker<File, String> {
 			
 			for(String itc : itcList){
 				Supervisor.getInstance().reportTask("Associating '" + itc + "'");
-				String persistentID = ITCParser.getInstance().getTrackPersistentId(new File(itc));
-				
-				collection.addArtwork(persistentID, itc);
+				collection.addArtwork(ITCParser.getInstance().getArtworkHead(new File(itc)));
 			}
 		}
 		
@@ -132,7 +130,7 @@ public class MosArt extends SwingWorker<File, String> {
 			// Paint
 			Supervisor.getInstance().reportMainProgress(
 					"(3/4) Generating wallpaper");
-			painter.setITCList(collection.getCoversList());
+			painter.setArtworkList(collection.getCoversList());
 			ImageIcon mosaic = painter.createMosaic();
 
 			// Save image

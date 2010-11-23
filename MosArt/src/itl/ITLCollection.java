@@ -1,17 +1,19 @@
 package itl;
 
+import itc.ITCArtwork;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ITLCollection {
 	private HashMap<String, ArrayList<ITLSong>> albums;
 	private HashMap<String, ITLSong> songs;
-	private HashMap<String, String> covers;
+	private HashMap<String, ITCArtwork> covers;
 
 	public ITLCollection() {
 		songs = new HashMap<String, ITLSong>();
 		albums = new HashMap<String, ArrayList<ITLSong>>();
-		covers = new HashMap<String, String>();
+		covers = new HashMap<String, ITCArtwork>();
 	}
 
 	public void add(ITLSong song) {
@@ -27,18 +29,18 @@ public class ITLCollection {
 		songs.add(song);
 	}
 
-	public void addArtwork(String persistentID, String artworkPath) {
-		covers.put(persistentID, artworkPath);
+	public void addArtwork(ITCArtwork artwork) {
+		covers.put(artwork.getTrackPersistentId(), artwork);
 	}
 
-	public HashMap<String, String> getCovers() {
+	public HashMap<String, ITCArtwork> getCovers() {
 		return covers;
 	}
-
-	public ArrayList<String> getCoversList() {
-		return (ArrayList<String>) covers.values();
+	
+	public ArrayList<ITCArtwork> getCoversList(){
+		return (ArrayList<ITCArtwork>) covers.values();
 	}
-
+	
 	public void clear() {
 		songs.clear();
 		albums.clear();

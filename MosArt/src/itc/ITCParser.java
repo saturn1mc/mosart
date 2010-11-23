@@ -185,35 +185,58 @@ public class ITCParser {
 		return null;
 	}
 
-	public String getTrackPersistentId(File file) throws IOException {
-		ITCArtwork art = new ITCArtwork();
+	public ITCArtwork getArtworkHead(File file) throws IOException {
+		ITCArtwork artwork = new ITCArtwork(file.getPath());
 
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
-		readHeader(fistream, art);
-		readMetadata(fistream, art);
+		readHeader(fistream, artwork);
+		readMetadata(fistream, artwork);
 		
-		return art.getTrackPersistentId();
+		artwork.setFullyParsed(false);
+		
+		return artwork;
+	}
+	
+	public void completeArtwork(ITCArtwork artwork) throws IOException{
+		
+		File file = new File(artwork.getSource());
+		
+		BufferedInputStream fistream = new BufferedInputStream(
+				new FileInputStream(file.getPath()));
+
+		//TODO skip bytes
+
+		int imageBytesCount = (int) file.length() - artwork.getHeaderLength()
+				- artwork.getMetadataLength();
+		artwork.setImageData(new byte[imageBytesCount]);
+		readImageData(fistream, artwork);
+
+		fistream.close();
+		
+		artwork.setFullyParsed(true);
 	}
 
-	public ITCArtwork extractArtwork(File file) throws IOException {
+	public ITCArtwork getFullArtwork(File file) throws IOException {
 
-		ITCArtwork art = new ITCArtwork();
+		ITCArtwork artwork = new ITCArtwork(file.getPath());
 
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
-		readHeader(fistream, art);
-		readMetadata(fistream, art);
+		readHeader(fistream, artwork);
+		readMetadata(fistream, artwork);
 
-		int imageBytesCount = (int) file.length() - art.getHeaderLength()
-				- art.getMetadataLength();
-		art.setImageData(new byte[imageBytesCount]);
-		readImageData(fistream, art);
+		int imageBytesCount = (int) file.length() - artwork.getHeaderLength()
+				- artwork.getMetadataLength();
+		artwork.setImageData(new byte[imageBytesCount]);
+		readImageData(fistream, artwork);
 
 		fistream.close();
 
-		return art;
+		artwork.setFullyParsed(true);
+		
+		return artwork;
 	}
 }
