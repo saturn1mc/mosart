@@ -1,6 +1,10 @@
 package itc;
 
 public class ITCArtwork {
+	
+	private String source;
+	private boolean fullyParsed;
+	
 	private int headerLength;
 	private int metadataLength;
 
@@ -18,6 +22,27 @@ public class ITCArtwork {
 	private int height;
 
 	private byte[] imageData;
+	
+	public ITCArtwork(String source){
+		this.source = source;
+		fullyParsed = false;
+	}
+	
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public boolean isFullyParsed() {
+		return fullyParsed;
+	}
+
+	public void setFullyParsed(boolean fullyParsed) {
+		this.fullyParsed = fullyParsed;
+	}
 
 	public int getHeaderLength() {
 		return headerLength;
