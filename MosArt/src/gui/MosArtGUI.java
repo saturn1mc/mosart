@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -32,10 +31,12 @@ public class MosArtGUI extends JFrame {
 	private static final int FIELD_HEIGHT = 10;
 
 	private static final int DEFAULT_IMG_DIM = 3000;
-	private static final int DEFAULT_TILE_COUNT = 30;
-
+	private static final int DEFAULT_TILE_COUNT = 30; 
+	
 	private MosArt worker;
 
+	private String iTunesDir = "D:\\Mes Documents\\My Music\\iTunes";
+	
 	private JProgressBar mainProgressBar;
 	private JProgressBar subProgressBar;
 
@@ -88,7 +89,8 @@ public class MosArtGUI extends JFrame {
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
 
-		panel.add(new JLabel("Artwork directory : "));
+		panel.add(new JLabel("iTunes Music directory : "));
+		sourceField.setText(iTunesDir);
 		panel.add(sourceField);
 		panel.add(sourceButton);
 
@@ -119,7 +121,7 @@ public class MosArtGUI extends JFrame {
 		targetField = new JTextField();
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
-
+		
 		// Panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -278,7 +280,15 @@ public class MosArtGUI extends JFrame {
 						.parseInt(tileHeightField.getText()));
 
 		this.worker.setTargetFilename(targetField.getText());
-		this.worker.setSourceDirectory(new File(sourceField.getText()));
+		
+		try {
+			this.worker.setSourceDirectory(sourceField.getText());
+		} catch (MosArtException e) {
+			JOptionPane.showMessageDialog(MosArtGUI.this,
+					e.getCause(), "Can't start",
+					JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 
 	private boolean checking() {

@@ -24,7 +24,8 @@ public class ITCBaseReader extends SwingWorker<ArrayList<String>, String> {
 	}
 
 	public ArrayList<String> getITCs() {
-
+		itcList.clear();
+		
 		for (File file : artworkDirectory.listFiles()) {
 			if (file.isDirectory()) {
 				Supervisor.getInstance().reportTask("Handling directory : " + file.getPath());

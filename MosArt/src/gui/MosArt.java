@@ -2,6 +2,7 @@ package gui;
 
 import itc.ITCBaseReader;
 import itl.ITLCollection;
+import itl.ITLParser;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,10 +17,14 @@ import painters.MosaicPainter;
 
 public class MosArt extends SwingWorker<File, String> {
 
+	private static final String ARTWORK_DIR = "Album Artwork";
+	private static final String ITL_XML = "iTunes Music Library.xml";
+	
 	private ITLCollection collection;
 	private ITCBaseReader baseReader;
 	private MosaicPainter painter;
 	private String targetFilename;
+	private String sourceDirectory;
 
 	public MosArt() {
 		collection = new ITLCollection();
@@ -32,11 +37,37 @@ public class MosArt extends SwingWorker<File, String> {
 		this.targetFilename = targetFilename;
 	}
 
-	public void setSourceDirectory(File sourceDir) {
+	public void setSourceDirectory(String sourceDir) throws MosArtException {
+		
+		sourceDirectory = sourceDir;
+		
+		//Test source directory
+		File dir = new File(sourceDir);
+		
+		if(!dir.canRead()){
+			throw new MosArtException("Can't read : '" + dir.getPath() + "'");
+		}
+		
+		if(!dir.isDirectory()){
+			throw new MosArtException("'" + dir.getPath() + "' is not a directory");
+		}
+		
+		//Test artwork directory
+		dir = new File(sourceDir + File.separator + ARTWORK_DIR);
+		
+		if(!dir.canRead()){
+			throw new MosArtException("Can't find : '" + dir.getPath() + "'");
+		}
+		
+		if(!dir.isDirectory()){
+			throw new MosArtException("'" + dir.getPath() + "' is not a directory");
+		}
+		
+		//Create ITC base reader
 		if (baseReader == null) {
-			baseReader = new ITCBaseReader(sourceDir);
+			baseReader = new ITCBaseReader(dir);
 		} else {
-			baseReader.setArtworkDirectory(sourceDir);
+			baseReader.setArtworkDirectory(dir);
 		}
 	}
 
@@ -52,26 +83,47 @@ public class MosArt extends SwingWorker<File, String> {
 		}
 
 	}
+	
+	public ITLCollection refreshCollection(){
+		String library = sourceDirectory + File.separator + ARTWORK_DIR + File.separator + ITL_XML;	
+		
+		if(collection == null){
+			collection = new ITLCollection();
+		}
+		else{
+			collection.clear();
+		}
+		
+		ITLParser.getInstance().parseITL(library, collection);
+		
+		return collection;
+	}
 
-	public File paint() throws IOException {
+	private File paint() throws IOException {
 
 		File result = null;
-
+		// Read library		
+		Supervisor.getInstance().reportMainProgress(
+		"(1/4) Reading iTunes library");
+		if(collection == null){
+			refreshCollection();
+		}
+		
 		// Read base
 		Supervisor.getInstance().reportMainProgress(
-				"(1/3) Reading artwork directories");
+				"(2/4) Reading artwork directories");
 		ArrayList<String> itcList = baseReader.getITCs();
 
 		if (itcList != null && itcList.size() > 0) {
 			// Paint
 			Supervisor.getInstance().reportMainProgress(
-					"(2/3) Generating wallpaper");
+					"(3/4) Generating wallpaper");
 			painter.setITCList(itcList);
 			ImageIcon mosaic = painter.createMosaic();
 
 			// Save image
 			Supervisor.getInstance().reportMainProgress(
-					"(3/3) Saving work to " + targetFilename);
+					"(4/4) Saving work to " + targetFilename);
 			result = new File(targetFilename);
 			ImageIO.write((BufferedImage) mosaic.getImage(), "PNG", result);
 		} else {

@@ -15,4 +15,9 @@ public class ITLCollection {
 		songs.put(song.getID(), song);
 		albums.put(song.getAlbum(), song);
 	}
+	
+	public void clear(){
+		songs.clear();
+		albums.clear();
+	}
 }

@@ -279,10 +279,6 @@ public class ITLSong {
 		return releaseDate;
 	}
 
-	public int getId() {
-		return id;
-	}
-
 	public String getDateUTC() {
 		return dateUTC;
 	}
