@@ -15,11 +15,22 @@ public class ITCParser {
 	public static final int[] imageSignatureTIFF = { 0x49, 0x49, 0x2A };
 	public static final int[] imageSignatureBMP = { 0x42, 0x4D };
 	public static final int[] imageSignatureGIF = { 0x47, 0x49, 0x46 };
-	
-	public ITCParser() {
+
+	private static ITCParser singleton;
+
+	private ITCParser() {
 		super();
+		// Nothing
 	}
-	
+
+	public static ITCParser getInstance() {
+		if (singleton == null) {
+			singleton = new ITCParser();
+		}
+
+		return singleton;
+	}
+
 	public static int[] getImagesignaturepng() {
 		return imageSignaturePNG;
 	}
@@ -34,7 +45,8 @@ public class ITCParser {
 		return in.readInt();
 	}
 
-	private void readHeader(BufferedInputStream strm, ITCArtwork art) throws IOException {
+	private void readHeader(BufferedInputStream strm, ITCArtwork art)
+			throws IOException {
 		// Mark position
 		strm.mark(Integer.MAX_VALUE);
 
@@ -61,10 +73,11 @@ public class ITCParser {
 		strm.skip(art.getHeaderLength());
 	}
 
-	private void readMetadata(BufferedInputStream strm, ITCArtwork art) throws IOException {
+	private void readMetadata(BufferedInputStream strm, ITCArtwork art)
+			throws IOException {
 		// Mark position
 		strm.mark(Integer.MAX_VALUE);
-		
+
 		// Buffer
 		byte[] bytes = new byte[4];
 
@@ -120,73 +133,87 @@ public class ITCParser {
 		strm.skip(art.getMetadataLength());
 	}
 
-	private void readImageData(BufferedInputStream strm, ITCArtwork art) throws IOException {
+	private void readImageData(BufferedInputStream strm, ITCArtwork art)
+			throws IOException {
 		strm.read(art.getImageData());
 		checkSignature(art.getImageData());
 	}
 
-	private boolean matchSignature(byte[] imagedata, int[] signature){
-		
+	private boolean matchSignature(byte[] imagedata, int[] signature) {
+
 		boolean match = false;
-		
+
 		if (imagedata != null) {
 			int i = 0;
 			if (imagedata.length >= signature.length) {
 				match = true;
-				
+
 				for (i = 0; i < signature.length; i++) {
-					if (imagedata[i] != (byte)signature[i]) {
+					if (imagedata[i] != (byte) signature[i]) {
 						match = false;
 						break;
 					}
 				}
 			}
 		}
-		
+
 		return match;
 	}
-	
-	private int[] checkSignature(byte[] imagedata) {		
-		
-		if(matchSignature(imagedata, imageSignatureJPEG)){
+
+	private int[] checkSignature(byte[] imagedata) {
+
+		if (matchSignature(imagedata, imageSignatureJPEG)) {
 			return imageSignatureJPEG;
 		}
-		
-		if(matchSignature(imagedata, imageSignaturePNG)){
+
+		if (matchSignature(imagedata, imageSignaturePNG)) {
 			return imageSignaturePNG;
 		}
-		
-		if(matchSignature(imagedata, imageSignatureBMP)){
+
+		if (matchSignature(imagedata, imageSignatureBMP)) {
 			return imageSignatureBMP;
 		}
-		
-		if(matchSignature(imagedata, imageSignatureGIF)){
+
+		if (matchSignature(imagedata, imageSignatureGIF)) {
 			return imageSignatureGIF;
 		}
-		
-		if(matchSignature(imagedata, imageSignatureTIFF)){
+
+		if (matchSignature(imagedata, imageSignatureTIFF)) {
 			return imageSignatureTIFF;
 		}
-		
+
 		return null;
 	}
-	
-	public ITCArtwork parse(File file) throws IOException {
-		
+
+	public String getTrackPersistentId(File file) throws IOException {
 		ITCArtwork art = new ITCArtwork();
+
+		BufferedInputStream fistream = new BufferedInputStream(
+				new FileInputStream(file.getPath()));
+
+		readHeader(fistream, art);
+		readMetadata(fistream, art);
 		
+		return art.getTrackPersistentId();
+	}
+
+	public ITCArtwork extractArtwork(File file) throws IOException {
+
+		ITCArtwork art = new ITCArtwork();
+
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
 		readHeader(fistream, art);
 		readMetadata(fistream, art);
 
-		int imageBytesCount = (int) file.length() - art.getHeaderLength() - art.getMetadataLength();
+		int imageBytesCount = (int) file.length() - art.getHeaderLength()
+				- art.getMetadataLength();
 		art.setImageData(new byte[imageBytesCount]);
 		readImageData(fistream, art);
 
 		fistream.close();
-		
+
 		return art;
 	}
 }

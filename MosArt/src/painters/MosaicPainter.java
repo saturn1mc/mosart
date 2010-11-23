@@ -19,8 +19,6 @@ import javax.swing.SwingWorker;
 
 public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 
-	private ITCParser parser;
-
 	private int imageWidth;
 	private int imageHeight;
 
@@ -46,8 +44,6 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		this.mosaicHeight = mosaicHeight;
 
 		this.imageList = imageList;
-
-		this.parser = new ITCParser();
 	}
 
 	public void setProperties(int imageWidth, int imageHeight, int mosaicWidth,
@@ -68,7 +64,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	private Image handleITC(String filename, int targetWidth, int targetHeight)
 			throws IOException {
 
-		ITCArtwork art = parser.parse(new File(filename));
+		ITCArtwork art = ITCParser.getInstance().extractArtwork(new File(filename));
 
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(art.getImageData()));
 

@@ -40,8 +40,8 @@ public class ITLParser {
 	private static ITLParser singleton;
 
 	private ITLParser() {
-		// Nothing
 		super();
+		// Nothing
 	}
 
 	public static ITLParser getInstance() {
@@ -85,10 +85,12 @@ public class ITLParser {
 					if (tag.equalsIgnoreCase(openTag(KEY))) {
 						currentSong = new ITLSong();
 					} else if (tag.equalsIgnoreCase(openTag(DICT))) {
-						Supervisor.getInstance().reportTask("Reading track details");
+						Supervisor.getInstance().reportTask(
+								"Reading track details");
 						state = STATE_TRACK;
 					} else if (tag.equalsIgnoreCase(closeTag(DICT))) {
-						Supervisor.getInstance().reportTask("Finishing reading library");
+						Supervisor.getInstance().reportTask(
+								"Finishing reading library");
 						// End of library
 						state = STATE_IGNORE;
 					}
@@ -101,7 +103,9 @@ public class ITLParser {
 						currentField = getTagContent();
 						state = STATE_FIELD_CONTENT;
 					} else if (tag.equalsIgnoreCase(closeTag(DICT))) {
-						Supervisor.getInstance().reportTask("Finished reading track '" + currentSong.getName() + "'");
+						Supervisor.getInstance().reportTask(
+								"Finished reading track '"
+										+ currentSong.getName() + "'");
 						collection.add(currentSong);
 						state = STATE_LIBRARY;
 					}
