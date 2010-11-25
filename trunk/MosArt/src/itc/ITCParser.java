@@ -133,10 +133,14 @@ public class ITCParser {
 		strm.skip(art.getMetadataLength());
 	}
 
-	private void readImageData(BufferedInputStream strm, ITCArtwork art)
+	private byte[] readImageData(BufferedInputStream strm, int imageBytesCount)
 			throws IOException {
-		strm.read(art.getImageData());
-		checkSignature(art.getImageData());
+		
+		byte[] imageData = new byte[imageBytesCount]; 
+		strm.read(imageData);
+		checkSignature(imageData);
+		
+		return imageData;
 	}
 
 	private boolean matchSignature(byte[] imagedata, int[] signature) {
@@ -218,12 +222,11 @@ public class ITCParser {
 		// Read image data
 		int imageBytesCount = (int) file.length() - artwork.getHeaderLength()
 				- artwork.getMetadataLength();
-		artwork.setImageData(new byte[imageBytesCount]);
-		readImageData(fistream, artwork);
+		artwork.setImageData(readImageData(fistream, imageBytesCount));
 
-		artwork.setFullyParsed(true);
-		
 		fistream.close();
+		
+		artwork.setFullyParsed(true);
 	}
 
 	public ITCArtwork getFullArtwork(File file) throws IOException {
@@ -242,8 +245,7 @@ public class ITCParser {
 		// Read image data
 		int imageBytesCount = (int) file.length() - artwork.getHeaderLength()
 				- artwork.getMetadataLength();
-		artwork.setImageData(new byte[imageBytesCount]);
-		readImageData(fistream, artwork);
+		artwork.setImageData(readImageData(fistream, imageBytesCount));
 
 		fistream.close();
 

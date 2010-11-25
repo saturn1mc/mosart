@@ -7,13 +7,18 @@ import java.util.Collection;
 import java.util.HashMap;
 
 public class ITLCollection {
+	
+	private ArrayList<ITCArtwork> artworks;
 	private HashMap<String, ArrayList<ITLSong>> albums;
+	
 	private HashMap<String, ITLSong> songs;
 	private HashMap<String, ITCArtwork> covers;
+	
 
 	public ITLCollection() {
-		songs = new HashMap<String, ITLSong>();
+		artworks = new ArrayList<ITCArtwork>();
 		albums = new HashMap<String, ArrayList<ITLSong>>();
+		songs = new HashMap<String, ITLSong>();
 		covers = new HashMap<String, ITCArtwork>();
 	}
 
@@ -34,6 +39,7 @@ public class ITLCollection {
 	}
 
 	public void addArtwork(ITCArtwork artwork) {
+		artworks.add(artwork);
 		covers.put(artwork.getTrackPersistentId(), artwork);
 	}
 
@@ -44,10 +50,15 @@ public class ITLCollection {
 	public Collection<ITCArtwork> getCoversList() {
 		return covers.values();
 	}
+	
+	public ArrayList<ITCArtwork> getArtworks(){
+		return artworks;
+	}
 
 	public void clear() {
-		songs.clear();
+		artworks.clear();
 		albums.clear();
+		songs.clear();
 		covers.clear();
 	}
 }
