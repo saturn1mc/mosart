@@ -132,6 +132,11 @@ public class ITCArtwork {
 		this.height = height;
 	}
 
+	public void clearImageData(){
+		imageData = null;
+		fullyParsed = false;
+	}
+	
 	public byte[] getImageData() {
 		return imageData;
 	}

@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.SwingWorker;
 
 import painters.MosaicPainter;
@@ -78,7 +77,7 @@ public class MosArt extends SwingWorker<File, String> {
 
 	}
 
-	public ITLCollection refreshCollection() throws IOException {
+	public void refreshCollection() throws IOException {
 
 		if (sourceDirectory != null) {
 
@@ -103,17 +102,18 @@ public class MosArt extends SwingWorker<File, String> {
 	
 			//Associate covers
 			Supervisor.getInstance().reportTask("Associating artworks to tracks");
+			int associated = 0;
 			
 			for(String itc : itcList){
-				Supervisor.getInstance().reportTask("Associating '" + itc + "'");
-				collection.addArtwork(ITCParser.getInstance().getArtworkHead(new File(itc)));
+				float progress = ((float)(associated++)) / ((float)itcList.size());
+				File itcFile = new File(itc);
+				Supervisor.getInstance().reportProgress("Associating '" + itcFile.getName() + "'", progress);
+				collection.addArtwork(ITCParser.getInstance().getArtworkHead(itcFile));
 			}
 		}
-		
-		return collection;
 	}
 
-	private File paint() throws IOException {
+	public File paint() throws IOException {
 
 		File result = null;
 		
@@ -131,18 +131,18 @@ public class MosArt extends SwingWorker<File, String> {
 			Supervisor.getInstance().reportMainProgress(
 					"(3/4) Generating wallpaper");
 			painter.setArtworkList(collection.getCoversList());
-			ImageIcon mosaic = painter.createMosaic();
+			BufferedImage mosaic = painter.createMosaic();
 
 			// Save image
 			Supervisor.getInstance().reportMainProgress(
 					"(4/4) Saving work to " + targetFilename);
 			result = new File(targetFilename);
-			ImageIO.write((BufferedImage) mosaic.getImage(), "PNG", result);
+			ImageIO.write(mosaic, "PNG", result);
 		} else {
 			if (collection.getCovers() == null) {
 				Supervisor.getInstance().reportCrash(
 						"Error during artwork directory analysis");
-			} else if (collection.getCovers().size() == 0) {
+			} else if (collection.getCovers().size() <= 0) {
 				Supervisor.getInstance().reportCrash("No iTunes covers found");
 			}
 		}

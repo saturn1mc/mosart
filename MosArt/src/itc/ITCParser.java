@@ -191,31 +191,39 @@ public class ITCParser {
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
+		// Read header
 		readHeader(fistream, artwork);
+
+		// Read metadata
 		readMetadata(fistream, artwork);
-		
+
 		artwork.setFullyParsed(false);
-		
+
 		return artwork;
 	}
-	
-	public void completeArtwork(ITCArtwork artwork) throws IOException{
-		
+
+	public void completeArtwork(ITCArtwork artwork) throws IOException {
+
 		File file = new File(artwork.getSource());
-		
+
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
-		//TODO skip bytes
+		// Skip head
+		fistream.skip(artwork.getHeaderLength());
 
+		// Skip metadata
+		fistream.skip(artwork.getMetadataLength());
+
+		// Read image data
 		int imageBytesCount = (int) file.length() - artwork.getHeaderLength()
 				- artwork.getMetadataLength();
 		artwork.setImageData(new byte[imageBytesCount]);
 		readImageData(fistream, artwork);
 
-		fistream.close();
-		
 		artwork.setFullyParsed(true);
+		
+		fistream.close();
 	}
 
 	public ITCArtwork getFullArtwork(File file) throws IOException {
@@ -225,9 +233,13 @@ public class ITCParser {
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
 
+		// Read header
 		readHeader(fistream, artwork);
+
+		// Read metadata
 		readMetadata(fistream, artwork);
 
+		// Read image data
 		int imageBytesCount = (int) file.length() - artwork.getHeaderLength()
 				- artwork.getMetadataLength();
 		artwork.setImageData(new byte[imageBytesCount]);
@@ -236,7 +248,7 @@ public class ITCParser {
 		fistream.close();
 
 		artwork.setFullyParsed(true);
-		
+
 		return artwork;
 	}
 }

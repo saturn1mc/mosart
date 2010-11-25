@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -119,6 +120,7 @@ public class MosArtGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
+		targetField.setText("D:\\Mes Documents\\Mosaic.png");
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 		
@@ -142,7 +144,15 @@ public class MosArtGUI extends JFrame {
 				if (checking()) {
 					buildWorker();
 					launchButton.setEnabled(false);
-					worker.execute();
+					//worker.execute();
+					// A VIRER
+					try {
+						worker.paint();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					// FIN A VIRER
 				} else {
 					JOptionPane.showMessageDialog(MosArtGUI.this,
 							"Please check inputs", "Can't start",
@@ -440,7 +450,8 @@ public class MosArtGUI extends JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				MosArtGUI gui = new MosArtGUI();
-				Supervisor.getInstance().registerGUI(gui);
+				//TODO uncomment
+				//Supervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
 			}
 		});

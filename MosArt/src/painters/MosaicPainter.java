@@ -9,14 +9,13 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
-import javax.swing.SwingWorker;
 
-public class MosaicPainter extends SwingWorker<ImageIcon, String> {
+public class MosaicPainter {
 
 	private int imageWidth;
 	private int imageHeight;
@@ -24,9 +23,7 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 	private int mosaicWidth;
 	private int mosaicHeight;
 
-	private ArrayList<ITCArtwork> artworks;
-
-	private ImageIcon mosaic;
+	private Collection<ITCArtwork> artworks;
 
 	@SuppressWarnings("unused")
 	private MosaicPainter() {
@@ -56,24 +53,27 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		this.artworks = artworks;
 	}
 	
-	public void setArtworkList(ArrayList<ITCArtwork> artworks){
+	public void setArtworkList(Collection<ITCArtwork> artworks){
 		this.artworks = artworks;
 	}
 
-	private Image handleITC(ITCArtwork artwork, int targetWidth, int targetHeight)
+	private Image handleArtwork(ITCArtwork artwork, int targetWidth, int targetHeight)
 			throws IOException {
 
 		if(!artwork.isFullyParsed()){
+			Supervisor.getInstance().reportTask("Completing : " + artwork.getSource());
 			ITCParser.getInstance().completeArtwork(artwork);
 		}
 
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(artwork.getImageData()));
 
+		//artwork.clearImageData();
+		
 		return image.getScaledInstance(targetWidth, targetHeight,
 				Image.SCALE_SMOOTH);
 	}
 
-	public ImageIcon createMosaic() throws IOException {
+	public BufferedImage createMosaic() throws IOException {
 		
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
@@ -81,8 +81,8 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		int tileY = 0;
 		int done = 1;
 
-		mosaic = new ImageIcon(new BufferedImage(imageWidth, imageHeight,
-				BufferedImage.TYPE_INT_RGB));
+		BufferedImage mosaic = new BufferedImage(imageWidth, imageHeight,
+				BufferedImage.TYPE_INT_RGB);
 
 		Stack<ITCArtwork> randomList = new Stack<ITCArtwork>();
 
@@ -97,11 +97,11 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 					Collections.shuffle(randomList);
 				}
 				
-				Image image = handleITC(randomList.pop(), tileWidth,
+				Image image = handleArtwork(randomList.pop(), tileWidth,
 						tileHeight);
 				
-				mosaic.getImage().getGraphics().drawImage(image, tileX, tileY,
-						mosaic.getImageObserver());
+				mosaic.getGraphics().drawImage(image, tileX, tileY,
+						null);
 
 				float progress = ((float) done)
 						/ ((float) mosaicHeight * (float) mosaicWidth);
@@ -118,10 +118,5 @@ public class MosaicPainter extends SwingWorker<ImageIcon, String> {
 		}
 
 		return mosaic;
-	}
-
-	@Override
-	protected ImageIcon doInBackground() throws Exception {
-		return createMosaic();
 	}
 }
