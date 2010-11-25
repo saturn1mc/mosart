@@ -179,7 +179,8 @@ public class ITLSong {
 			libraryFolderCount = Integer.parseInt(value);
 		}
 		else{
-			throw new ITLException("Field '" + field + "' unknown");
+			//TODO remove comment
+			//throw new ITLException("Field '" + field + "' unknown");
 		}
 	}
 	
