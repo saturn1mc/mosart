@@ -26,6 +26,23 @@ public class ITCArtwork {
 	public ITCArtwork(String source){
 		this.source = source;
 		fullyParsed = false;
+		
+		headerLength = 0;
+		metadataLength = 0;
+		itch = null;
+		artw = null;
+		item = null;
+		
+		libraryPersistentId = null;
+		trackPersistentId = null;
+		
+		downloadIndicator = null;
+		fileFormatIndicator = null;
+		
+		width = 0;
+		height = 0;
+		
+		imageData = null;
 	}
 	
 	public String getSource() {

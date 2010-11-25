@@ -17,7 +17,7 @@ import painters.MosaicPainter;
 
 public class MosArt extends SwingWorker<File, String> {
 
-	private static final String ARTWORK_DIR = "Album Artwork";
+	private static final String ARTWORK_DIR = "Album Artwork" + File.separator + "Download";
 	private static final String ITL_XML = "iTunes Music Library.xml";
 
 	private ITLCollection collection;
@@ -29,9 +29,13 @@ public class MosArt extends SwingWorker<File, String> {
 		collection = null;
 		painter = null;
 		targetFilename = null;
+		sourceDirectory = null;
 	}
 
 	public void setTargetFilename(String targetFilename) {
+		
+		//TODO check target is writeable
+		
 		this.targetFilename = targetFilename;
 	}
 
@@ -69,10 +73,10 @@ public class MosArt extends SwingWorker<File, String> {
 
 		if (painter == null) {
 			painter = new MosaicPainter(imageWidth, imageHeight, mosaicWidth,
-					mosaicHeight, null);
+					mosaicHeight);
 		} else {
 			painter.setProperties(imageWidth, imageHeight, mosaicWidth,
-					mosaicHeight, null);
+					mosaicHeight);
 		}
 
 	}
@@ -108,7 +112,7 @@ public class MosArt extends SwingWorker<File, String> {
 				float progress = ((float)(associated++)) / ((float)itcList.size());
 				File itcFile = new File(itc);
 				Supervisor.getInstance().reportProgress("Associating '" + itcFile.getName() + "'", progress);
-				collection.addArtwork(ITCParser.getInstance().getArtworkHead(itcFile));
+				collection.addArtwork(ITCParser.getInstance().getFullArtwork(itcFile));
 			}
 		}
 	}
@@ -126,11 +130,11 @@ public class MosArt extends SwingWorker<File, String> {
 			// Refresh collection contains (2/4) Reading artworks
 		}
 		
-		if (collection.getCovers() != null && collection.getCovers().size() > 0) {
+		if (collection.getArtworks() != null && collection.getArtworks().size() > 0) {
 			// Paint
 			Supervisor.getInstance().reportMainProgress(
 					"(3/4) Generating wallpaper");
-			painter.setArtworkList(collection.getCoversList());
+			painter.setCollection(collection);
 			BufferedImage mosaic = painter.createMosaic();
 
 			// Save image

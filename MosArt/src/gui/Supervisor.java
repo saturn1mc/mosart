@@ -35,7 +35,7 @@ public class Supervisor {
 			JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
 					+ gui.getTarget(), "Done", JOptionPane.INFORMATION_MESSAGE);
 		} else {
-			System.out.println("Wallpaper saved to : " + gui.getTarget());
+			System.out.println("Wallpaper saved");
 		}
 	}
 

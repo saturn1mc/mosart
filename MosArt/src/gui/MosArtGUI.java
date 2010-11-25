@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -31,13 +30,13 @@ public class MosArtGUI extends JFrame {
 	private static final int DIM_FIELD_WIDTH = 30;
 	private static final int FIELD_HEIGHT = 10;
 
-	private static final int DEFAULT_IMG_DIM = 3000;
-	private static final int DEFAULT_TILE_COUNT = 30; 
-	
+	private static final int DEFAULT_IMG_DIM = 600;
+	private static final int DEFAULT_TILE_COUNT = 2;
+
 	private MosArt worker;
 
 	private String iTunesDir = "D:\\Mes Documents\\My Music\\iTunes";
-	
+
 	private JProgressBar mainProgressBar;
 	private JProgressBar subProgressBar;
 
@@ -85,7 +84,7 @@ public class MosArtGUI extends JFrame {
 				FIELD_HEIGHT));
 
 		sourceField.setAlignmentX(RIGHT_ALIGNMENT);
-		
+
 		// Panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -123,7 +122,7 @@ public class MosArtGUI extends JFrame {
 		targetField.setText("D:\\Mes Documents\\Mosaic.png");
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
-		
+
 		// Panel
 		JPanel panel = new JPanel();
 		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
@@ -144,15 +143,8 @@ public class MosArtGUI extends JFrame {
 				if (checking()) {
 					buildWorker();
 					launchButton.setEnabled(false);
-					//worker.execute();
-					// A VIRER
-					try {
-						worker.paint();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
-					// FIN A VIRER
+
+					worker.execute();
 				} else {
 					JOptionPane.showMessageDialog(MosArtGUI.this,
 							"Please check inputs", "Can't start",
@@ -280,23 +272,23 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void buildWorker() {
-		if(worker == null){
+		if (worker == null) {
 			this.worker = new MosArt();
 		}
-
-		this.worker.setMosaicProperties(Integer.parseInt(imgWidthField
-				.getText()), Integer.parseInt(imgHeightField.getText()),
-				Integer.parseInt(tileWidthField.getText()), Integer
-						.parseInt(tileHeightField.getText()));
-
-		this.worker.setTargetFilename(targetField.getText());
-		
 		try {
+
+			this.worker.setMosaicProperties(Integer.parseInt(imgWidthField
+					.getText()), Integer.parseInt(imgHeightField.getText()),
+					Integer.parseInt(tileWidthField.getText()), Integer
+							.parseInt(tileHeightField.getText()));
+
+			this.worker.setTargetFilename(targetField.getText());
+
 			this.worker.setSourceDirectory(sourceField.getText());
+
 		} catch (MosArtException e) {
-			JOptionPane.showMessageDialog(MosArtGUI.this,
-					e.getCause(), "Can't start",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(MosArtGUI.this, e.getCause(),
+					"Can't start", JOptionPane.ERROR_MESSAGE);
 		}
 
 	}
@@ -450,8 +442,7 @@ public class MosArtGUI extends JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				MosArtGUI gui = new MosArtGUI();
-				//TODO uncomment
-				//Supervisor.getInstance().registerGUI(gui);
+				Supervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
 			}
 		});
