@@ -63,7 +63,6 @@ public class MosaicPainter {
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(artwork
 				.getImageData()));
 
-		artwork.clearImageData();
 		return image.getScaledInstance(targetWidth, targetHeight,
 				Image.SCALE_SMOOTH);
 	}
