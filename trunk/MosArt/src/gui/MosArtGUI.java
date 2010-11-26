@@ -30,8 +30,8 @@ public class MosArtGUI extends JFrame {
 	private static final int DIM_FIELD_WIDTH = 30;
 	private static final int FIELD_HEIGHT = 10;
 
-	private static final int DEFAULT_IMG_DIM = 600;
-	private static final int DEFAULT_TILE_COUNT = 2;
+	private static final int DEFAULT_IMG_DIM = 3000;
+	private static final int DEFAULT_TILE_COUNT = 30;
 
 	private MosArt worker;
 
