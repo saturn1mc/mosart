@@ -73,11 +73,11 @@ public class ITLSong {
 	private int fileFolderCount;
 	private int libraryFolderCount;
 	
-	public ITLSong(){
-		//Nothing
+	public ITLSong() {
+		// Nothing
 		super();
 	}
-	
+
 	public void set(String field, String value) throws ParseException, ITLException{
 		if(field.equalsIgnoreCase(TRACK_ID)){
 			id = Integer.parseInt(value);

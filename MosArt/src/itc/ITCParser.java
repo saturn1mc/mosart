@@ -190,7 +190,7 @@ public class ITCParser {
 	}
 
 	public ITCArtwork getArtworkHead(File file) throws IOException {
-		ITCArtwork artwork = new ITCArtwork(file.getPath());
+		ITCArtwork artwork = new ITCArtwork(file);
 
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));
@@ -231,7 +231,7 @@ public class ITCParser {
 
 	public ITCArtwork getFullArtwork(File file) throws IOException {
 
-		ITCArtwork artwork = new ITCArtwork(file.getPath());
+		ITCArtwork artwork = new ITCArtwork(file);
 
 		BufferedInputStream fistream = new BufferedInputStream(
 				new FileInputStream(file.getPath()));

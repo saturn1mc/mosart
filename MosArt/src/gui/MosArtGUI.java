@@ -406,19 +406,19 @@ public class MosArtGUI extends JFrame {
 		return allFilled && allCorrect;
 	}
 
-	public JProgressBar getSubProgressBar() {
+	public synchronized JProgressBar getSubProgressBar() {
 		return subProgressBar;
 	}
 
-	public JProgressBar getMainProgressBar() {
+	public synchronized JProgressBar getMainProgressBar() {
 		return mainProgressBar;
 	}
 
-	public JButton getLaunchButton() {
+	public synchronized JButton getLaunchButton() {
 		return launchButton;
 	}
 
-	public String getTarget() {
+	public synchronized String getTarget() {
 		return targetField.getText();
 	}
 

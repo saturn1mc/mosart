@@ -2,7 +2,6 @@ package painters;
 
 import gui.Supervisor;
 import itc.ITCArtwork;
-import itc.ITCParser;
 import itl.ITLCollection;
 
 import java.awt.Graphics2D;
@@ -54,12 +53,6 @@ public class MosaicPainter {
 	private Image handleArtwork(ITCArtwork artwork, int targetWidth,
 			int targetHeight) throws IOException {
 
-		if (!artwork.isFullyParsed()) {
-			Supervisor.getInstance().reportTask(
-					"Completing : " + artwork.getSource());
-			ITCParser.getInstance().completeArtwork(artwork);
-		}
-
 		BufferedImage image = ImageIO.read(new ByteArrayInputStream(artwork
 				.getImageData()));
 
@@ -103,11 +96,11 @@ public class MosaicPainter {
 				"Adding tile to (" + tileX + "," + tileY + ")",
 				progress);
 				
-				Image image = handleArtwork(randomList.pop(),
+				ITCArtwork currentArt = randomList.pop();
+				Image image = handleArtwork(currentArt,
 						tileWidth, tileHeight);
 
 				g2d.drawImage(image, tileX, tileY, null);
-
 
 				tileY += tileHeight;
 				done++;
