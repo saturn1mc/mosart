@@ -3,7 +3,6 @@ package itl;
 import itc.ITCArtwork;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 public class ITLCollection {
@@ -39,20 +38,33 @@ public class ITLCollection {
 	}
 
 	public void addArtwork(ITCArtwork artwork) {
+		
+		String[] split = artwork.getFilename().split(ITCArtwork.FILENAME_SEPARATOR);
+		
 		artworks.add(artwork);
-		covers.put(artwork.getTrackPersistentId(), artwork);
+		covers.put(split[ITCArtwork.TRACK_PID_POS], artwork);
 	}
 
 	public HashMap<String, ITCArtwork> getCovers() {
 		return covers;
 	}
 
-	public Collection<ITCArtwork> getCoversList() {
-		return covers.values();
+	public HashMap<String, ITLSong> getSongs() {
+		return songs;
 	}
 	
+	// A VIRER
 	public ArrayList<ITCArtwork> getArtworks(){
 		return artworks;
+	}
+	// FIN A VIRER
+	
+	public ITCArtwork getArtwork(String trackPersistendID){
+		return covers.get(trackPersistendID);
+	}
+	
+	public ITLSong getSong(String persistendID){
+		return songs.get(persistendID);
 	}
 
 	public void clear() {

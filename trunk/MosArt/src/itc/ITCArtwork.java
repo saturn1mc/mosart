@@ -1,8 +1,15 @@
 package itc;
 
+import java.io.File;
+
 public class ITCArtwork {
 	
+	public static final String FILENAME_SEPARATOR = "-";
+	public static final int LIBRARY_PID_POS = 0;
+	public static final int TRACK_PID_POS = 1;
+	
 	private String source;
+	private String filename;
 	private boolean fullyParsed;
 	
 	private int headerLength;
@@ -23,28 +30,22 @@ public class ITCArtwork {
 
 	private byte[] imageData;
 	
-	public ITCArtwork(String source){
-		this.source = source;
+	public ITCArtwork(File source){
+		super();
+		
+		this.filename = source.getName().substring(0, source.getName().indexOf('.'));
+		this.source = source.getPath();
 		fullyParsed = false;
-		
-		headerLength = 0;
-		metadataLength = 0;
-		itch = null;
-		artw = null;
-		item = null;
-		
-		libraryPersistentId = null;
-		trackPersistentId = null;
-		
-		downloadIndicator = null;
-		fileFormatIndicator = null;
-		
-		width = 0;
-		height = 0;
-		
-		imageData = null;
 	}
 	
+	public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
 	public String getSource() {
 		return source;
 	}

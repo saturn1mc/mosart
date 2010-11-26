@@ -1,9 +1,11 @@
 package gui;
 
+import itc.ITCArtwork;
 import itc.ITCBaseReader;
 import itc.ITCParser;
 import itl.ITLCollection;
 import itl.ITLParser;
+import itl.ITLSong;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -33,9 +35,7 @@ public class MosArt extends SwingWorker<File, String> {
 	}
 
 	public void setTargetFilename(String targetFilename) {
-		
 		//TODO check target is writeable
-		
 		this.targetFilename = targetFilename;
 	}
 

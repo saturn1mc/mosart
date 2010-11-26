@@ -23,7 +23,7 @@ public class Supervisor {
 		this.gui = gui;
 	}
 
-	public void reportMainTaskFinished() {
+	public synchronized void reportMainTaskFinished() {
 		if (gui != null) {
 			gui.getMainProgressBar().setIndeterminate(false);
 			gui.getMainProgressBar().setValue(
