@@ -1,11 +1,9 @@
 package gui;
 
-import itc.ITCArtwork;
 import itc.ITCBaseReader;
 import itc.ITCParser;
 import itl.ITLCollection;
-import itl.ITLParser;
-import itl.ITLSong;
+import itl.ITLXMLParser;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -95,7 +93,7 @@ public class MosArt extends SwingWorker<File, String> {
 			}
 
 			// Read ITL
-			ITLParser.getInstance().parseITL(library, collection);
+			ITLXMLParser.getInstance().parseITL(library, collection);
 			
 			//Read covers
 			Supervisor.getInstance().reportMainProgress(

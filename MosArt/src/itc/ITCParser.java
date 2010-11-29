@@ -38,6 +38,41 @@ public class ITCParser {
 	public static int[] getImagesignaturejpeg() {
 		return imageSignatureJPEG;
 	}
+	
+	  public String convertStringToHex(String str){
+		  
+		  char[] chars = str.toCharArray();
+	 
+		  StringBuffer hex = new StringBuffer();
+		  for(int i = 0; i < chars.length; i++){
+		    hex.append(Integer.toHexString((int)chars[i]));
+		  }
+	 
+		  return hex.toString();
+	  }
+	 
+	  public String convertHexToString(String hex){
+	 
+		  StringBuilder sb = new StringBuilder();
+		  StringBuilder temp = new StringBuilder();
+	 
+		  //49204c6f7665204a617661 split into two characters 49, 20, 4c...
+		  for( int i=0; i<hex.length()-1; i+=2 ){
+	 
+		      //grab the hex in pairs
+		      String output = hex.substring(i, (i + 2));
+		      //convert hex to decimal
+		      int decimal = Integer.parseInt(output, 16);
+		      //convert the decimal to character
+		      sb.append((char)decimal);
+	 
+		      temp.append(decimal);
+		  }
+		  System.out.println("Decimal : " + temp.toString());
+	 
+		  return sb.toString();
+	  }
+
 
 	private int byteArrayToInt(final byte[] bytes) throws IOException {
 		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
@@ -104,10 +139,10 @@ public class ITCParser {
 		// Get the library and track persistent Id's
 		bytes = new byte[8];
 		strm.read(bytes);
-		art.setLibraryPersistentId(Arrays.toString(bytes));
+		art.setLibraryPersistentId(convertStringToHex(new String(bytes)));
 
-		strm.read(bytes);
-		art.setTrackPersistentId(Arrays.toString(bytes));
+		strm.read(bytes);		
+		art.setTrackPersistentId(convertStringToHex(new String(bytes)));
 
 		// Read the download/persistence indicator
 		bytes = new byte[4];
