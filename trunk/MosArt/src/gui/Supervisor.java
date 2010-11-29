@@ -32,8 +32,9 @@ public class Supervisor {
 
 			gui.getLaunchButton().setEnabled(true);
 
-			JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
-					+ gui.getTarget(), "Done", JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(gui,
+					"Wallpaper saved to : " + gui.getTarget(), "Done",
+					JOptionPane.INFORMATION_MESSAGE);
 		} else {
 			System.out.println("Wallpaper saved");
 		}
@@ -71,8 +72,10 @@ public class Supervisor {
 
 	public synchronized void reportTask(String task) {
 		if (gui != null) {
-			gui.getSubProgressBar().setIndeterminate(true);
-			gui.getSubProgressBar().setString(task);
+			synchronized (gui) {
+				gui.getSubProgressBar().setIndeterminate(true);
+				gui.getSubProgressBar().setString(task);
+			}
 		} else {
 			System.out.println(task);
 		}
