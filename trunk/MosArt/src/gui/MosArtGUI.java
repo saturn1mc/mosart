@@ -1,14 +1,22 @@
 package gui;
 
+import itc.ITCArtwork;
+import itc.ITCParser;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -422,6 +430,17 @@ public class MosArtGUI extends JFrame {
 		return targetField.getText();
 	}
 
+	public void showArtwork(String itc) throws IOException{
+		ITCArtwork art = ITCParser.getInstance().getFullArtwork(new File(itc));
+		ImageIcon icon = new ImageIcon(ImageIO.read(new ByteArrayInputStream(art.getImageData())));
+		JLabel label = new JLabel(icon);
+		
+		JFrame frame = new JFrame();
+		frame.getContentPane().add(label);
+		frame.pack();
+		frame.setVisible(true);
+	}
+	
 	public MosArtGUI() {
 
 		super("MosArt");
