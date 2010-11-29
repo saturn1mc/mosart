@@ -18,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -435,10 +436,12 @@ public class MosArtGUI extends JFrame {
 		ImageIcon icon = new ImageIcon(ImageIO.read(new ByteArrayInputStream(art.getImageData())));
 		JLabel label = new JLabel(icon);
 		
-		JFrame frame = new JFrame();
-		frame.getContentPane().add(label);
-		frame.pack();
-		frame.setVisible(true);
+		JDialog dialog = new JDialog();
+		dialog.setTitle(art.getFilename());
+		dialog.getContentPane().add(label);
+		dialog.pack();
+		dialog.setLocationRelativeTo(null);
+		dialog.setVisible(true);
 	}
 	
 	public MosArtGUI() {
@@ -463,6 +466,17 @@ public class MosArtGUI extends JFrame {
 				MosArtGUI gui = new MosArtGUI();
 				Supervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
+				
+				//FOR TEST PURPOSE
+				try {
+					gui.showArtwork("D:\\Mes Documents\\My Music\\iTunes\\Album Artwork\\Cache\\C9BBE67472C6A9FB\\07\\01\\12\\C9BBE67472C6A9FB-63D87F264C358C17.itc2");
+					System.out.println("Cover : " + ITCParser.getInstance().convertHexToString("63D87F264C358C17"));
+					System.out.println("Track : " + ITCParser.getInstance().convertHexToString("95019E3137A85CB9"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//END TEST
 			}
 		});
 	}
