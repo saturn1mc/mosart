@@ -17,6 +17,7 @@ public class ITLSong {
 	private final static String DISC_NUMBER = "Disc Number";
 	private final static String DISC_COUNT = "Disc Count";
 	private final static String TRACK_NUMBER = "Track Number";
+	private final static String BPM = "BPM";
 	private final static String TRACK_COUNT = "Track Count";
 	private final static String YEAR = "Year";
 	private final static String DATE_MODIFIED = "Date Modified";
@@ -24,6 +25,7 @@ public class ITLSong {
 	private final static String BIT_RATE = "Bit Rate";
 	private final static String SAMPLE_RATE = "Sample Rate";
 	private final static String PART_GAPLESS = "Part Of Gapless Album";
+	private final static String COMMENTS = "Comments";
 	private final static String PLAY_COUNT = "Play Count";
 	private final static String PLAY_DATE = "Play Date";
 	private final static String PLAY_DATE_UTC = "Play Date UTC";
@@ -31,8 +33,15 @@ public class ITLSong {
 	private final static String SKIP_COUNT = "Skip Count";
 	private final static String SKIP_DATE = "Skip Date";
 	private final static String ARTWORK_COUNT = "Artwork Count";
+	private final static String SORT_ALBUM = "Sort Album";
 	private final static String PERSISTENT_ID = "Persistent ID";
+	private final static String DISABLED = "Disabled";
 	private final static String TRACK_TYPE = "Track Type";
+	private final static String HAS_VIDEO = "Has Video";
+	private final static String HD = "HD";
+	private final static String V_WIDTH = "Video Width";
+	private final static String V_HEIGHT = "Video Height";
+	private final static String MOVIE = "Movie";
 	private final static String PURCHASED = "Purchased";
 	private final static String LOCATION = "Location";
 	private final static String FILE_FOLDER_COUNT = "File Folder Count";
@@ -52,6 +61,7 @@ public class ITLSong {
 	private int discNumber;
 	private int discCount;
 	private int trackNumber;
+	private int bpm;
 	private int trackCount;
 	private int year;
 	private String dateModified;
@@ -59,6 +69,7 @@ public class ITLSong {
 	private String bitRate;
 	private int sampleRate;
 	private boolean gapless;
+	private String comments;
 	private int playCount;
 	private String playDate;
 	private String dateUTC;
@@ -66,8 +77,15 @@ public class ITLSong {
 	private int skipCount;
 	private String skipDate;
 	private int artworkCount;
+	private String sortAlbum;
 	private String persistentID;
+	private boolean disabled;
 	private String trackType;
+	private boolean hasVideo;
+	private boolean hd;
+	private int videoWidth;
+	private int videoHeight;
+	private boolean movie;
 	private boolean purchased;
 	private String location;
 	private int fileFolderCount;
@@ -118,6 +136,9 @@ public class ITLSong {
 		else if(field.equalsIgnoreCase(TRACK_NUMBER)){
 			trackNumber = Integer.parseInt(value);
 		}
+		else if(field.equalsIgnoreCase(BPM)){
+			bpm = Integer.parseInt(value);
+		}
 		else if(field.equalsIgnoreCase(TRACK_COUNT)){
 			trackCount = Integer.parseInt(value);
 		}
@@ -139,6 +160,9 @@ public class ITLSong {
 		else if(field.equalsIgnoreCase(PART_GAPLESS)){
 			gapless = Boolean.parseBoolean(value);
 		}
+		else if(field.equalsIgnoreCase(COMMENTS)){
+			comments = value;
+		}
 		else if(field.equalsIgnoreCase(PLAY_COUNT)){
 			playCount = Integer.parseInt(value);
 		}
@@ -154,6 +178,9 @@ public class ITLSong {
 		else if(field.equalsIgnoreCase(PERSISTENT_ID)){
 			persistentID = value;
 		}
+		else if(field.equalsIgnoreCase(DISABLED)){
+			disabled = Boolean.parseBoolean(value);
+		}
 		else if(field.equalsIgnoreCase(SKIP_COUNT)){
 			skipCount = Integer.parseInt(value);
 		}
@@ -163,8 +190,26 @@ public class ITLSong {
 		else if(field.equalsIgnoreCase(ARTWORK_COUNT)){
 			artworkCount = Integer.parseInt(value);
 		}
+		else if(field.equalsIgnoreCase(SORT_ALBUM)){
+			sortAlbum = value;
+		}
 		else if(field.equalsIgnoreCase(TRACK_TYPE)){
 			trackType = value;
+		}
+		else if(field.equalsIgnoreCase(HAS_VIDEO)){
+			hasVideo = Boolean.parseBoolean(value);
+		}
+		else if(field.equalsIgnoreCase(HD)){
+			hd = Boolean.parseBoolean(value);
+		}
+		else if(field.equalsIgnoreCase(V_WIDTH)){
+			videoWidth = Integer.parseInt(value);
+		}
+		else if(field.equalsIgnoreCase(V_HEIGHT)){
+			videoHeight = Integer.parseInt(value);
+		}
+		else if(field.equalsIgnoreCase(MOVIE)){
+			movie = Boolean.parseBoolean(value);
 		}
 		else if(field.equalsIgnoreCase(PURCHASED)){
 			purchased = Boolean.parseBoolean(value);
@@ -202,7 +247,7 @@ public class ITLSong {
 	public String getComposer() {
 		return composer;
 	}
-	
+
 	public String getAlbum() {
 		return album;
 	}
@@ -235,6 +280,10 @@ public class ITLSong {
 		return trackNumber;
 	}
 
+	public int getBpm() {
+		return bpm;
+	}
+
 	public int getTrackCount() {
 		return trackCount;
 	}
@@ -263,6 +312,10 @@ public class ITLSong {
 		return gapless;
 	}
 
+	public String getComments() {
+		return comments;
+	}
+
 	public int getPlayCount() {
 		return playCount;
 	}
@@ -271,16 +324,12 @@ public class ITLSong {
 		return playDate;
 	}
 
-	public String getPlayDateUTC() {
+	public String getDateUTC() {
 		return dateUTC;
 	}
 
 	public String getReleaseDate() {
 		return releaseDate;
-	}
-
-	public String getDateUTC() {
-		return dateUTC;
 	}
 
 	public int getSkipCount() {
@@ -295,15 +344,43 @@ public class ITLSong {
 		return artworkCount;
 	}
 
+	public String getSortAlbum() {
+		return sortAlbum;
+	}
+
 	public String getPersistentID() {
 		return persistentID;
+	}
+
+	public boolean isDisabled() {
+		return disabled;
 	}
 
 	public String getTrackType() {
 		return trackType;
 	}
 
-	public boolean getPurchased() {
+	public boolean isHasVideo() {
+		return hasVideo;
+	}
+
+	public boolean isHd() {
+		return hd;
+	}
+
+	public int getVideoWidth() {
+		return videoWidth;
+	}
+
+	public int getVideoHeight() {
+		return videoHeight;
+	}
+
+	public boolean isMovie() {
+		return movie;
+	}
+
+	public boolean isPurchased() {
 		return purchased;
 	}
 
