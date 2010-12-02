@@ -436,7 +436,7 @@ public class ITLSong {
 
 	@Override
 	public String toString() {
-		return this.id + " : " + this.name + " - " + this.album + " - "
+		return this.persistentID + " : " + this.name + " - " + this.album + " - "
 				+ this.artist;
 	}
 }
