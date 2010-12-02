@@ -1,8 +1,11 @@
 package gui;
 
+import itc.ITCArtwork;
 import itc.ITCBaseReader;
+import itc.ITCException;
 import itc.ITCParser;
 import itl.ITLCollection;
+import itl.ITLSong;
 import itl.ITLXMLParser;
 
 import java.awt.image.BufferedImage;
@@ -17,7 +20,7 @@ import painters.MosaicPainter;
 
 public class MosArt extends SwingWorker<File, String> {
 
-	private static final String ARTWORK_DIR = "Album Artwork" + File.separator + "Download";
+	private static final String ARTWORK_DIR = "Album Artwork";
 	private static final String ITL_XML = "iTunes Music Library.xml";
 
 	private ITLCollection collection;
@@ -33,7 +36,7 @@ public class MosArt extends SwingWorker<File, String> {
 	}
 
 	public void setTargetFilename(String targetFilename) {
-		//TODO check target is writeable
+		// TODO check target is writeable
 		this.targetFilename = targetFilename;
 	}
 
@@ -79,12 +82,12 @@ public class MosArt extends SwingWorker<File, String> {
 
 	}
 
-	public void refreshCollection() throws IOException {
+	public void refreshCollection() throws IOException, ITCException {
 
 		if (sourceDirectory != null) {
 
-			String library = sourceDirectory + File.separator
-					+ File.separator + ITL_XML;
+			String library = sourceDirectory + File.separator + File.separator
+					+ ITL_XML;
 
 			if (collection == null) {
 				collection = new ITLCollection();
@@ -94,23 +97,28 @@ public class MosArt extends SwingWorker<File, String> {
 
 			// Read ITL
 			ITLXMLParser.getInstance().parseITL(library, collection);
-			
-			//Read covers
+
+			// Read covers
 			Supervisor.getInstance().reportMainProgress(
-			"(2/4) Reading artworks");
-			
+					"(2/4) Reading artworks");
+
 			String artworkDir = sourceDirectory + File.separator + ARTWORK_DIR;
-			ArrayList<String> itcList = ITCBaseReader.getInstance().getITCs(artworkDir);
-	
-			//Associate covers
-			Supervisor.getInstance().reportTask("Associating artworks to tracks");
+			ArrayList<String> itcList = ITCBaseReader.getInstance().getITCs(
+					artworkDir);
+
+			// Associate covers
+			Supervisor.getInstance().reportTask(
+					"Associating artworks to tracks");
 			int associated = 0;
-			
-			for(String itc : itcList){
-				float progress = ((float)(associated++)) / ((float)itcList.size());
+
+			for (String itc : itcList) {
+				float progress = ((float) (associated++))
+						/ ((float) itcList.size());
 				File itcFile = new File(itc);
-				Supervisor.getInstance().reportProgress("Associating '" + itcFile.getName() + "'", progress);
-				collection.addArtwork(ITCParser.getInstance().getFullArtwork(itcFile));
+				Supervisor.getInstance().reportProgress(
+						"Associating '" + itcFile.getName() + "'", progress);
+				collection.addArtwork(ITCParser.getInstance().getFullArtwork(
+						itcFile));
 			}
 		}
 	}
@@ -118,17 +126,46 @@ public class MosArt extends SwingWorker<File, String> {
 	public File paint() throws IOException {
 
 		File result = null;
-		
-		// Read library && covers
-		Supervisor.getInstance().reportMainProgress(
-				"(1/4) Reading iTunes library");
-		
+
 		if (collection == null) {
-			refreshCollection();
+
+			try {
+				// Read library && covers
+				Supervisor.getInstance().reportMainProgress(
+						"(1/4) Reading iTunes library");
+				refreshCollection();
+			} catch (ITCException e) {
+				e.printStackTrace();
+			}
 			// Refresh collection contains (2/4) Reading artworks
 		}
+
+		// For test purpose
+		int match = 0;
+		int total = 0;
 		
-		if (collection.getArtworks() != null && collection.getArtworks().size() > 0) {
+		for (String albumName : collection.getAlbums()) {
+
+			total++;
+
+			ITLSong song = collection.getAlbum(albumName).firstEntry()
+					.getValue();
+			String pid = song.getPersistentID();
+			ITCArtwork art = collection.getArtwork(pid);
+
+			if (art != null) {
+				System.out.println(song.getName() + " : "
+						+ song.getTrackNumber());
+				match++;
+			}
+		}
+
+		System.out.println("Total : " + total);
+		System.out.println("Matched : " + match);
+		//
+
+		if (collection.getArtworks() != null
+				&& collection.getArtworks().size() > 0) {
 			// Paint
 			Supervisor.getInstance().reportMainProgress(
 					"(3/4) Generating wallpaper");
