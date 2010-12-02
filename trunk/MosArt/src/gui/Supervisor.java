@@ -72,10 +72,8 @@ public class Supervisor {
 
 	public synchronized void reportTask(String task) {
 		if (gui != null) {
-			synchronized (gui) {
 				gui.getSubProgressBar().setIndeterminate(true);
 				gui.getSubProgressBar().setString(task);
-			}
 		} else {
 			System.out.println(task);
 		}

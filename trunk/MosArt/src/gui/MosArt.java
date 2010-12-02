@@ -100,19 +100,17 @@ public class MosArt extends SwingWorker<File, String> {
 
 			// Read covers
 			Supervisor.getInstance().reportMainProgress(
-					"(2/4) Reading artworks");
+					"(2/4) Managing artworks");
 
 			String artworkDir = sourceDirectory + File.separator + ARTWORK_DIR;
 			ArrayList<String> itcList = ITCBaseReader.getInstance().getITCs(
 					artworkDir);
 
 			// Associate covers
-			Supervisor.getInstance().reportTask(
-					"Associating artworks to tracks");
 			int associated = 0;
 
 			for (String itc : itcList) {
-				float progress = ((float) (associated++))
+				float progress = ((float) (++associated))
 						/ ((float) itcList.size());
 				File itcFile = new File(itc);
 				Supervisor.getInstance().reportProgress(
@@ -139,31 +137,11 @@ public class MosArt extends SwingWorker<File, String> {
 			}
 			// Refresh collection contains (2/4) Reading artworks
 		}
-
-		// For test purpose
-		int match = 0;
-		int total = 0;
 		
-		for (String albumName : collection.getAlbums()) {
-
-			total++;
-
-			ITLSong song = collection.getAlbum(albumName).firstEntry()
-					.getValue();
-			String pid = song.getPersistentID();
-			ITCArtwork art = collection.getArtwork(pid);
-
-			if (art != null) {
-				System.out.println(song.getName() + " : "
-						+ song.getTrackNumber());
-				match++;
-			}
-		}
-
-		System.out.println("Total : " + total);
-		System.out.println("Matched : " + match);
-		//
-
+		//TODO a virer
+		test();
+		//TODO fin a virer
+		
 		if (collection.getArtworks() != null
 				&& collection.getArtworks().size() > 0) {
 			// Paint
@@ -191,6 +169,57 @@ public class MosArt extends SwingWorker<File, String> {
 		}
 
 		return result;
+	}
+	
+	public void test(){
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// For test purpose
+		int match = 0;
+		int total = 0;
+
+		for (ITLSong track : collection.getSongs().values()) {
+
+			total++;
+
+			String album = track.getAlbum();
+
+			if (album != null) {
+
+				for (ITLSong albumTrack : collection.getAlbum(album).values()) {
+					ITCArtwork art = collection.getArtwork(albumTrack
+							.getPersistentID());
+
+					if (art != null) {
+						System.out.println(albumTrack.getName() + " : "
+								+ albumTrack.getTrackNumber());
+						match++;
+						break;
+					}
+				}
+			} else {
+				ITCArtwork art = collection.getArtwork(track.getPersistentID());
+
+				if (art != null) {
+					System.out.println(track.getName() + " : "
+							+ track.getTrackNumber());
+					match++;
+				}
+			}
+		}
+
+		System.out.println("Total : " + total);
+		System.out.println("Matched : " + match);
+		// End test
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
+		// /////////////////////////////////////////////////////////////////
 	}
 
 	@Override
