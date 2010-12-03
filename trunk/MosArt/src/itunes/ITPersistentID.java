@@ -7,6 +7,10 @@ public class ITPersistentID {
 	public ITPersistentID(long value) {
 		this.persistentID = value;
 	}
+	
+	public ITPersistentID(String value) {
+		this(Long.parseLong(value));
+	}
 
 	public ITPersistentID(int high, int low) {
 		this.persistentID = (long) ((((long) high << 32) & 0xFFFFFFFF00000000L) + ((long) low & 0x00000000FFFFFFFFL));
@@ -18,6 +22,10 @@ public class ITPersistentID {
 
 	public int getHighBits() {
 		return (int) (persistentID >> 32);
+	}
+	
+	public Long longValue(){
+		return persistentID;
 	}
 	
 	public String toString(){

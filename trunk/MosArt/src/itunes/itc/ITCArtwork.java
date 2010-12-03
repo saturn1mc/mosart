@@ -104,16 +104,16 @@ public class ITCArtwork {
 		this.item = item;
 	}
 
-	public String getLibraryPersistentId() {
-		return libraryPersistentId.toString();
+	public ITPersistentID getLibraryPersistentId() {
+		return libraryPersistentId;
 	}
 
 	public void setLibraryPersistentId(long value) {
 		this.libraryPersistentId = new ITPersistentID(value);
 	}
 
-	public String getTrackPersistentId() {
-		return trackPersistentId.toString();
+	public ITPersistentID getTrackPersistentId() {
+		return trackPersistentId;
 	}
 
 	public void setTrackPersistentId(long value) {

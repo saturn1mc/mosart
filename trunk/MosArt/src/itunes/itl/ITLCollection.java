@@ -12,20 +12,20 @@ public class ITLCollection {
 	private ArrayList<ITCArtwork> artworks;
 	private HashMap<String, TreeMap<Integer, ITLSong>> albums;
 	
-	private HashMap<String, ITLSong> songs;
-	private HashMap<String, ITCArtwork> covers;
+	private HashMap<Long, ITLSong> songs;
+	private HashMap<Long, ITCArtwork> covers;
 	
 
 	public ITLCollection() {
 		artworks = new ArrayList<ITCArtwork>();
 		albums = new HashMap<String, TreeMap<Integer,ITLSong>>();
-		songs = new HashMap<String, ITLSong>();
-		covers = new HashMap<String, ITCArtwork>();
+		songs = new HashMap<Long, ITLSong>();
+		covers = new HashMap<Long, ITCArtwork>();
 	}
 
 	public void add(ITLSong song) {
 
-		songs.put(song.getPersistentID(), song);
+		songs.put(song.getPersistentID().longValue(), song);
 
 		if (song.getAlbum() != null) {
 			TreeMap<Integer, ITLSong> album = albums.get(song.getAlbum());
@@ -40,18 +40,15 @@ public class ITLCollection {
 	}
 
 	public void addArtwork(ITCArtwork artwork) {
-		
-		String[] split = artwork.getFilename().split(ITCArtwork.FILENAME_SEPARATOR);
-		
 		artworks.add(artwork);
-		covers.put(split[ITCArtwork.TRACK_PID_POS], artwork);
+		covers.put(artwork.getTrackPersistentId().longValue(), artwork);
 	}
 
-	public HashMap<String, ITCArtwork> getCovers() {
+	public HashMap<Long, ITCArtwork> getCovers() {
 		return covers;
 	}
 
-	public HashMap<String, ITLSong> getSongs() {
+	public HashMap<Long, ITLSong> getSongs() {
 		return songs;
 	}
 	
@@ -69,12 +66,12 @@ public class ITLCollection {
 	}
 	// End disappearance
 	
-	public ITCArtwork getArtwork(String trackPersistendID){
+	public ITCArtwork getArtwork(long trackPersistendID){
 		return covers.get(trackPersistendID);
 	}
 	
-	public ITLSong getSong(String persistendID){
-		return songs.get(persistendID);
+	public ITLSong getSong(long trackPersistendID){
+		return songs.get(trackPersistendID);
 	}
 
 	public void clear() {
