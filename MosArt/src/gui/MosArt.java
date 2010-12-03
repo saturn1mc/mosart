@@ -1,12 +1,12 @@
 package gui;
 
-import itc.ITCArtwork;
-import itc.ITCBaseReader;
-import itc.ITCException;
-import itc.ITCParser;
-import itl.ITLCollection;
-import itl.ITLSong;
-import itl.ITLXMLParser;
+import itunes.itc.ITCArtwork;
+import itunes.itc.ITCBaseReader;
+import itunes.itc.ITCException;
+import itunes.itc.ITCParser;
+import itunes.itl.ITLCollection;
+import itunes.itl.ITLSong;
+import itunes.itl.ITLXMLParser;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

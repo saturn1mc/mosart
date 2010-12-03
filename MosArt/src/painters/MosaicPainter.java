@@ -1,8 +1,8 @@
 package painters;
 
 import gui.Supervisor;
-import itc.ITCArtwork;
-import itl.ITLCollection;
+import itunes.itc.ITCArtwork;
+import itunes.itl.ITLCollection;
 
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
