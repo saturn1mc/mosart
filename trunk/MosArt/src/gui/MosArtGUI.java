@@ -1,7 +1,7 @@
 package gui;
 
-import itc.ITCArtwork;
-import itc.ITCParser;
+import itunes.itc.ITCArtwork;
+import itunes.itc.ITCParser;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

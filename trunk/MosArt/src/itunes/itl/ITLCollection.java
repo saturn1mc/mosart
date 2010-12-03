@@ -1,6 +1,6 @@
 package itunes.itl;
 
-import itc.ITCArtwork;
+import itunes.itc.ITCArtwork;
 
 import java.util.ArrayList;
 import java.util.HashMap;
