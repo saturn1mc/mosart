@@ -1,5 +1,7 @@
 package itunes;
 
+import java.math.BigInteger;
+
 public class ITPersistentID {
 
 	private long persistentID;
@@ -9,7 +11,7 @@ public class ITPersistentID {
 	}
 	
 	public ITPersistentID(String value) {
-		this(Long.parseLong(value));
+		this.persistentID = new BigInteger(value, 16).longValue();
 	}
 
 	public ITPersistentID(int high, int low) {
