@@ -462,7 +462,7 @@ public class MosArtGUI extends JFrame {
 
 	public static void main(String[] args) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {
+			public void run() {		
 				MosArtGUI gui = new MosArtGUI();
 				Supervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
