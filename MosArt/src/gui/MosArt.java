@@ -191,7 +191,7 @@ public class MosArt extends SwingWorker<File, String> {
 
 				for (ITLSong albumTrack : collection.getAlbum(album).values()) {
 					ITCArtwork art = collection.getArtwork(albumTrack
-							.getPersistentID());
+							.getPersistentID().longValue());
 
 					if (art != null) {
 						System.out.println(albumTrack.getName() + " : "
@@ -201,7 +201,7 @@ public class MosArt extends SwingWorker<File, String> {
 					}
 				}
 			} else {
-				ITCArtwork art = collection.getArtwork(track.getPersistentID());
+				ITCArtwork art = collection.getArtwork(track.getPersistentID().longValue());
 
 				if (art != null) {
 					System.out.println(track.getName() + " : "

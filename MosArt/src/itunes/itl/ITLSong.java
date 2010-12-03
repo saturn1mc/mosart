@@ -1,5 +1,7 @@
 package itunes.itl;
 
+import itunes.ITPersistentID;
+
 import java.text.ParseException;
 
 public class ITLSong {
@@ -93,7 +95,7 @@ public class ITLSong {
 	private String sortAlbum;
 	private String sortAlbumArtist;
 	private boolean compilation;
-	private String persistentID;
+	private ITPersistentID persistentID;
 	private boolean clean;
 	private boolean explicit;
 	private boolean disabled;
@@ -178,7 +180,7 @@ public class ITLSong {
 		} else if (field.equalsIgnoreCase(RELEASE_DATE)) {
 			releaseDate = value;
 		} else if (field.equalsIgnoreCase(PERSISTENT_ID)) {
-			persistentID = value;
+			persistentID = new ITPersistentID(value);
 		} else if (field.equalsIgnoreCase(CLEAN)) {
 			clean = Boolean.parseBoolean(value);
 		} else if (field.equalsIgnoreCase(EXPLICIT)) {
@@ -370,7 +372,7 @@ public class ITLSong {
 		return compilation;
 	}
 
-	public String getPersistentID() {
+	public ITPersistentID getPersistentID() {
 		return persistentID;
 	}
 
