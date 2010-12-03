@@ -11,7 +11,6 @@ public class ITCArtwork {
 	public static final int TRACK_PID_POS = 1;
 	
 	private String source;
-	private String filename;
 	private boolean fullyParsed;
 	
 	private int headerLength;
@@ -34,18 +33,8 @@ public class ITCArtwork {
 	
 	public ITCArtwork(File source){
 		super();
-		
-		this.filename = source.getName().substring(0, source.getName().indexOf('.'));
 		this.source = source.getPath();
 		fullyParsed = false;
-	}
-	
-	public String getFilename() {
-		return filename;
-	}
-
-	public void setFilename(String filename) {
-		this.filename = filename;
 	}
 
 	public String getSource() {

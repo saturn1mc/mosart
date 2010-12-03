@@ -437,7 +437,6 @@ public class MosArtGUI extends JFrame {
 		JLabel label = new JLabel(icon);
 		
 		JDialog dialog = new JDialog();
-		dialog.setTitle(art.getFilename());
 		dialog.getContentPane().add(label);
 		dialog.pack();
 		dialog.setLocationRelativeTo(null);

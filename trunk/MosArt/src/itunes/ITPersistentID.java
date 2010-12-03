@@ -30,6 +30,20 @@ public class ITPersistentID {
 		return persistentID;
 	}
 	
+	public boolean equals(String value){
+		long lvalue = new BigInteger(value, 16).longValue();
+		return this.persistentID == lvalue;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ITPersistentID){
+			return ((ITPersistentID)obj).persistentID == this.persistentID;
+		}else{
+			return false;
+		}
+	}
+	
 	public String toString(){
 		return Long.toHexString(persistentID);
 	}
