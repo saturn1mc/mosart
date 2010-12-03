@@ -1,5 +1,7 @@
 package itunes.itc;
 
+import itunes.ITPersistentID;
+
 import java.io.File;
 
 public class ITCArtwork {
@@ -19,8 +21,8 @@ public class ITCArtwork {
 	private String artw;
 	private String item;
 
-	private String libraryPersistentId;
-	private String trackPersistentId;
+	private ITPersistentID libraryPersistentId;
+	private ITPersistentID trackPersistentId;
 
 	private String downloadIndicator;
 	private String fileFormatIndicator;
@@ -103,19 +105,19 @@ public class ITCArtwork {
 	}
 
 	public String getLibraryPersistentId() {
-		return libraryPersistentId;
+		return libraryPersistentId.toString();
 	}
 
-	public void setLibraryPersistentId(String libraryPersistentId) {
-		this.libraryPersistentId = libraryPersistentId;
+	public void setLibraryPersistentId(long value) {
+		this.libraryPersistentId = new ITPersistentID(value);
 	}
 
 	public String getTrackPersistentId() {
-		return trackPersistentId;
+		return trackPersistentId.toString();
 	}
 
-	public void setTrackPersistentId(String trackPersistentId) {
-		this.trackPersistentId = trackPersistentId;
+	public void setTrackPersistentId(long value) {
+		this.trackPersistentId = new ITPersistentID(value);
 	}
 
 	public String getDownloadIndicator() {
