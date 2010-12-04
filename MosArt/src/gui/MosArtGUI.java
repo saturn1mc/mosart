@@ -44,8 +44,9 @@ public class MosArtGUI extends JFrame {
 
 	private MosArt worker;
 
-	private String iTunesDir = "D:\\Mes Documents\\My Music\\iTunes";
-
+	//private String iTunesDir = "D:\\Mes Documents\\My Music\\iTunes"; //On my PC
+	private String iTunesDir = "/Users/camille/Music/iTunes";			//On my Mac
+	
 	private JProgressBar mainProgressBar;
 	private JProgressBar subProgressBar;
 
@@ -128,7 +129,8 @@ public class MosArtGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText("D:\\Mes Documents\\Mosaic.png");
+		//targetField.setText("D:\\Mes Documents\\Mosaic.png");
+		targetField.setText("/Users/camille/Downloads/Mosaic.png");
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 

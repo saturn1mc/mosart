@@ -17,6 +17,7 @@ public class ITLSong {
 	private final static String KIND = "Kind";
 	private final static String SIZE = "Size";
 	private final static String TOTAL_TIME = "Total Time";
+	private final static String START_TIME = "Start Time";
 	private final static String DISC_NUMBER = "Disc Number";
 	private final static String DISC_COUNT = "Disc Count";
 	private final static String TRACK_NUMBER = "Track Number";
@@ -34,6 +35,7 @@ public class ITLSong {
 	private final static String PLAY_DATE = "Play Date";
 	private final static String PLAY_DATE_UTC = "Play Date UTC";
 	private final static String SORT_ARTIST = "Sort Artist";
+	private final static String SORT_COMPOSER = "Sort Composer";
 	private final static String SORT_NAME = "Sort Name";
 	private final static String RELEASE_DATE = "Release Date";
 	private final static String SKIP_COUNT = "Skip Count";
@@ -47,6 +49,7 @@ public class ITLSong {
 	private final static String EXPLICIT = "Explicit";
 	private final static String DISABLED = "Disabled";
 	private final static String TRACK_TYPE = "Track Type";
+	private final static String FILE_TYPE = "File Type";
 	private final static String HAS_VIDEO = "Has Video";
 	private final static String HD = "HD";
 	private final static String VIDEO_WIDTH = "Video Width";
@@ -70,6 +73,7 @@ public class ITLSong {
 	private String kind;
 	private int size;
 	private int totalTime;
+	private int startTime;
 	private int discNumber;
 	private int discCount;
 	private int trackNumber;
@@ -87,6 +91,7 @@ public class ITLSong {
 	private String playDate;
 	private String dateUTC;
 	private String sortArtist;
+	private String sortComposer;
 	private String sortName;
 	private String releaseDate;
 	private int skipCount;
@@ -100,6 +105,7 @@ public class ITLSong {
 	private boolean explicit;
 	private boolean disabled;
 	private String trackType;
+	private int fileType;
 	private boolean hasVideo;
 	private boolean hd;
 	private int videoWidth;
@@ -141,6 +147,8 @@ public class ITLSong {
 			size = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(TOTAL_TIME)) {
 			totalTime = Integer.parseInt(value);
+		} else if (field.equalsIgnoreCase(START_TIME)) {
+			startTime = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(DISC_NUMBER)) {
 			discNumber = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(DISC_COUNT)) {
@@ -175,7 +183,9 @@ public class ITLSong {
 			dateUTC = value;
 		} else if (field.equalsIgnoreCase(SORT_ARTIST)) {
 			sortArtist = value;
-		} else if (field.equalsIgnoreCase(SORT_NAME)) {
+		}else if(field.equalsIgnoreCase(SORT_COMPOSER)){
+			sortComposer = value;
+		}else if (field.equalsIgnoreCase(SORT_NAME)) {
 			sortName = value;
 		} else if (field.equalsIgnoreCase(RELEASE_DATE)) {
 			releaseDate = value;
@@ -201,6 +211,8 @@ public class ITLSong {
 			compilation = Boolean.parseBoolean(value);
 		} else if (field.equalsIgnoreCase(TRACK_TYPE)) {
 			trackType = value;
+		} else if (field.equalsIgnoreCase(FILE_TYPE)) {
+			fileType = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(HAS_VIDEO)) {
 			hasVideo = Boolean.parseBoolean(value);
 		} else if (field.equalsIgnoreCase(HD)) {
@@ -271,6 +283,10 @@ public class ITLSong {
 	public int getTotalTime() {
 		return totalTime;
 	}
+	
+	public int getStartTime() {
+		return startTime;
+	}
 
 	public int getDiscNumber() {
 		return discNumber;
@@ -339,6 +355,10 @@ public class ITLSong {
 	public String getSortArtist() {
 		return sortArtist;
 	}
+	
+	public String getSortComposer() {
+		return sortComposer;
+	}
 
 	public String getSortName() {
 		return sortName;
@@ -391,6 +411,10 @@ public class ITLSong {
 	public String getTrackType() {
 		return trackType;
 	}
+	
+	public int getFileType() {
+		return fileType;
+	}
 
 	public boolean isHasVideo() {
 		return hasVideo;
@@ -438,7 +462,7 @@ public class ITLSong {
 
 	@Override
 	public String toString() {
-		return this.persistentID + " : " + this.name + " - " + this.album + " - "
-				+ this.artist;
+		return this.persistentID + " : " + this.name + " - " + this.album
+				+ " - " + this.artist;
 	}
 }
