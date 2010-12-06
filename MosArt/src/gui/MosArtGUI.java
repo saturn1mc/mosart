@@ -6,6 +6,7 @@ import itunes.itc.ITCParser;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -44,9 +45,10 @@ public class MosArtGUI extends JFrame {
 
 	private MosArt worker;
 
-	private String iTunesDir = "D:\\Mes Documents\\My Music\\iTunes"; //On my PC
-	//private String iTunesDir = "/Users/camille/Music/iTunes";			//On my Mac
-	
+	private String iTunesDir = "D:\\Mes Documents\\My Music\\iTunes"; // On my
+																		// PC
+	// private String iTunesDir = "/Users/camille/Music/iTunes"; //On my Mac
+
 	private JProgressBar mainProgressBar;
 	private JProgressBar subProgressBar;
 
@@ -129,8 +131,9 @@ public class MosArtGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText("D:\\Mes Documents\\Mosaic.png");		 	//On my PC
-		//targetField.setText("/Users/camille/Downloads/Mosaic.png");	//On my Mac
+		targetField.setText("D:\\Mes Documents\\Mosaic.png"); // On my PC
+		// targetField.setText("/Users/camille/Downloads/Mosaic.png"); //On my
+		// Mac
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 
@@ -154,7 +157,8 @@ public class MosArtGUI extends JFrame {
 				if (checking()) {
 					buildWorker();
 					launchButton.setEnabled(false);
-
+					MosArtGUI.this.setCursor(Cursor
+							.getPredefinedCursor(Cursor.WAIT_CURSOR));
 					worker.execute();
 				} else {
 					JOptionPane.showMessageDialog(MosArtGUI.this,
@@ -249,9 +253,9 @@ public class MosArtGUI extends JFrame {
 		centerPanel.add(buildSourcePanel());
 		centerPanel.add(buildTargetPanel());
 
-		centerPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED), "Paths",
-				TitledBorder.LEFT, TitledBorder.TOP));
+		centerPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Paths", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(centerPanel, BorderLayout.CENTER);
 	}
@@ -264,9 +268,9 @@ public class MosArtGUI extends JFrame {
 		southPanel.add(mainProgressBar);
 		southPanel.add(subProgressBar);
 
-		southPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED), "Creation",
-				TitledBorder.LEFT, TitledBorder.TOP));
+		southPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Creation", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(southPanel, BorderLayout.SOUTH);
 	}
@@ -277,9 +281,9 @@ public class MosArtGUI extends JFrame {
 
 		eastPanel.add(buildDimensionsPanel());
 
-		eastPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory
-				.createEtchedBorder(EtchedBorder.LOWERED), "Dimensions",
-				TitledBorder.LEFT, TitledBorder.TOP));
+		eastPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
@@ -290,10 +294,11 @@ public class MosArtGUI extends JFrame {
 		}
 		try {
 
-			this.worker.setMosaicProperties(Integer.parseInt(imgWidthField
-					.getText()), Integer.parseInt(imgHeightField.getText()),
-					Integer.parseInt(tileWidthField.getText()), Integer
-							.parseInt(tileHeightField.getText()));
+			this.worker.setMosaicProperties(
+					Integer.parseInt(imgWidthField.getText()),
+					Integer.parseInt(imgHeightField.getText()),
+					Integer.parseInt(tileWidthField.getText()),
+					Integer.parseInt(tileHeightField.getText()));
 
 			this.worker.setTargetFilename(targetField.getText());
 
@@ -435,18 +440,19 @@ public class MosArtGUI extends JFrame {
 		return targetField.getText();
 	}
 
-	public void showArtwork(String itc) throws IOException{
+	public void showArtwork(String itc) throws IOException {
 		ITCArtwork art = ITCParser.getInstance().getFullArtwork(new File(itc));
-		ImageIcon icon = new ImageIcon(ImageIO.read(new ByteArrayInputStream(art.getImageData())));
+		ImageIcon icon = new ImageIcon(ImageIO.read(new ByteArrayInputStream(
+				art.getImageData())));
 		JLabel label = new JLabel(icon);
-		
+
 		JDialog dialog = new JDialog();
 		dialog.getContentPane().add(label);
 		dialog.pack();
 		dialog.setLocationRelativeTo(null);
 		dialog.setVisible(true);
 	}
-	
+
 	public MosArtGUI() {
 
 		super("MosArt");
@@ -465,7 +471,7 @@ public class MosArtGUI extends JFrame {
 
 	public static void main(String[] args) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
-			public void run() {		
+			public void run() {
 				MosArtGUI gui = new MosArtGUI();
 				Supervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
