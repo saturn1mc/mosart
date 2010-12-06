@@ -100,7 +100,7 @@ public class MosArt extends SwingWorker<File, String> {
 
 			// Read covers
 			Supervisor.getInstance().reportMainProgress(
-					"(2/4) Managing artworks");
+					"(2/4) Managing artworks", 0.50f);
 
 			String artworkDir = sourceDirectory + File.separator + ARTWORK_DIR;
 			ArrayList<String> itcList = ITCBaseReader.getInstance().getITCs(
@@ -130,29 +130,29 @@ public class MosArt extends SwingWorker<File, String> {
 			try {
 				// Read library && covers
 				Supervisor.getInstance().reportMainProgress(
-						"(1/4) Reading iTunes library");
+						"(1/4) Reading iTunes library", 0.25f);
 				refreshCollection();
 			} catch (ITCException e) {
 				e.printStackTrace();
 			}
 			// Refresh collection contains (2/4) Reading artworks
 		}
-		
-		//TODO a virer
+
+		// TODO a virer
 		test();
-		//TODO fin a virer
-		
+		// TODO fin a virer
+
 		if (collection.getArtworks() != null
 				&& collection.getArtworks().size() > 0) {
 			// Paint
 			Supervisor.getInstance().reportMainProgress(
-					"(3/4) Generating wallpaper");
+					"(3/4) Generating wallpaper", 0.75f);
 			painter.setCollection(collection);
 			BufferedImage mosaic = painter.createMosaic();
 
 			// Save image
 			Supervisor.getInstance().reportMainProgress(
-					"(4/4) Saving work to " + targetFilename);
+					"(4/4) Saving work to " + targetFilename, 1);
 			result = new File(targetFilename);
 			ImageIO.write(mosaic, "PNG", result);
 		} else {
@@ -170,8 +170,8 @@ public class MosArt extends SwingWorker<File, String> {
 
 		return result;
 	}
-	
-	public void test(){
+
+	public void test() {
 		// /////////////////////////////////////////////////////////////////
 		// /////////////////////////////////////////////////////////////////
 		// /////////////////////////////////////////////////////////////////
@@ -201,7 +201,8 @@ public class MosArt extends SwingWorker<File, String> {
 					}
 				}
 			} else {
-				ITCArtwork art = collection.getArtwork(track.getPersistentID().longValue());
+				ITCArtwork art = collection.getArtwork(track.getPersistentID()
+						.longValue());
 
 				if (art != null) {
 					System.out.println(track.getName() + " : "

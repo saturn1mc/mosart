@@ -11,7 +11,7 @@ public class Supervisor {
 		gui = null;
 	}
 
-	public static Supervisor getInstance() {
+	public synchronized static Supervisor getInstance() {
 		if (singleton == null) {
 			singleton = new Supervisor();
 		}
@@ -40,7 +40,7 @@ public class Supervisor {
 		}
 	}
 
-	public void reportCrash(String reason) {
+	public synchronized void reportCrash(String reason) {
 		if (gui != null) {
 			gui.getMainProgressBar().setIndeterminate(false);
 			gui.getMainProgressBar().setValue(
@@ -61,12 +61,22 @@ public class Supervisor {
 		}
 	}
 
-	public synchronized void reportMainProgress(String task) {
+	public synchronized void reportMainTask(String task) {
 		if (gui != null) {
 			gui.getMainProgressBar().setIndeterminate(true);
 			gui.getMainProgressBar().setString(task);
 		} else {
 			System.out.println(task);
+		}
+	}
+	
+	public synchronized void reportMainProgress(String message, float progress) {
+		if (gui != null) {
+			gui.getMainProgressBar().setIndeterminate(false);
+			gui.getMainProgressBar().setString(message);
+			gui.getMainProgressBar().setValue((int) (100f * progress));
+		} else {
+			System.out.println(Math.round(progress * 100f) + "% - " + message);
 		}
 	}
 
@@ -78,7 +88,7 @@ public class Supervisor {
 			System.out.println(task);
 		}
 	}
-
+	
 	public synchronized void reportProgress(String message, float progress) {
 		if (gui != null) {
 			gui.getSubProgressBar().setIndeterminate(false);
