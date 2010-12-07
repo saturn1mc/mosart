@@ -32,15 +32,15 @@ import java.util.Collections;
  *
  * @author Joseph
  */
-public class Library
+public class ITLLibrary
 {
-    final Hdfm hdr;
+    final ITLHdfm hdr;
     private final String path;
     private final Collection<ITLPlaylist> playlists;
     private final Collection<ITLPodcast> podcasts;
     private final Collection<ITLSong> tracks;
 
-    public Library(Hdfm header, String path, Collection<ITLPlaylist> playlists, Collection<ITLPodcast> podcasts, Collection<ITLSong> tracks)
+    public ITLLibrary(ITLHdfm header, String path, Collection<ITLPlaylist> playlists, Collection<ITLPodcast> podcasts, Collection<ITLSong> tracks)
     {
         this.hdr = header;
         this.path = path;

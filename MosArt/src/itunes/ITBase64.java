@@ -1,4 +1,4 @@
-package itunes.itl.parsers;
+package itunes;
 
 import java.io.ByteArrayOutputStream;
 
@@ -19,7 +19,7 @@ import java.io.ByteArrayOutputStream;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class Base64
+public class ITBase64
 {
     public static final String CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
     public static final char PAD = '=';
