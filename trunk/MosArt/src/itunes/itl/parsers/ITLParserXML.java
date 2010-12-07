@@ -1,6 +1,10 @@
-package itunes.itl;
+package itunes.itl.parsers;
 
 import gui.Supervisor;
+
+import itunes.itl.ITLCollection;
+import itunes.itl.ITLException;
+import itunes.itl.ITLSong;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;

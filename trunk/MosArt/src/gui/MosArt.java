@@ -6,7 +6,7 @@ import itunes.itc.ITCException;
 import itunes.itc.ITCParser;
 import itunes.itl.ITLCollection;
 import itunes.itl.ITLSong;
-import itunes.itl.ITLParserXML;
+import itunes.itl.parsers.ITLParserXML;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
