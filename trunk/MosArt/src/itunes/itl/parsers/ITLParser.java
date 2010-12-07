@@ -18,7 +18,8 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.ITLUtil;
+import itunes.ITUtil;
+import itunes.ITPersistentID;
 import itunes.itl.ITLException;
 import itunes.itl.ITLPlaylist;
 import itunes.itl.ITLPodcast;
@@ -38,6 +39,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -57,21 +59,6 @@ public class ITLParser {
 
 	private ITLSong currentTrack;
 
-	public static void main(String[] args) throws Exception {
-		if (args.length != 1) {
-			System.err.println("Usage: ITLParser <iTunes Library.itl>");
-			System.exit(5);
-		}
-
-		File f = new File(args[0]);
-
-		Library lib = parse(f);
-
-		OutputStream out = new FileOutputStream("decrypted-file");
-		out.write(lib.hdr.fileData);
-		out.close();
-	}
-
 	public static Library parse(File f) throws IOException, ITLException {
 		long fileLength = f.length();
 
@@ -88,8 +75,6 @@ public class ITLParser {
 		DataInputStream di = new DataInputStream(in);
 
 		Hdfm hdr = Hdfm.read(di, fileLength);
-
-		// System.out.println("Version: " + hdr.version);
 
 		ITLParser pl = new ITLParser();
 
@@ -109,7 +94,7 @@ public class ITLParser {
 
 		while (going) {
 			int consumed = 0;
-			String type = ITLUtil.toString(di.readInt());
+			String type = ITUtil.toString(di.readInt());
 			consumed += 4;
 
 			int length = di.readInt();
@@ -435,7 +420,7 @@ public class ITLParser {
 				// hexDumpBytes(di, length - consumed);
 				// consumed = length;
 
-				if (ITLUtil.isIdentifier(type)) {
+				if (ITUtil.isIdentifier(type)) {
 					throw new ITLException("Unhandled type: " + type);
 				} else {
 					throw new ITLException(
@@ -748,8 +733,12 @@ public class ITLParser {
 		byte[] bytes124 = new byte[32];
 		di.readFully(bytes124);
 		
-		System.out.println(bytes124);
-
+		byte[] partI = Arrays.copyOfRange(bytes124, 0, 15);
+		byte[] partII = Arrays.copyOfRange(bytes124, 16, 31);
+		
+		System.out.println(new ITPersistentID(ITUtil.byteArrayToLong(partI)));
+		System.out.println(new ITPersistentID(ITUtil.byteArrayToLong(partII)));
+		
 		// System.out.println("Last play date: " + Dates.fromMac(lastPlayDate));
 		// System.out.println("Add date: " + Dates.fromMac(addDate));
 
@@ -784,7 +773,7 @@ public class ITLParser {
 			int hohmType, DataInput di, int remaining) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DataOutput out = new DataOutputStream(baos);
-		out.writeInt(ITLUtil.fromString(type));
+		out.writeInt(ITUtil.fromString(type));
 		out.writeInt(length);
 		out.writeInt(recLength);
 		out.writeInt(hohmType);
@@ -836,6 +825,24 @@ public class ITLParser {
 			if (b != 0x00) {
 				throw new ITLException("Expected zero byte. Was: " + b);
 			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		
+		try {
+			File f = new File("D:\\Mes Documents\\My Music\\iTunes\\iTunes Library.itl");
+			Library lib = parse(f);
+			
+			OutputStream out = new FileOutputStream("D:\\decrypted-file");
+			out.write(lib.hdr.fileData);
+			out.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ITLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

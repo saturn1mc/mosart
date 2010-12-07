@@ -18,7 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.ITLUtil;
+import itunes.ITUtil;
 import itunes.itl.ITLException;
 
 import java.io.ByteArrayInputStream;
@@ -77,7 +77,7 @@ public class ProcessLibrary
         while(going)
         {
             int consumed = 0;
-            String type = ITLUtil.toString(di.readInt());
+            String type = ITUtil.toString(di.readInt());
             consumed += 4;
 
             int length = di.readInt();
@@ -99,7 +99,7 @@ public class ProcessLibrary
                 }
 
                 /* Write out again */
-                out.writeInt(ITLUtil.fromString(type));
+                out.writeInt(ITUtil.fromString(type));
                 out.writeInt(length);
 
                 out.writeInt(ba.length + consumed);
@@ -122,7 +122,7 @@ public class ProcessLibrary
                 remaining -= length;
 
                 /* Write out again */
-                out.writeInt(ITLUtil.fromString(type));
+                out.writeInt(ITUtil.fromString(type));
                 out.writeInt(ba.length + 8);
                 out.write(ba);
             }

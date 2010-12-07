@@ -18,7 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.ITLUtil;
+import itunes.ITUtil;
 import itunes.itl.ITLException;
 
 import java.io.ByteArrayInputStream;
@@ -66,7 +66,7 @@ public class Hdfm {
 	public static Hdfm read(DataInput di, long fileLength) throws IOException,
 			ITLException {
 		int hdr = di.readInt();
-		ITLUtil.assertEquals(ITLUtil.toString(hdr), "hdfm");
+		ITUtil.assertEquals(ITUtil.toString(hdr), "hdfm");
 
 		int hl = di.readInt();
 
@@ -191,6 +191,7 @@ public class Hdfm {
 			byte[] result = cip.doFinal(orig, 0, orig.length - x);
 			System.arraycopy(result, 0, res, 0, result.length);
 			System.arraycopy(orig, result.length, res, result.length, x);
+			
 		} catch (GeneralSecurityException gse) {
 			if (mode == Cipher.DECRYPT_MODE) {
 				throw new ITLException("Unable to decrypt library");
@@ -283,7 +284,7 @@ public class Hdfm {
 
 		assert ba.length < 256;
 
-		o.writeInt(ITLUtil.fromString("hdfm"));
+		o.writeInt(ITUtil.fromString("hdfm"));
 
 		int hl = 17 + headerRemainder.length + ba.length;
 		o.writeInt(hl);

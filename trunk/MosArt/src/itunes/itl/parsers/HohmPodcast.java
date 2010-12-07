@@ -18,7 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.ITLUtil;
+import itunes.ITUtil;
 
 import java.io.DataInput;
 import java.io.IOException;
@@ -59,9 +59,9 @@ public class HohmPodcast {
 		}
 
 		int len = di.readInt();
-		String type = ITLUtil.toString(di.readInt());
+		String type = ITUtil.toString(di.readInt());
 		len -= 8;
-		ITLUtil.assertEquals("url ", type);
+		ITUtil.assertEquals("url ", type);
 
 		di.skipBytes(12);
 		len -= 12;
@@ -76,10 +76,10 @@ public class HohmPodcast {
 		di.skipBytes(15 * 4);
 
 		len = di.readInt();
-		type = ITLUtil.toString(di.readInt());
+		type = ITUtil.toString(di.readInt());
 		len -= 8;
 
-		ITLUtil.assertEquals("link", type);
+		ITUtil.assertEquals("link", type);
 
 		di.skipBytes(12);
 		len -= 12;
@@ -89,7 +89,7 @@ public class HohmPodcast {
 		link = toString(ba);
 
 		len = di.readInt();
-		type = ITLUtil.toString(di.readInt());
+		type = ITUtil.toString(di.readInt());
 		len -= 8;
 
 		while (!"aurl".equals(type)) {
@@ -106,11 +106,11 @@ public class HohmPodcast {
 			}
 
 			len = di.readInt();
-			type = ITLUtil.toString(di.readInt());
+			type = ITUtil.toString(di.readInt());
 			len -= 8;
 		}
 
-		ITLUtil.assertEquals("aurl", type);
+		ITUtil.assertEquals("aurl", type);
 
 		di.skipBytes(12);
 		len -= 12;
@@ -126,7 +126,7 @@ public class HohmPodcast {
 	static void dump(DataInput di, int length) throws IOException {
 		di.skipBytes(12);
 
-		String type = ITLUtil.toString(di.readInt());
+		String type = ITUtil.toString(di.readInt());
 		System.out.println(type);
 
 		// parse(di, length - 60 + 23);
@@ -136,7 +136,7 @@ public class HohmPodcast {
 		// ParseLibrary.hexDumpBytes(di, length);
 		while (length > 0) {
 			int len = di.readInt();
-			type = ITLUtil.toString(di.readInt());
+			type = ITUtil.toString(di.readInt());
 
 			System.out.println(type + ", " + len);
 
