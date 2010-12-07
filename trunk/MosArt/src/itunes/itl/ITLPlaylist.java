@@ -23,49 +23,45 @@ import itunes.itl.parsers.HohmPodcast;
 import java.util.ArrayList;
 import java.util.List;
 
+public class ITLPlaylist {
+	byte[] ppid;
+	String title;
+	public byte[] smartInfo;
+	public byte[] smartCriteria;
 
-class ITLPlaylist
-{
-    byte[] ppid;
-    String title;
-    public byte[] smartInfo;
-    public byte[] smartCriteria;
+	private final List<Integer> items = new ArrayList<Integer>();
+	private HohmPodcast hohmPodcast;;
 
-    private final List<Integer> items = new ArrayList<Integer>();
-    private HohmPodcast hohmPodcast;;
+	public byte[] getPpid() {
+		return ppid;
+	}
 
-    public byte[] getPpid()
-    {
-        return ppid;
-    }
+	public String getTitle() {
+		return title;
+	}
+	
+	public List<Integer> getItems() {
+		return items;
+	}
 
-    public String getTitle()
-    {
-        return title;
-    }
+	public HohmPodcast getHohmPodcast() {
+		return hohmPodcast;
+	}
+	
+	public void setPPID(byte[] ppid) {
+		this.ppid = ppid;
+	}
+	
+	public void setTitle(String title) {
+		this.title = title;
+	}
+	
+	public void addItem(int key) {
+		items.add(Integer.valueOf(key));
+	}
+	
+	public void setHohmPodcast(HohmPodcast parse) {
+		this.hohmPodcast = parse;
+	}
 
-    public List<Integer> getItems()
-    {
-        return items;
-    }
-
-    public void addItem(int key)
-    {
-        items.add(Integer.valueOf(key));
-    }
-
-    public void setHohmPodcast(HohmPodcast parse)
-    {
-        this.hohmPodcast = parse;
-    }
-
-    public HohmPodcast getHohmPodcast()
-    {
-        return hohmPodcast;
-    }
-
-//    public int getId()
-//    {
-//        return -1;
-//    }
 }

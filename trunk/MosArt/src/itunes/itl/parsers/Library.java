@@ -1,5 +1,13 @@
 package itunes.itl.parsers;
 
+import itunes.itl.ITLPlaylist;
+import itunes.itl.ITLPodcast;
+import itunes.itl.ITLSong;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 /*
  *  titl - Tools for iTunes Libraries
  *  Copyright (C) 2008 Joseph Walton
@@ -18,13 +26,6 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.itl.ITLPodcast;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.sound.midi.Track;
 
 /**
  * A high-level view of a library, including all the data extracted.
@@ -37,9 +38,9 @@ public class Library
     private final String path;
     private final Collection<ITLPlaylist> playlists;
     private final Collection<ITLPodcast> podcasts;
-    private final Collection<Track> tracks;
+    private final Collection<ITLSong> tracks;
 
-    public Library(Hdfm header, String path, Collection<ITLPlaylist> playlists, Collection<ITLPodcast> podcasts, Collection<Track> tracks)
+    public Library(Hdfm header, String path, Collection<ITLPlaylist> playlists, Collection<ITLPodcast> podcasts, Collection<ITLSong> tracks)
     {
         this.hdr = header;
         this.path = path;
@@ -87,9 +88,9 @@ public class Library
         return Collections.unmodifiableCollection(new ArrayList<ITLPlaylist>(playlists));
     }
 
-    public Collection<Track> getTracks()
+    public Collection<ITLSong> getTracks()
     {
-        return Collections.unmodifiableCollection(new ArrayList<Track>(tracks));
+        return Collections.unmodifiableCollection(new ArrayList<ITLSong>(tracks));
     }
 
     public Collection<ITLPodcast> getPodcasts()
