@@ -24,12 +24,12 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class HohmPodcast {
+public class ITLHohmPodcast {
 	public final String url;
 	public final String link;
 	public final String aurl;
 
-	public HohmPodcast(String url, String link, String aurl) {
+	public ITLHohmPodcast(String url, String link, String aurl) {
 		this.url = url;
 		this.link = link;
 		this.aurl = aurl;
@@ -47,7 +47,7 @@ public class HohmPodcast {
 		return new String(ba, 0, lnz, "utf-8");
 	}
 
-	public static HohmPodcast parse(DataInput di, int length)
+	public static ITLHohmPodcast parse(DataInput di, int length)
 			throws IOException {
 		String url, link, aurl;
 
@@ -120,7 +120,7 @@ public class HohmPodcast {
 
 		aurl = toString(ba);
 
-		return new HohmPodcast(url, link, aurl);
+		return new ITLHohmPodcast(url, link, aurl);
 	}
 
 	static void dump(DataInput di, int length) throws IOException {

@@ -38,14 +38,14 @@ import java.util.zip.ZipException;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
-public class Hdfm {
+public class ITLHdfm {
 	public final String version;
 	public final int unknown;
 	final byte[] headerRemainder;
 	public final byte[] fileData;
 	public Boolean compressContents;
 
-	private Hdfm(String version, int unknown, byte[] headerRemainder,
+	private ITLHdfm(String version, int unknown, byte[] headerRemainder,
 			byte[] fileData, Boolean compressContents) {
 		this.version = version;
 		this.unknown = unknown;
@@ -63,7 +63,7 @@ public class Hdfm {
 	// 13 1 N = length of version string
 	// 14 N application version string
 	// 14+N L-N-17 ?
-	public static Hdfm read(DataInput di, long fileLength) throws IOException,
+	public static ITLHdfm read(DataInput di, long fileLength) throws IOException,
 			ITLException {
 		int hdr = di.readInt();
 		ITUtil.assertEquals(ITUtil.toString(hdr), "hdfm");
@@ -115,7 +115,7 @@ public class Hdfm {
 		 */
 		boolean useCompression = !Arrays.equals(decrypted, inflated);
 
-		return new Hdfm(version, unknown, headerRemainder, inflated,
+		return new ITLHdfm(version, unknown, headerRemainder, inflated,
 				useCompression);
 	}
 
@@ -129,7 +129,7 @@ public class Hdfm {
 	 * @throws IOException
 	 * @throws ITLException
 	 */
-	public static Hdfm readInline(DataInput di, int length, int consumed)
+	public static ITLHdfm readInline(DataInput di, int length, int consumed)
 			throws IOException, ITLException {
 		int hl = di.readInt();
 
@@ -160,7 +160,7 @@ public class Hdfm {
 					+ " bytes but read " + consumed);
 		}
 
-		return new Hdfm(version, unknown, headerRemainder, null, false);
+		return new ITLHdfm(version, unknown, headerRemainder, null, false);
 	}
 
 	/**

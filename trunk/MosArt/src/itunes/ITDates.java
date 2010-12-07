@@ -1,4 +1,4 @@
-package itunes.itl.parsers;
+package itunes;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -24,7 +24,7 @@ import java.util.TimeZone;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-public class Dates
+public class ITDates
 {
     public static String toString(Date d)
     {

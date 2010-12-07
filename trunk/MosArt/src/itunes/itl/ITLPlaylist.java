@@ -18,7 +18,7 @@ package itunes.itl;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.itl.parsers.HohmPodcast;
+import itunes.itl.parsers.ITLHohmPodcast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,7 @@ public class ITLPlaylist {
 	public byte[] smartCriteria;
 
 	private final List<Integer> items = new ArrayList<Integer>();
-	private HohmPodcast hohmPodcast;;
+	private ITLHohmPodcast hohmPodcast;;
 
 	public byte[] getPpid() {
 		return ppid;
@@ -44,7 +44,7 @@ public class ITLPlaylist {
 		return items;
 	}
 
-	public HohmPodcast getHohmPodcast() {
+	public ITLHohmPodcast getHohmPodcast() {
 		return hohmPodcast;
 	}
 	
@@ -60,7 +60,7 @@ public class ITLPlaylist {
 		items.add(Integer.valueOf(key));
 	}
 	
-	public void setHohmPodcast(HohmPodcast parse) {
+	public void setHohmPodcast(ITLHohmPodcast parse) {
 		this.hohmPodcast = parse;
 	}
 

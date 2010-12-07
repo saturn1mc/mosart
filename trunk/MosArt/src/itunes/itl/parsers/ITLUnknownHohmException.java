@@ -26,7 +26,7 @@ import itunes.itl.ITLException;
  * 
  * @author joe
  */
-public class UnknownHohmException extends ITLException {
+public class ITLUnknownHohmException extends ITLException {
 	/**
 	 * Auto-generated SVUID
 	 */
@@ -34,7 +34,7 @@ public class UnknownHohmException extends ITLException {
 	private final int hohmType;
 	private final byte[] contents;
 
-	public UnknownHohmException(int hohmType, byte[] contents) {
+	public ITLUnknownHohmException(int hohmType, byte[] contents) {
 		super(null);
 		this.hohmType = hohmType;
 		this.contents = contents;

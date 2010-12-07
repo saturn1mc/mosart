@@ -40,19 +40,19 @@ import java.util.Map;
  *
  * @author Joseph
  */
-public class ProcessLibrary
+public class ITLProcessLibrary
 {
     private final Map<Integer, StringConverter> converters = new HashMap<Integer, StringConverter>();
 
     public void process(File inFile, OutputStream outStr) throws IOException, ITLException
     {
         /* Read the original library in */
-        Hdfm hdfm;
+        ITLHdfm hdfm;
 
         InputStream inStr = new FileInputStream(inFile);
         try {
             DataInput di = new DataInputStream(inStr);
-            hdfm = Hdfm.read(di, inFile.length());
+            hdfm = ITLHdfm.read(di, inFile.length());
         } finally {
             inStr.close();
         }

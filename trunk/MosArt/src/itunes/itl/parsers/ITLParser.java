@@ -18,6 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import itunes.ITDates;
 import itunes.ITUtil;
 import itunes.ITPersistentID;
 import itunes.itl.ITLException;
@@ -59,7 +60,7 @@ public class ITLParser {
 
 	private ITLSong currentTrack;
 
-	public static Library parse(File f) throws IOException, ITLException {
+	public static ITLLibrary parse(File f) throws IOException, ITLException {
 		long fileLength = f.length();
 
 		InputStream in = new FileInputStream(f);
@@ -70,18 +71,18 @@ public class ITLParser {
 		}
 	}
 
-	public static Library parse(InputStream in, long fileLength)
+	public static ITLLibrary parse(InputStream in, long fileLength)
 			throws IOException, ITLException {
 		DataInputStream di = new DataInputStream(in);
 
-		Hdfm hdr = Hdfm.read(di, fileLength);
+		ITLHdfm hdr = ITLHdfm.read(di, fileLength);
 
 		ITLParser pl = new ITLParser();
 
 		String path = pl.drain(new DataInputStream(new ByteArrayInputStream(
 				hdr.fileData)), hdr.fileData.length);
 
-		Library library = new Library(hdr, path, pl.playlists, pl.podcasts,
+		ITLLibrary library = new ITLLibrary(hdr, path, pl.playlists, pl.podcasts,
 				pl.tracks);
 		return library;
 	}
@@ -347,7 +348,7 @@ public class ITLParser {
 					// System.exit(0);
 					di.readFully(pcInf);
 					// System.out.println(pcInf.length);
-					currentPlaylist.setHohmPodcast(HohmPodcast
+					currentPlaylist.setHohmPodcast(ITLHohmPodcast
 							.parse(new DataInputStream(
 									new ByteArrayInputStream(pcInf)),
 									pcInf.length));
@@ -389,7 +390,7 @@ public class ITLParser {
 				default:
 					byte[] unknownHohmContents = new byte[recLength - consumed];
 					di.readFully(unknownHohmContents);
-					throw new UnknownHohmException(hohmType,
+					throw new ITLUnknownHohmException(hohmType,
 							unknownHohmContents);
 				}
 			} else if (type.equals("hdsm")) {
@@ -409,7 +410,7 @@ public class ITLParser {
 				readHaim(di, length - consumed);
 				consumed = length;
 			} else if (type.equals("hdfm")) {
-				Hdfm.readInline(di, length, consumed);
+				ITLHdfm.readInline(di, length, consumed);
 				consumed = length;
 			} else if (type.equals("hghm") || type.equals("halm")
 					|| type.equals("hilm") || type.equals("htlm")
@@ -653,7 +654,7 @@ public class ITLParser {
 
 		// 32 4 modification date
 		int modificationDate = di.readInt();
-		track.setDateModified(Dates.fromMac(modificationDate));
+		track.setDateModified(ITDates.fromMac(modificationDate));
 		// System.out.println("Modification date: " +
 		// Dates.fromMac(modificationDate));
 
@@ -727,7 +728,7 @@ public class ITLParser {
 		
 		// 120 4 add date
 		int addDate = di.readInt();
-		track.setDateAdded(Dates.fromMac(addDate));
+		track.setDateAdded(ITDates.fromMac(addDate));
 
 		// 124 32 ?
 		byte[] bytes124 = new byte[32];
@@ -832,7 +833,7 @@ public class ITLParser {
 		
 		try {
 			File f = new File("D:\\Mes Documents\\My Music\\iTunes\\iTunes Library.itl");
-			Library lib = parse(f);
+			ITLLibrary lib = parse(f);
 			
 			OutputStream out = new FileOutputStream("D:\\decrypted-file");
 			out.write(lib.hdr.fileData);

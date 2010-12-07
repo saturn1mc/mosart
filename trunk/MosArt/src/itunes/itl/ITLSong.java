@@ -1,7 +1,7 @@
 package itunes.itl;
 
+import itunes.ITDates;
 import itunes.ITPersistentID;
-import itunes.itl.parsers.Dates;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -170,9 +170,9 @@ public class ITLSong {
 		} else if (field.equalsIgnoreCase(YEAR)) {
 			year = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(DATE_MODIFIED)) {
-			dateModified = Dates.fromString(value);
+			dateModified = ITDates.fromString(value);
 		} else if (field.equalsIgnoreCase(DATE_ADDED)) {
-			dateAdded = Dates.fromString(value);
+			dateAdded = ITDates.fromString(value);
 		} else if (field.equalsIgnoreCase(BIT_RATE)) {
 			bitRate = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(SAMPLE_RATE)) {
