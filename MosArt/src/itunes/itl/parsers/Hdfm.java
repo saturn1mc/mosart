@@ -65,9 +65,7 @@ public class Hdfm {
 	public static Hdfm read(DataInput di, long fileLength) throws IOException,
 			ITLException {
 		int hdr = di.readInt();
-		if(!Util.toString(hdr).equals("hdfm")){
-			throw new ITLException("Header marker <> hdfm ('" + Util.toString(hdr) + "'");
-		}
+		Util.assertEquals(Util.toString(hdr), "hdfm");
 
 		int hl = di.readInt();
 

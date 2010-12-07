@@ -18,6 +18,8 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -58,6 +60,18 @@ public class Util {
 		}
 
 		return res;
+	}
+	
+	public static int byteArrayToInt(final byte[] bytes) throws IOException {
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		DataInputStream in = new DataInputStream(bis);
+		return in.readInt();
+	}
+
+	public static long byteArrayToLong(final byte[] bytes) throws IOException {
+		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+		DataInputStream in = new DataInputStream(bis);
+		return in.readLong();
 	}
 
 	public static String pidToString(byte[] libraryPersistentId) {

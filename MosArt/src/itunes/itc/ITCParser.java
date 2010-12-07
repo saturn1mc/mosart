@@ -1,8 +1,8 @@
 package itunes.itc;
 
+import itunes.itl.parsers.Util;
+
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,18 +37,6 @@ public class ITCParser {
 	public static int[] getImagesignaturejpeg() {
 		return imageSignatureJPEG;
 	}
-
-	private int byteArrayToInt(final byte[] bytes) throws IOException {
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		DataInputStream in = new DataInputStream(bis);
-		return in.readInt();
-	}
-
-	private long byteArrayToLong(final byte[] bytes) throws IOException {
-		ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-		DataInputStream in = new DataInputStream(bis);
-		return in.readLong();
-	}
 	
 	private void readHeader(BufferedInputStream strm, ITCArtwork art)
 			throws IOException {
@@ -60,7 +48,7 @@ public class ITCParser {
 
 		// Self-describing header length
 		strm.read(bytes);
-		art.setHeaderLength(byteArrayToInt(bytes));
+		art.setHeaderLength(Util.byteArrayToInt(bytes));
 
 		// Itch
 		strm.read(bytes);
@@ -95,7 +83,7 @@ public class ITCParser {
 
 		// Read the entire length of the data header
 		strm.read(bytes);
-		art.setMetadataLength(byteArrayToInt(bytes));
+		art.setMetadataLength(Util.byteArrayToInt(bytes));
 
 		// 16 bytes of disposable info
 		strm.skip(16);
@@ -109,10 +97,10 @@ public class ITCParser {
 		// Get the library and track persistent Id's
 		bytes = new byte[8];
 		strm.read(bytes);
-		art.setLibraryPersistentId(byteArrayToLong(bytes));
+		art.setLibraryPersistentId(Util.byteArrayToLong(bytes));
 
 		strm.read(bytes);
-		art.setTrackPersistentId(byteArrayToLong(bytes));
+		art.setTrackPersistentId(Util.byteArrayToLong(bytes));
 
 		// Read the download/persistence indicator
 		bytes = new byte[4];
@@ -128,10 +116,10 @@ public class ITCParser {
 
 		// Read width and height of image
 		strm.read(bytes);
-		art.setWidth(byteArrayToInt(bytes));
+		art.setWidth(Util.byteArrayToInt(bytes));
 
 		strm.read(bytes);
-		art.setHeight(byteArrayToInt(bytes));
+		art.setHeight(Util.byteArrayToInt(bytes));
 
 		// Reset position to end of header (beginning of "null buffer")
 		strm.reset();

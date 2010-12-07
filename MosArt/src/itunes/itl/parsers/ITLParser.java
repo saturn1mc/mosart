@@ -736,14 +736,18 @@ public class ITLParser {
 		track.setRating(rating);
 
 		// 109 11 ?
-		di.skipBytes(11);
-
+		byte[] bytes109 = new byte[11];
+		di.readFully(bytes109);
+		
 		// 120 4 add date
 		int addDate = di.readInt();
 		track.setDateAdded(Dates.fromMac(addDate));
 
 		// 124 32 ?
-		di.skipBytes(32);
+		byte[] bytes124 = new byte[32];
+		di.readFully(bytes124);
+		
+		System.out.println(bytes124);
 
 		// System.out.println("Last play date: " + Dates.fromMac(lastPlayDate));
 		// System.out.println("Add date: " + Dates.fromMac(addDate));
