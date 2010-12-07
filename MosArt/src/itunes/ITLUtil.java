@@ -25,7 +25,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.regex.Pattern;
 
-public class Util {
+public class ITLUtil {
 	public static void assertEquals(String expected, String actual)
 			throws IOException {
 		if (!expected.equals(actual)) {

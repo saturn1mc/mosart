@@ -1,6 +1,6 @@
 package itunes.itc;
 
-import itunes.Util;
+import itunes.ITLUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -48,7 +48,7 @@ public class ITCParser {
 
 		// Self-describing header length
 		strm.read(bytes);
-		art.setHeaderLength(Util.byteArrayToInt(bytes));
+		art.setHeaderLength(ITLUtil.byteArrayToInt(bytes));
 
 		// Itch
 		strm.read(bytes);
@@ -83,7 +83,7 @@ public class ITCParser {
 
 		// Read the entire length of the data header
 		strm.read(bytes);
-		art.setMetadataLength(Util.byteArrayToInt(bytes));
+		art.setMetadataLength(ITLUtil.byteArrayToInt(bytes));
 
 		// 16 bytes of disposable info
 		strm.skip(16);
@@ -97,10 +97,10 @@ public class ITCParser {
 		// Get the library and track persistent Id's
 		bytes = new byte[8];
 		strm.read(bytes);
-		art.setLibraryPersistentId(Util.byteArrayToLong(bytes));
+		art.setLibraryPersistentId(ITLUtil.byteArrayToLong(bytes));
 
 		strm.read(bytes);
-		art.setTrackPersistentId(Util.byteArrayToLong(bytes));
+		art.setTrackPersistentId(ITLUtil.byteArrayToLong(bytes));
 
 		// Read the download/persistence indicator
 		bytes = new byte[4];
@@ -116,10 +116,10 @@ public class ITCParser {
 
 		// Read width and height of image
 		strm.read(bytes);
-		art.setWidth(Util.byteArrayToInt(bytes));
+		art.setWidth(ITLUtil.byteArrayToInt(bytes));
 
 		strm.read(bytes);
-		art.setHeight(Util.byteArrayToInt(bytes));
+		art.setHeight(ITLUtil.byteArrayToInt(bytes));
 
 		// Reset position to end of header (beginning of "null buffer")
 		strm.reset();

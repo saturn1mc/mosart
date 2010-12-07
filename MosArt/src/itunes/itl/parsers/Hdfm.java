@@ -18,7 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.Util;
+import itunes.ITLUtil;
 import itunes.itl.ITLException;
 
 import java.io.ByteArrayInputStream;
@@ -66,7 +66,7 @@ public class Hdfm {
 	public static Hdfm read(DataInput di, long fileLength) throws IOException,
 			ITLException {
 		int hdr = di.readInt();
-		Util.assertEquals(Util.toString(hdr), "hdfm");
+		ITLUtil.assertEquals(ITLUtil.toString(hdr), "hdfm");
 
 		int hl = di.readInt();
 
@@ -283,7 +283,7 @@ public class Hdfm {
 
 		assert ba.length < 256;
 
-		o.writeInt(Util.fromString("hdfm"));
+		o.writeInt(ITLUtil.fromString("hdfm"));
 
 		int hl = 17 + headerRemainder.length + ba.length;
 		o.writeInt(hl);
