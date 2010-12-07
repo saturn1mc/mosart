@@ -18,7 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import itunes.Util;
+import itunes.ITLUtil;
 import itunes.itl.ITLException;
 import itunes.itl.ITLPlaylist;
 import itunes.itl.ITLPodcast;
@@ -109,7 +109,7 @@ public class ITLParser {
 
 		while (going) {
 			int consumed = 0;
-			String type = Util.toString(di.readInt());
+			String type = ITLUtil.toString(di.readInt());
 			consumed += 4;
 
 			int length = di.readInt();
@@ -435,7 +435,7 @@ public class ITLParser {
 				// hexDumpBytes(di, length - consumed);
 				// consumed = length;
 
-				if (Util.isIdentifier(type)) {
+				if (ITLUtil.isIdentifier(type)) {
 					throw new ITLException("Unhandled type: " + type);
 				} else {
 					throw new ITLException(
@@ -784,7 +784,7 @@ public class ITLParser {
 			int hohmType, DataInput di, int remaining) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		DataOutput out = new DataOutputStream(baos);
-		out.writeInt(Util.fromString(type));
+		out.writeInt(ITLUtil.fromString(type));
 		out.writeInt(length);
 		out.writeInt(recLength);
 		out.writeInt(hohmType);
