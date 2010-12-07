@@ -22,140 +22,137 @@ import java.io.DataInput;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 
-public class HohmPodcast
-{
-    public final String url;
-    public final String link;
-    public final String aurl;
+public class HohmPodcast {
+	public final String url;
+	public final String link;
+	public final String aurl;
 
-    public HohmPodcast(String url, String link, String aurl)
-    {
-        this.url = url;
-        this.link = link;
-        this.aurl = aurl;
-    }
+	public HohmPodcast(String url, String link, String aurl) {
+		this.url = url;
+		this.link = link;
+		this.aurl = aurl;
+	}
 
-    public static String toString(byte[] ba) throws UnsupportedEncodingException
-    {
-        int lnz = 0;
-        for (int i = 0; i < ba.length; i++) {
-            if (ba[i] != 0) {
-                lnz = i + 1;
-            }
-        }
+	public static String toString(byte[] ba)
+			throws UnsupportedEncodingException {
+		int lnz = 0;
+		for (int i = 0; i < ba.length; i++) {
+			if (ba[i] != 0) {
+				lnz = i + 1;
+			}
+		}
 
-        return new String(ba, 0, lnz, "utf-8");
-    }
+		return new String(ba, 0, lnz, "utf-8");
+	}
 
-    public static HohmPodcast parse(DataInput di, int length) throws IOException
-    {
-        String url, link, aurl;
+	public static HohmPodcast parse(DataInput di, int length)
+			throws IOException {
+		String url, link, aurl;
 
-        di.skipBytes(23 * 4);
-        length -= 23 * 4;
+		di.skipBytes(23 * 4);
+		length -= 23 * 4;
 
-        if (length <= 0) {
-            return null;
-        }
+		if (length <= 0) {
+			return null;
+		}
 
-        int len = di.readInt();
-        String type = Util.toString(di.readInt());
-        len -= 8;
-        Util.assertEquals("url ", type);
+		int len = di.readInt();
+		String type = Util.toString(di.readInt());
+		len -= 8;
+		Util.assertEquals("url ", type);
 
-        di.skipBytes(12);
-        len -= 12;
+		di.skipBytes(12);
+		len -= 12;
 
-        byte[] ba;
+		byte[] ba;
 
-        ba = new byte[len];
-        di.readFully(ba);
+		ba = new byte[len];
+		di.readFully(ba);
 
-        url = toString(ba);
+		url = toString(ba);
 
-        di.skipBytes(15 * 4);
+		di.skipBytes(15 * 4);
 
-        len = di.readInt();
-        type = Util.toString(di.readInt());
-        len -= 8;
+		len = di.readInt();
+		type = Util.toString(di.readInt());
+		len -= 8;
 
-        Util.assertEquals("link", type);
+		Util.assertEquals("link", type);
 
-        di.skipBytes(12);
-        len -= 12;
+		di.skipBytes(12);
+		len -= 12;
 
-        ba = new byte[len];
-        di.readFully(ba);
-        link = toString(ba);
+		ba = new byte[len];
+		di.readFully(ba);
+		link = toString(ba);
 
-        len = di.readInt();
-        type = Util.toString(di.readInt());
-        len -= 8;
+		len = di.readInt();
+		type = Util.toString(di.readInt());
+		len -= 8;
 
-        while(!"aurl".equals(type)) {
-            System.out.println(type);
+		while (!"aurl".equals(type)) {
+			System.out.println(type);
 
-            if(type.equals("pech")) {
-                System.out.println("Recurse");
+			if (type.equals("pech")) {
+				System.out.println("Recurse");
 
-                dump(di, len);
-            } else {
-                ba = new byte[len];
-                di.readFully(ba);
-                System.out.println(new String(ba));
-            }
+				dump(di, len);
+			} else {
+				ba = new byte[len];
+				di.readFully(ba);
+				System.out.println(new String(ba));
+			}
 
-            len = di.readInt();
-            type = Util.toString(di.readInt());
-            len -= 8;
-        }
+			len = di.readInt();
+			type = Util.toString(di.readInt());
+			len -= 8;
+		}
 
-        Util.assertEquals("aurl", type);
+		Util.assertEquals("aurl", type);
 
-        di.skipBytes(12);
-        len -= 12;
+		di.skipBytes(12);
+		len -= 12;
 
-        ba = new byte[len];
-        di.readFully(ba);
+		ba = new byte[len];
+		di.readFully(ba);
 
-        aurl = toString(ba);
+		aurl = toString(ba);
 
-        return new HohmPodcast(url, link, aurl);
-    }
+		return new HohmPodcast(url, link, aurl);
+	}
 
-    static void dump(DataInput di, int length) throws IOException
-    {
-        di.skipBytes(12);
+	static void dump(DataInput di, int length) throws IOException {
+		di.skipBytes(12);
 
-        String type = Util.toString(di.readInt());
-        System.out.println(type);
+		String type = Util.toString(di.readInt());
+		System.out.println(type);
 
-//        parse(di, length - 60 + 23);
-//        di.skipBytes(24);
-//        length -= 24;
+		// parse(di, length - 60 + 23);
+		// di.skipBytes(24);
+		// length -= 24;
 
-//        ParseLibrary.hexDumpBytes(di, length);
-        while(length > 0) {
-            int len = di.readInt();
-            type = Util.toString(di.readInt());
+		// ParseLibrary.hexDumpBytes(di, length);
+		while (length > 0) {
+			int len = di.readInt();
+			type = Util.toString(di.readInt());
 
-            System.out.println(type + ", " + len);
+			System.out.println(type + ", " + len);
 
-            if(type.equals("strt")) {
-            } else if(type.equals("pech")) {
-//                dump(di, len - 8);
-                ParseLibrary.hexDumpBytes(di, length);
-            } else {
-                len -= 8;
+			if (type.equals("strt")) {
+			} else if (type.equals("pech")) {
+				// dump(di, len - 8);
+				ITLParser.hexDumpBytes(di, length);
+			} else {
+				len -= 8;
 
-    //            di.skipBytes(12);
-    //            len -= 12;
-                byte[] ba = new byte[len];
-                di.readFully(ba);
-                System.out.println(new String(ba));
+				// di.skipBytes(12);
+				// len -= 12;
+				byte[] ba = new byte[len];
+				di.readFully(ba);
+				System.out.println(new String(ba));
 
-                length -= len;
-            }
-        }
-    }
+				length -= len;
+			}
+		}
+	}
 }

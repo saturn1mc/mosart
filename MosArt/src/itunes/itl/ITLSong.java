@@ -1,8 +1,10 @@
 package itunes.itl;
 
 import itunes.ITPersistentID;
+import itunes.itl.parsers.Dates;
 
 import java.text.ParseException;
+import java.util.Date;
 
 public class ITLSong {
 
@@ -63,6 +65,7 @@ public class ITLSong {
 	private final static String LIBRARY_FOLDER_COUNT = "Library Folder Count";
 
 	private int id;
+	private int rating;
 	private String name;
 	private String artist;
 	private String albumArtist;
@@ -80,12 +83,15 @@ public class ITLSong {
 	private int bpm;
 	private int trackCount;
 	private int year;
-	private String dateModified;
-	private String dateAdded;
-	private String bitRate;
+	private Date dateModified;
+	private Date dateAdded;
+	private int bitRate;
 	private int sampleRate;
 	private boolean gapless;
 	private String comments;
+	private String summary;
+	private String keywords;
+	private String subtitle;
 	private int volumeAdjustment;
 	private int playCount;
 	private String playDate;
@@ -115,6 +121,8 @@ public class ITLSong {
 	private boolean protect;
 	private boolean purchased;
 	private String location;
+	private String url;
+	private String podcastURL;
 	private int fileFolderCount;
 	private int libraryFolderCount;
 
@@ -162,11 +170,11 @@ public class ITLSong {
 		} else if (field.equalsIgnoreCase(YEAR)) {
 			year = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(DATE_MODIFIED)) {
-			dateModified = value;
+			dateModified = Dates.fromString(value);
 		} else if (field.equalsIgnoreCase(DATE_ADDED)) {
-			dateAdded = value;
+			dateAdded = Dates.fromString(value);
 		} else if (field.equalsIgnoreCase(BIT_RATE)) {
-			bitRate = value;
+			bitRate = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(SAMPLE_RATE)) {
 			sampleRate = Integer.parseInt(value);
 		} else if (field.equalsIgnoreCase(PART_GAPLESS)) {
@@ -244,6 +252,10 @@ public class ITLSong {
 		return id;
 	}
 
+	public int getRating() {
+		return rating;
+	}
+	
 	public String getName() {
 		return name;
 	}
@@ -312,15 +324,15 @@ public class ITLSong {
 		return year;
 	}
 
-	public String getDateModified() {
+	public Date getDateModified() {
 		return dateModified;
 	}
 
-	public String getDateAdded() {
+	public Date getDateAdded() {
 		return dateAdded;
 	}
 
-	public String getBitRate() {
+	public int getBitRate() {
 		return bitRate;
 	}
 
@@ -336,6 +348,18 @@ public class ITLSong {
 		return comments;
 	}
 
+	public String getSummary() {
+		return summary;
+	}
+	
+	public String getKeywords() {
+		return keywords;
+	}
+	
+	public String getSubtitle() {
+		return subtitle;
+	}
+	
 	public int getVolumeAdjustment() {
 		return volumeAdjustment;
 	}
@@ -451,6 +475,14 @@ public class ITLSong {
 	public String getLocation() {
 		return location;
 	}
+	
+	public String getURL() {
+		return url;
+	}
+	
+	public String getPodcastURL() {
+		return podcastURL;
+	}
 
 	public int getFileFolderCount() {
 		return fileFolderCount;
@@ -458,6 +490,250 @@ public class ITLSong {
 
 	public int getLibraryFolderCount() {
 		return libraryFolderCount;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setArtist(String artist) {
+		this.artist = artist;
+	}
+
+	public void setAlbumArtist(String albumArtist) {
+		this.albumArtist = albumArtist;
+	}
+
+	public void setComposer(String composer) {
+		this.composer = composer;
+	}
+
+	public void setAlbum(String album) {
+		this.album = album;
+	}
+
+	public void setGrouping(String grouping) {
+		this.grouping = grouping;
+	}
+
+	public void setGenre(String genre) {
+		this.genre = genre;
+	}
+
+	public void setKind(String kind) {
+		this.kind = kind;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public void setTotalTime(int totalTime) {
+		this.totalTime = totalTime;
+	}
+
+	public void setStartTime(int startTime) {
+		this.startTime = startTime;
+	}
+
+	public void setDiscNumber(int discNumber) {
+		this.discNumber = discNumber;
+	}
+
+	public void setDiscCount(int discCount) {
+		this.discCount = discCount;
+	}
+
+	public void setTrackNumber(int trackNumber) {
+		this.trackNumber = trackNumber;
+	}
+
+	public void setBpm(int bpm) {
+		this.bpm = bpm;
+	}
+
+	public void setTrackCount(int trackCount) {
+		this.trackCount = trackCount;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public void setDateModified(Date dateModified) {
+		this.dateModified = dateModified;
+	}
+
+	public void setDateAdded(Date dateAdded) {
+		this.dateAdded = dateAdded;
+	}
+
+	public void setBitRate(int bitRate) {
+		this.bitRate = bitRate;
+	}
+
+	public void setSampleRate(int sampleRate) {
+		this.sampleRate = sampleRate;
+	}
+
+	public void setGapless(boolean gapless) {
+		this.gapless = gapless;
+	}
+
+	public void setComments(String comments) {
+		this.comments = comments;
+	}
+	
+	public void setSummary(String summary) {
+		this.summary = summary;
+	}
+	
+	public void setKeywords(String keywords){
+		this.keywords = keywords;
+	}
+	
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
+	}
+
+	public void setVolumeAdjustment(int volumeAdjustment) {
+		this.volumeAdjustment = volumeAdjustment;
+	}
+
+	public void setPlayCount(int playCount) {
+		this.playCount = playCount;
+	}
+
+	public void setPlayDate(String playDate) {
+		this.playDate = playDate;
+	}
+
+	public void setDateUTC(String dateUTC) {
+		this.dateUTC = dateUTC;
+	}
+
+	public void setSortArtist(String sortArtist) {
+		this.sortArtist = sortArtist;
+	}
+
+	public void setSortComposer(String sortComposer) {
+		this.sortComposer = sortComposer;
+	}
+
+	public void setSortName(String sortName) {
+		this.sortName = sortName;
+	}
+
+	public void setReleaseDate(String releaseDate) {
+		this.releaseDate = releaseDate;
+	}
+
+	public void setSkipCount(int skipCount) {
+		this.skipCount = skipCount;
+	}
+
+	public void setSkipDate(String skipDate) {
+		this.skipDate = skipDate;
+	}
+
+	public void setArtworkCount(int artworkCount) {
+		this.artworkCount = artworkCount;
+	}
+
+	public void setSortAlbum(String sortAlbum) {
+		this.sortAlbum = sortAlbum;
+	}
+
+	public void setSortAlbumArtist(String sortAlbumArtist) {
+		this.sortAlbumArtist = sortAlbumArtist;
+	}
+
+	public void setCompilation(boolean compilation) {
+		this.compilation = compilation;
+	}
+
+	public void setPersistentID(ITPersistentID persistentID) {
+		this.persistentID = persistentID;
+	}
+
+	public void setClean(boolean clean) {
+		this.clean = clean;
+	}
+
+	public void setExplicit(boolean explicit) {
+		this.explicit = explicit;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
+	}
+
+	public void setTrackType(String trackType) {
+		this.trackType = trackType;
+	}
+
+	public void setFileType(int fileType) {
+		this.fileType = fileType;
+	}
+
+	public void setHasVideo(boolean hasVideo) {
+		this.hasVideo = hasVideo;
+	}
+
+	public void setHd(boolean hd) {
+		this.hd = hd;
+	}
+
+	public void setVideoWidth(int videoWidth) {
+		this.videoWidth = videoWidth;
+	}
+
+	public void setVideoHeight(int videoHeight) {
+		this.videoHeight = videoHeight;
+	}
+
+	public void setMusicVideo(boolean musicVideo) {
+		this.musicVideo = musicVideo;
+	}
+
+	public void setMovie(boolean movie) {
+		this.movie = movie;
+	}
+
+	public void setProtect(boolean protect) {
+		this.protect = protect;
+	}
+
+	public void setPurchased(boolean purchased) {
+		this.purchased = purchased;
+	}
+
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	public void setURL(String url) {
+		this.url = url;
+	}
+	
+	public void setPodcastURL(String podcastURL) {
+		this.podcastURL = podcastURL;
+	}
+
+	public void setFileFolderCount(int fileFolderCount) {
+		this.fileFolderCount = fileFolderCount;
+	}
+
+	public void setLibraryFolderCount(int libraryFolderCount) {
+		this.libraryFolderCount = libraryFolderCount;
 	}
 
 	@Override

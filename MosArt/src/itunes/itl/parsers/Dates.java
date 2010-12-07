@@ -1,6 +1,7 @@
 package itunes.itl.parsers;
 
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,7 +26,7 @@ import java.util.TimeZone;
  */
 public class Dates
 {
-    static String toString(Date d)
+    public static String toString(Date d)
     {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         df.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -33,6 +34,13 @@ public class Dates
         return df.format(d);
     }
 
+    public static Date fromString(String d) throws ParseException{
+    	 DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+         df.setTimeZone(TimeZone.getTimeZone("UTC"));
+         
+         return df.parse(d);
+    }
+    
     public static Date fromMac(long seconds)
     {
         if (seconds == 0)
