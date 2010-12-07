@@ -18,6 +18,7 @@ package itunes.itl.parsers;
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import itunes.Util;
 import itunes.itl.ITLException;
 
 import java.io.ByteArrayInputStream;

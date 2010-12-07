@@ -1,4 +1,4 @@
-package itunes.itl.parsers;
+package itunes;
 
 /*
  *  titl - Tools for iTunes Libraries
