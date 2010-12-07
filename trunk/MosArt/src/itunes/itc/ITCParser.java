@@ -1,6 +1,6 @@
 package itunes.itc;
 
-import itunes.itl.parsers.Util;
+import itunes.Util;
 
 import java.io.BufferedInputStream;
 import java.io.File;
