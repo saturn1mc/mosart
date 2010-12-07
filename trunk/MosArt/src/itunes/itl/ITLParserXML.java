@@ -8,7 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 
-public class ITLXMLParser {
+public class ITLParserXML {
 
 	// States
 	private static final int STATE_INITIAL = 0;
@@ -37,16 +37,16 @@ public class ITLXMLParser {
 
 	private int state;
 
-	private static ITLXMLParser singleton;
+	private static ITLParserXML singleton;
 
-	private ITLXMLParser() {
+	private ITLParserXML() {
 		super();
 		// Nothing
 	}
 
-	public static ITLXMLParser getInstance() {
+	public static ITLParserXML getInstance() {
 		if (singleton == null) {
-			singleton = new ITLXMLParser();
+			singleton = new ITLParserXML();
 		}
 
 		return singleton;

@@ -6,7 +6,7 @@ import itunes.itc.ITCException;
 import itunes.itc.ITCParser;
 import itunes.itl.ITLCollection;
 import itunes.itl.ITLSong;
-import itunes.itl.ITLXMLParser;
+import itunes.itl.ITLParserXML;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -96,7 +96,7 @@ public class MosArt extends SwingWorker<File, String> {
 			}
 
 			// Read ITL
-			ITLXMLParser.getInstance().parseITL(library, collection);
+			ITLParserXML.getInstance().parseITL(library, collection);
 
 			// Read covers
 			Supervisor.getInstance().reportMainProgress(

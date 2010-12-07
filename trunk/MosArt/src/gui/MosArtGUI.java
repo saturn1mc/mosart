@@ -1,5 +1,6 @@
 package gui;
 
+import itunes.ITPersistentID;
 import itunes.itc.ITCArtwork;
 import itunes.itc.ITCParser;
 
@@ -470,9 +471,27 @@ public class MosArtGUI extends JFrame {
 	}
 
 	public static void main(String[] args) {
+		
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				MosArtGUI gui = new MosArtGUI();
+				
+				///TEST
+				
+				ITPersistentID tpid = new ITPersistentID("1C649B6833CF2E40");
+				ITPersistentID apid = new ITPersistentID("AAD8BA43C0D64900");
+				
+				System.out.println(tpid.getHighBits());
+				System.out.println(apid.getHighBits());
+				
+				System.out.println(tpid.getHighBits());
+				System.out.println(apid.getHighBits());
+				
+				System.out.println(tpid.getLowBits());
+				System.out.println(apid.getLowBits());
+				
+				///END TEST
+				
 				Supervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
 			}
