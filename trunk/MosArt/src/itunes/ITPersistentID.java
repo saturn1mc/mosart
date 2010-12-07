@@ -9,7 +9,7 @@ public class ITPersistentID {
 	public ITPersistentID(long value) {
 		this.persistentID = value;
 	}
-	
+
 	public ITPersistentID(String value) {
 		this.persistentID = new BigInteger(value, 16).longValue();
 	}
@@ -25,26 +25,26 @@ public class ITPersistentID {
 	public int getHighBits() {
 		return (int) (persistentID >> 32);
 	}
-	
-	public Long longValue(){
+
+	public Long longValue() {
 		return persistentID;
 	}
-	
-	public boolean equals(String value){
+
+	public boolean equals(String value) {
 		long lvalue = new BigInteger(value, 16).longValue();
 		return this.persistentID == lvalue;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
-		if(obj instanceof ITPersistentID){
-			return ((ITPersistentID)obj).persistentID == this.persistentID;
-		}else{
+		if (obj instanceof ITPersistentID) {
+			return ((ITPersistentID) obj).persistentID == this.persistentID;
+		} else {
 			return false;
 		}
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return Long.toHexString(persistentID);
 	}
 }
