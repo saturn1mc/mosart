@@ -17,7 +17,6 @@ package itunes.itl.parsers;
  *  You should have received a copy of the GNU General Public License
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 import itunes.ITUtil;
 import itunes.itl.ITLException;
 
@@ -27,6 +26,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.zip.Deflater;
@@ -180,8 +180,8 @@ public class ITLHdfm {
 
 		/* Decrypt */
 		try {
-			byte[] rawKey = "BHUILuilfghuila3".getBytes("us-ascii");
-
+			byte[] rawKey = "BHUILuilfghuila3".getBytes("US-ASCII");
+			
 			SecretKeySpec skeySpec = new SecretKeySpec(rawKey, "AES");
 			Cipher cip = Cipher.getInstance("AES/ECB/NoPadding");
 			cip.init(mode, skeySpec);
