@@ -82,8 +82,8 @@ public class ITLParser {
 		String path = pl.drain(new DataInputStream(new ByteArrayInputStream(
 				hdr.fileData)), hdr.fileData.length);
 
-		ITLLibrary library = new ITLLibrary(hdr, path, pl.playlists, pl.podcasts,
-				pl.tracks);
+		ITLLibrary library = new ITLLibrary(hdr, path, pl.playlists,
+				pl.podcasts, pl.tracks);
 		return library;
 	}
 
@@ -277,7 +277,7 @@ public class ITLParser {
 					currentTrack.setSummary(summary);
 					consumed = recLength;
 					break;
-
+				
 				case 0x24: // (Only present in full DB)
 					hexDumpBytes(di, recLength - consumed);
 					// String v = readGenericHohm(di);
@@ -286,29 +286,29 @@ public class ITLParser {
 					break;
 
 				case 0x09: // iTunes category?
-
-				case 0x08:
-				case 0x14:
-				case 0x0c:
-				case 0x0e:
-				case 0x1b:
-				case 0x1e:
-				case 0x1f:
-				case 0x20:
-				case 0x21:
+				case 0x08: // Comments
+				case 0x14: // Grouping ? (="Snatch")
+				case 0x0c: // Composer
+				case 0x0e: // Grouping ? (="Snatch")
+				case 0x1b: // App title ? (="20minutes.fr")
+				case 0x1e: // App title / Developper ? (="Monde.fr")
+				case 0x1f: // App title / Developper ? (="Monde.fr")
+				case 0x20: // App title / Developper ? (="Monde.fr")
+				case 0x21: // App title / Developper ? (="Monde.fr")
 				case 0x22:
+				case 0x2B: // Producer ? ("=Warner:isrc:GBAHT0900327")
 				case 0x2D: // A version string?
 				case 0x2E: // Copyright notice?
 				case 0x2F:
-				case 0xc8: // ITLPodcast episode list title
+				case 0xC8: // ITLPodcast episode list title
 				case 0xC9: // ITLPodcast title
-				case 0x12D:
-				case 0x12E:
-				case 0x132: // App title
+				case 0x12D: // Sort Artist ?
+				case 0x12E:	// Sort Artist ?
+				case 0x132: // App. title
 				case 0x1F8: // A UUID. For?
 				case 0x1F9: // A UUID. For?
-				case 0x1FA: // An email address. For?
-				case 0x191:
+				case 0x1FA: // iTunes account email
+				case 0x191: // App title / Developper ? (="Monde.fr")
 					String val = readGenericHohm(di);
 					// System.out.println(val);
 					consumed = recLength;
@@ -354,10 +354,9 @@ public class ITLParser {
 									pcInf.length));
 					consumed = recLength;
 					break;
-
-				/* Unknown, but seen */
 				case 0x68:
 				case 0x69:
+				case 0x6A: // Album artist ? (="Coldplay,,,Snow Patrol,,,Muse")
 				case 0x6b:
 				case 0x1f7:
 				case 0x1f4:
@@ -368,9 +367,6 @@ public class ITLParser {
 					consumed = recLength;
 					break;
 
-				// GLH: TV Show-related 'hohm's
-				//
-				// Description .XML Key?
 				case 0x18: // Show (on 'Video' tab) 'Series'
 				case 0x19: // Episode ID (on 'Video' tab) 'Episode'
 				case 0x1a: // ?? Studio/Producer, e.g. "Fox" --n/a--
@@ -544,7 +540,7 @@ public class ITLParser {
 
 		int unknown = di.readInt();
 		int blockType = di.readInt();
-
+		
 		di.skipBytes(length - 16);
 
 		// System.out.println("HDSM block type: " + blockType);
@@ -562,7 +558,7 @@ public class ITLParser {
 			ITLException {
 		int unknownA = di.readInt();
 		int unknownB = di.readInt();
-
+		
 		int itemCount = di.readInt();
 
 		// System.out.println("HPIM items: " + itemCount);
@@ -585,8 +581,6 @@ public class ITLParser {
 		di.readFully(unknown);
 
 		int key = di.readInt();
-
-		// System.out.println(" Key: " + key);
 
 		if (currentPlaylist == null) {
 			throw new ITLException("ITLPlaylist item outside playlist content");
@@ -641,9 +635,7 @@ public class ITLParser {
 		int recordLength = di.readInt();
 		int subblocks = di.readInt();
 		int songId = di.readInt();
-		// System.out.println("Song ID: " + songId);
 		long blockType = di.readInt();
-		// System.out.println("Block type: " + blockType);
 
 		ITLSong track = new ITLSong();
 		track.setId(songId);
@@ -723,22 +715,14 @@ public class ITLParser {
 		track.setRating(rating);
 
 		// 109 11 ?
-		byte[] bytes109 = new byte[11];
-		di.readFully(bytes109);
-		
+		di.skipBytes(11);
+
 		// 120 4 add date
 		int addDate = di.readInt();
 		track.setDateAdded(ITDates.fromMac(addDate));
 
 		// 124 32 ?
-		byte[] bytes124 = new byte[32];
-		di.readFully(bytes124);
-		
-		byte[] partI = Arrays.copyOfRange(bytes124, 0, 15);
-		byte[] partII = Arrays.copyOfRange(bytes124, 16, 31);
-		
-		System.out.println(new ITPersistentID(ITUtil.byteArrayToLong(partI)));
-		System.out.println(new ITPersistentID(ITUtil.byteArrayToLong(partII)));
+		di.skipBytes(32);
 		
 		// System.out.println("Last play date: " + Dates.fromMac(lastPlayDate));
 		// System.out.println("Add date: " + Dates.fromMac(addDate));
@@ -748,14 +732,7 @@ public class ITLParser {
 		tracks.add(track);
 		currentTrack = track;
 
-		if (false) {
-			// System.out.println("Skipping remaining: " + (recordLength -
-			// length));
-			di.skipBytes(recordLength - length);
-			return (recordLength - length);
-		} else {
-			return 0;
-		}
+		return 0;
 	}
 
 	/* A ITLPodcast header? */
@@ -828,13 +805,14 @@ public class ITLParser {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		
+
 		try {
-			File f = new File("D:\\Mes Documents\\My Music\\iTunes\\iTunes Library.itl");
+			File f = new File(
+					"D:\\Mes Documents\\My Music\\iTunes\\Previous iTunes Libraries\\iTunes Library 2010-09-02.itl");
 			ITLLibrary lib = parse(f);
-			
+
 			OutputStream out = new FileOutputStream("D:\\decrypted-file");
 			out.write(lib.hdr.fileData);
 			out.close();
