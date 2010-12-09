@@ -7,14 +7,14 @@ public class ITLException extends Exception {
 	 */
 	private static final long serialVersionUID = 3032059647076593550L;
 
-	private String cause;
+	private String message;
 	
-	public ITLException(String cause) {
-		this.cause = cause;
+	public ITLException(String message) {
+		this.message = message;
 	}
 	
 	@Override
 	public String getMessage() {
-		return "ITLException : " + cause;
+		return "ITLException : " + message;
 	}
 }

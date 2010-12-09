@@ -51,7 +51,7 @@ public class MosArtGUI extends JFrame {
 	};
 
 	private JButton launchButton;
-	
+
 	private JPanel buildTargetPanel() {
 		JButton targetButton = new JButton("...");
 
@@ -74,9 +74,8 @@ public class MosArtGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText("D:\\Mes Documents\\Mosaic.png"); // On my PC
-		// targetField.setText("/Users/camille/Downloads/Mosaic.png"); //On my
-		// Mac
+		// targetField.setText("D:\\Mes Documents\\Mosaic.png"); // On my PC
+		targetField.setText("/Users/camille/Downloads/Mosaic.png"); // On my Mac
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 
@@ -98,11 +97,18 @@ public class MosArtGUI extends JFrame {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				if (checking()) {
-					buildWorker();
-					launchButton.setEnabled(false);
-					MosArtGUI.this.setCursor(Cursor
-							.getPredefinedCursor(Cursor.WAIT_CURSOR));
-					worker.execute();
+
+					try {
+						buildWorker();
+						launchButton.setEnabled(false);
+						MosArtGUI.this.setCursor(Cursor
+								.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						worker.execute();
+					} catch (MosArtException me) {
+						JOptionPane.showMessageDialog(MosArtGUI.this,
+								me.getMessage(), "Can't start",
+								JOptionPane.ERROR_MESSAGE);
+					}
 				} else {
 					JOptionPane.showMessageDialog(MosArtGUI.this,
 							"Please check inputs", "Can't start",
@@ -192,7 +198,7 @@ public class MosArtGUI extends JFrame {
 	private void buildCenterPanel() {
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
-		
+
 		centerPanel.add(buildTargetPanel());
 
 		centerPanel.setBorder(BorderFactory.createTitledBorder(
@@ -230,24 +236,18 @@ public class MosArtGUI extends JFrame {
 		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
 
-	private void buildWorker() {
+	private void buildWorker() throws MosArtException {
 		if (worker == null) {
 			this.worker = new MosArt();
 		}
-		try {
 
-			this.worker.setMosaicProperties(
-					Integer.parseInt(imgWidthField.getText()),
-					Integer.parseInt(imgHeightField.getText()),
-					Integer.parseInt(tileWidthField.getText()),
-					Integer.parseInt(tileHeightField.getText()));
+		this.worker.setMosaicProperties(
+				Integer.parseInt(imgWidthField.getText()),
+				Integer.parseInt(imgHeightField.getText()),
+				Integer.parseInt(tileWidthField.getText()),
+				Integer.parseInt(tileHeightField.getText()));
 
-			this.worker.setTargetFilename(targetField.getText());
-
-		} catch (MosArtException e) {
-			JOptionPane.showMessageDialog(MosArtGUI.this, e.getCause(),
-					"Can't start", JOptionPane.ERROR_MESSAGE);
-		}
+		this.worker.setTargetFilename(targetField.getText());
 
 	}
 
@@ -389,7 +389,7 @@ public class MosArtGUI extends JFrame {
 		this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(null);
 	}
-	
+
 	public static void main(String[] args) {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
