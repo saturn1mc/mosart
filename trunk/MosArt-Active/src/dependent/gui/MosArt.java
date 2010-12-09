@@ -28,7 +28,7 @@ public class MosArt extends SwingWorker<File, String> {
 	public void setTargetFilename(String targetFilename) throws MosArtException {
 		File targetFile = new File(targetFilename);
 
-		if (targetFile.isDirectory() || !targetFile.canWrite()) {
+		if (targetFile.isDirectory() || (targetFile.exists() && !targetFile.canWrite())) {
 			throw new MosArtException("Can't write to : '" + targetFilename
 					+ "'");
 		}
