@@ -74,8 +74,8 @@ public class MosArtGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		// targetField.setText("D:\\Mes Documents\\Mosaic.png"); // On my PC
-		targetField.setText("/Users/camille/Downloads/Mosaic.png"); // On my Mac
+		targetField.setText("C:\\Mosaic.png"); // On my PC
+		//targetField.setText("/Users/camille/Downloads/Mosaic.png"); // On my Mac
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 
