@@ -275,7 +275,7 @@ public class ITLParser {
 					currentTrack.setSummary(summary);
 					consumed = recLength;
 					break;
-				
+
 				case 0x24: // (Only present in full DB)
 					hexDumpBytes(di, recLength - consumed);
 					// String v = readGenericHohm(di);
@@ -301,14 +301,15 @@ public class ITLParser {
 				case 0xC8: // ITLPodcast episode list title
 				case 0xC9: // ITLPodcast title
 				case 0x12D: // Sort Artist ?
-				case 0x12E:	// Sort Artist ?
+				case 0x12E: // Sort Artist ?
 				case 0x132: // App. title
 				case 0x1F8: // A UUID. For?
 				case 0x1F9: // A UUID. For?
 				case 0x1FA: // iTunes account email
 				case 0x191: // App title / Developper ? (="Monde.fr")
-					String val = readGenericHohm(di);
-					// System.out.println(val);
+
+					// Reading generic hohm
+					readGenericHohm(di);
 					consumed = recLength;
 					break;
 
@@ -375,9 +376,9 @@ public class ITLParser {
 							// building the 'TV Shows' menu, since
 							// there's one entry for each 'Season'
 							// within a given show.
-					String tvThing = readGenericHohm(di);
-					// System.out.println(String.format("0x%04x", hohmType) +
-					// ": " + tvThing);
+
+					// Read generic hohm (tv thing ?)
+					readGenericHohm(di);
 					consumed = recLength;
 					break;
 
@@ -438,16 +439,15 @@ public class ITLParser {
 
 	static void hexDump(DataInput di, int count) throws IOException {
 		for (int i = 0; i < count; i++) {
-			int v = di.readInt();
-			// System.out.printf("%3d 0x%08x %4s\n", i, v, Util.toString(v));
+			// Dumping
+			di.readInt();
 		}
 	}
 
 	static void hexDumpBytes(DataInput di, int count) throws IOException {
 		for (int i = 0; i < count; i++) {
-			int v = di.readUnsignedByte();
-			// System.out.printf("%3d 0x%02x %4s\n", i, v, (v == 0 ? ' ' :
-			// (char) v));
+			// Dumping
+			di.readUnsignedByte();
 		}
 	}
 
@@ -536,9 +536,9 @@ public class ITLParser {
 	static boolean readHdsm(DataInput di, int length) throws IOException {
 		// Assume header and length already read
 
-		int unknown = di.readInt();
+		di.readInt(); // Unknown
 		int blockType = di.readInt();
-		
+
 		di.skipBytes(length - 16);
 
 		// System.out.println("HDSM block type: " + blockType);
@@ -554,10 +554,10 @@ public class ITLParser {
 	// 16 4 number of items (hptm) in playlist
 	private void readHpim(DataInput di, int length) throws IOException,
 			ITLException {
-		int unknownA = di.readInt();
-		int unknownB = di.readInt();
-		
-		int itemCount = di.readInt();
+		di.readInt(); // Unknown
+		di.readInt(); // Unknown
+
+		di.readInt(); // Item count
 
 		// System.out.println("HPIM items: " + itemCount);
 		// System.out.printf("0x%04x%04x\n", unknownA, unknownB);
@@ -630,10 +630,10 @@ public class ITLParser {
 		// 12 4 N = number of hohm sub-blocks
 		// 16 4 song identifier
 		// 20 4 block type => (1, ?)
-		int recordLength = di.readInt();
-		int subblocks = di.readInt();
+		di.readInt(); // Record length
+		di.readInt(); // Sub blocks
 		int songId = di.readInt();
-		long blockType = di.readInt();
+		di.readInt(); // Block type
 
 		ITLSong track = new ITLSong();
 		track.setId(songId);
@@ -676,7 +676,7 @@ public class ITLParser {
 		track.setSampleRate(di.readShort());
 
 		// 62 2 ?
-		int x = di.readShort();
+		di.readShort();
 
 		// 64 4 volume adjustment (signed)
 
@@ -702,7 +702,7 @@ public class ITLParser {
 		// System.out.println("Play count: " + playcount);
 
 		// 100 4 last play date
-		int lastPlayDate = di.readInt();
+		di.readInt();
 
 		// 104 2 disk number
 		// 106 2 total disks
@@ -721,7 +721,7 @@ public class ITLParser {
 
 		// 124 32 ?
 		di.skipBytes(32);
-		
+
 		// System.out.println("Last play date: " + Dates.fromMac(lastPlayDate));
 		// System.out.println("Add date: " + Dates.fromMac(addDate));
 
