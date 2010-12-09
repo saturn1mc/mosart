@@ -67,7 +67,7 @@ public class MosaicPainter {
 	}
 
 	public BufferedImage createMosaic(iTunes itunes) throws IOException {
-
+		
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
 		int tileX = 0;
@@ -98,7 +98,7 @@ public class MosaicPainter {
 				while (image == null) {
 
 					Supervisor.getInstance().reportTask(
-							"Looking for a track with an artwork");
+							"Looking for a track with an artwork...");
 
 					if (randomList.size() == 0) {
 						int trackCount = itunes.getLibraryPlaylist()
@@ -108,9 +108,9 @@ public class MosaicPainter {
 							for (int t = 0; t < trackCount; t++) {
 								randomList.add(itunes.getLibraryPlaylist()
 										.getTracks().getItem(t + 1));
-
+								
 								Supervisor.getInstance().reportProgress(
-										"Randomized artworks picking",
+										"Gathering tracks...",
 										((float) (t + 1) / (float) trackCount));
 							}
 
