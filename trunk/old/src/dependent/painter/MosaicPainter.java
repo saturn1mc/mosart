@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Stack;
 
 import javax.imageio.ImageIO;
@@ -95,25 +96,25 @@ public class MosaicPainter {
 				Image image = null;
 
 				while (image == null) {
+
+					Supervisor.getInstance().reportTask(
+							"Looking for a track with an artwork");
+
 					if (randomList.size() == 0) {
 						int trackCount = itunes.getLibraryPlaylist()
 								.getTracks().getCount();
 
 						if (trackCount > 0) {
-
-							int toFill = Math.min(trackCount,
-									(mosaicHeight * mosaicWidth) - done);
-
-							for (int t = 0; t < toFill; t++) {
+							for (int t = 0; t < trackCount; t++) {
 								randomList.add(itunes.getLibraryPlaylist()
 										.getTracks().getItem(t + 1));
 
 								Supervisor.getInstance().reportProgress(
 										"Randomized artworks picking",
-										((float) (t + 1) / (float) toFill));
+										((float) (t + 1) / (float) trackCount));
 							}
 
-							// Collections.shuffle(randomList);
+							Collections.shuffle(randomList);
 						} else {
 							Supervisor.getInstance().reportCrash(
 									"No tracks in iTunes");
