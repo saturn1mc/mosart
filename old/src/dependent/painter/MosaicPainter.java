@@ -1,7 +1,5 @@
 package dependent.painter;
 
-import independent.gui.Supervisor;
-
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -16,10 +14,14 @@ import javax.imageio.ImageIO;
 
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.com.dt.iTunesController.iTunes;
+import dependent.gui.Supervisor;
 
 public class MosaicPainter {
-	private static final String TEMP_IMG = "TEMP" + File.separator
-			+ "MOSART_TMP_IMG.png";
+
+	private static final String TEMP_IMG = "MOSART_TEMP" + File.separator
+			+ "MOSART_TMP_IMG";
+
+	private File tempFile;
 
 	private int imageWidth;
 	private int imageHeight;
@@ -53,8 +55,9 @@ public class MosaicPainter {
 		int artCount = track.getArtwork().getCount();
 
 		if (artCount != 0) {
-			track.getArtwork().getItem(1).SaveArtworkToFile(TEMP_IMG);
-			BufferedImage image = ImageIO.read(new File(TEMP_IMG));
+			track.getArtwork().getItem(artCount)
+					.SaveArtworkToFile(tempFile.getAbsolutePath());
+			BufferedImage image = ImageIO.read(tempFile);
 			artwork = image.getScaledInstance(targetWidth, targetHeight,
 					Image.SCALE_SMOOTH);
 		}
@@ -68,7 +71,10 @@ public class MosaicPainter {
 		int tileHeight = imageHeight / mosaicHeight;
 		int tileX = 0;
 		int tileY = 0;
-		int done = 1;
+		int done = 0;
+
+		tempFile = new File(TEMP_IMG);
+		tempFile.getParentFile().mkdirs();
 
 		GraphicsEnvironment gEnv = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
@@ -86,40 +92,52 @@ public class MosaicPainter {
 
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				if (randomList.size() == 0) {
-					int trackCount = itunes.getLibraryPlaylist().getTracks()
-							.getCount();
+				Image image = null;
 
-					if (trackCount > 0) {
-						for (int t = 0; i < trackCount; i++) {
-							randomList.add(itunes.getLibraryPlaylist()
-									.getTracks().getItem(t + 1));
+				while (image == null) {
+					if (randomList.size() == 0) {
+						int trackCount = itunes.getLibraryPlaylist()
+								.getTracks().getCount();
+
+						if (trackCount > 0) {
+
+							int toFill = Math.min(trackCount,
+									(mosaicHeight * mosaicWidth) - done);
+
+							for (int t = 0; t < toFill; t++) {
+								randomList.add(itunes.getLibraryPlaylist()
+										.getTracks().getItem(t + 1));
+
+								Supervisor.getInstance().reportProgress(
+										"Randomized artworks picking",
+										((float) (t + 1) / (float) toFill));
+							}
+
+							// Collections.shuffle(randomList);
+						} else {
+							Supervisor.getInstance().reportCrash(
+									"No tracks in iTunes");
+							return null;
 						}
-					} else {
-						Supervisor.getInstance().reportCrash(
-								"No tracks in iTunes");
-						return null;
 					}
+
+					ITTrack currentTrack = randomList.pop();
+
+					image = getScaledTrackArtwork(currentTrack, tileWidth,
+							tileHeight);
+
 				}
 
-				float progress = ((float) done)
+				g2d.drawImage(image, tileX, tileY, null);
+
+				tileY += tileHeight;
+
+				float progress = ((float) ++done)
 						/ ((float) mosaicHeight * (float) mosaicWidth);
 
 				Supervisor.getInstance().reportProgress(
 						"Adding tile to (" + tileX + "," + tileY + ")",
 						progress);
-
-				ITTrack currentTrack = randomList.pop();
-
-				Image image = getScaledTrackArtwork(currentTrack, tileWidth,
-						tileHeight);
-
-				if (image != null) {
-					g2d.drawImage(image, tileX, tileY, null);
-
-					tileY += tileHeight;
-					done++;
-				}
 			}
 
 			tileX += tileWidth;

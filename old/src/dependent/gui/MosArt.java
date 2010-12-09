@@ -1,7 +1,5 @@
 package dependent.gui;
 
-import independent.gui.Supervisor;
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,12 +12,17 @@ import dependent.painter.MosaicPainter;
 
 public class MosArt extends SwingWorker<File, String> {
 
+	private static iTunes itunes;
 	private MosaicPainter painter;
 	private String targetFilename;
 
 	public MosArt() {
 		painter = null;
 		targetFilename = null;
+	}
+
+	public static iTunes getiTunes() {
+		return itunes;
 	}
 
 	public void setTargetFilename(String targetFilename) throws MosArtException {
@@ -54,7 +57,9 @@ public class MosArt extends SwingWorker<File, String> {
 			Supervisor.getInstance().reportMainProgress(
 					"(1/3) Connecting to iTunes", 0.33f);
 
-			iTunes itunes = new iTunes();
+			if (itunes == null) {
+				itunes = new iTunes();
+			}
 
 			Supervisor.getInstance().reportMainProgress(
 					"(2/3) Generating Mosaic", 0.66f);
