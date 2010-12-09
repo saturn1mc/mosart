@@ -150,5 +150,4 @@ public class ITPlaylist extends ITObject {
         Dispatch tracks = Dispatch.get(object, "Tracks").toDispatch();
         return new ITTrackCollection(tracks);
     }
-        
 }

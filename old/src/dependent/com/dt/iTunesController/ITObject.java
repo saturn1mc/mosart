@@ -108,8 +108,4 @@ public class ITObject {
     public int getTrackDatabaseID() {
         return Dispatch.get(object, "TrackDatabaseID").getInt();
     }
-    
-    public String getPersistentID() {
-        return Dispatch.get(object, "TrackPersistentID").getString();
-    }
 }

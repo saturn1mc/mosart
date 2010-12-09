@@ -483,10 +483,12 @@ public class ITTrack extends ITObject {
         return Dispatch.get(object, "Year").getInt();
     }
 
+    /**
+     * Returns the track associated artworks
+     * @return Returns the track associated artworks
+     */
     public ITArtworkCollection getArtwork() {
         Dispatch art = Dispatch.get(object, "Artwork").toDispatch();
         return new ITArtworkCollection(art);
-    	
     }
-    
 }
