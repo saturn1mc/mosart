@@ -1,8 +1,7 @@
 package dependent.com.dt.iTunesController;
-import com.jacob.activeX.*;
+import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.Dispatch;
 import com.jacob.com.DispatchEvents;
-import com.jacob.com.Variant;
 
 /**
  * Defines the top-level iTunes application object.
@@ -69,7 +68,7 @@ public class iTunes {
      * Play the currently targeted track.
      */
     public void play() {
-        Variant s = iTunes.invoke("ASDSDPlay");
+        iTunes.invoke("ASDSDPlay");
     }
     
     /**
