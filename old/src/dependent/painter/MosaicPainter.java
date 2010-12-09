@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -67,7 +68,7 @@ public class MosaicPainter {
 	}
 
 	public BufferedImage createMosaic(iTunes itunes) throws IOException {
-		
+
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
 		int tileX = 0;
@@ -96,19 +97,26 @@ public class MosaicPainter {
 				Image image = null;
 
 				while (image == null) {
-
-					Supervisor.getInstance().reportTask(
-							"Looking for a track with an artwork...");
-
 					if (randomList.size() == 0) {
 						int trackCount = itunes.getLibraryPlaylist()
 								.getTracks().getCount();
 
+						ArrayList<String> collectedAlbums = new ArrayList<String>();
+
 						if (trackCount > 0) {
 							for (int t = 0; t < trackCount; t++) {
-								randomList.add(itunes.getLibraryPlaylist()
-										.getTracks().getItem(t + 1));
-								
+
+								ITTrack track = itunes.getLibraryPlaylist()
+										.getTracks().getItem(t + 1);
+
+								String albumFullName = track.getArtist()
+										+ track.getAlbum();
+
+								if (!collectedAlbums.contains(albumFullName)) {
+									randomList.add(track);
+									collectedAlbums.add(albumFullName);
+								}
+
 								Supervisor.getInstance().reportProgress(
 										"Gathering tracks...",
 										((float) (t + 1) / (float) trackCount));
@@ -126,6 +134,11 @@ public class MosaicPainter {
 
 					image = getScaledTrackArtwork(currentTrack, tileWidth,
 							tileHeight);
+
+					if (image == null) {
+						Supervisor.getInstance().reportTask(
+								"Looking for a track with an artwork...");
+					}
 
 				}
 
