@@ -137,7 +137,8 @@ public class ITLHdfm {
 					+ hl + ")");
 		}
 
-		int fl = di.readInt();
+		//Flag
+		di.readInt();
 
 		int unknown = di.readInt();
 
