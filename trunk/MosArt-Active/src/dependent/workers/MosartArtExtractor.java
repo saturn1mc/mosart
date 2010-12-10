@@ -87,10 +87,14 @@ public class MosartArtExtractor extends Thread {
 
 	@Override
 	public void run() {
-		int packetSize = (expectedImageCount / MAX_THREAD) + 1;
+		int packetSize = (expectedImageCount / MAX_THREAD);
+		if (packetSize == 0) {
+			packetSize = 1;
+		}
+
 		int threadCount = (expectedImageCount / packetSize);
 		int leftTodo = expectedImageCount;
-		
+
 		for (int i = 0; i < threadCount; i++) {
 
 			ArrayList<ITTrack> tracks = new ArrayList<ITTrack>();
@@ -106,7 +110,7 @@ public class MosartArtExtractor extends Thread {
 			}
 
 			new MosartArtExtractorThread(this, i, tracks, targetWidth,
-					targetHeight).run();
+					targetHeight).start();
 		}
 	}
 }

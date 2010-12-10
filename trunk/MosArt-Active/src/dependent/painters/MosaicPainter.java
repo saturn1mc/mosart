@@ -62,7 +62,7 @@ public class MosaicPainter {
 			for (int j = 0; j < mosaicHeight; j++) {
 
 				MosartArtExtractor extractor = new MosartArtExtractor(itunes, mosaicHeight * mosaicWidth, tileWidth, tileHeight);
-				extractor.run();
+				extractor.start();
 				
 				Image image = extractor.getScaledImage();
 				
