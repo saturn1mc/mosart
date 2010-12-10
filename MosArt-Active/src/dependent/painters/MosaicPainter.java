@@ -6,24 +6,13 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Stack;
 
-import javax.imageio.ImageIO;
-
-import dependent.com.dt.iTunesController.ITTrack;
 import dependent.com.dt.iTunesController.iTunes;
 import dependent.gui.Supervisor;
+import dependent.workers.MosartArtExtractor;
 
 public class MosaicPainter {
-
-	private static final String TEMP_IMG = "MOSART_TEMP" + File.separator
-			+ "MOSART_TMP_IMG";
-
-	private File tempFile;
 
 	private int imageWidth;
 	private int imageHeight;
@@ -50,23 +39,6 @@ public class MosaicPainter {
 		this.mosaicHeight = mosaicHeight;
 	}
 
-	private Image getScaledTrackArtwork(ITTrack track, int targetWidth,
-			int targetHeight) throws IOException {
-
-		Image artwork = null;
-		int artCount = track.getArtwork().getCount();
-
-		if (artCount != 0) {
-			track.getArtwork().getItem(artCount)
-					.SaveArtworkToFile(tempFile.getAbsolutePath());
-			BufferedImage image = ImageIO.read(tempFile);
-			artwork = image.getScaledInstance(targetWidth, targetHeight,
-					Image.SCALE_SMOOTH);
-		}
-
-		return artwork;
-	}
-
 	public BufferedImage createMosaic(iTunes itunes) throws IOException {
 
 		int tileWidth = imageWidth / mosaicWidth;
@@ -74,9 +46,6 @@ public class MosaicPainter {
 		int tileX = 0;
 		int tileY = 0;
 		int done = 0;
-
-		tempFile = new File(TEMP_IMG);
-		tempFile.getParentFile().mkdirs();
 
 		GraphicsEnvironment gEnv = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
@@ -86,62 +55,17 @@ public class MosaicPainter {
 				imageHeight);
 		Graphics2D g2d = mosaic.createGraphics();
 
-		Stack<ITTrack> randomList = new Stack<ITTrack>();
-
 		for (int i = 0; i < mosaicWidth; i++) {
 
 			tileY = 0;
 
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				Image image = null;
-
-				while (image == null) {
-					if (randomList.size() == 0) {
-						int trackCount = itunes.getLibraryPlaylist()
-								.getTracks().getCount();
-
-						ArrayList<String> collectedAlbums = new ArrayList<String>();
-
-						if (trackCount > 0) {
-							for (int t = 0; t < trackCount; t++) {
-
-								ITTrack track = itunes.getLibraryPlaylist()
-										.getTracks().getItem(t + 1);
-
-								String albumFullName = track.getArtist()
-										+ track.getAlbum();
-
-								if (!collectedAlbums.contains(albumFullName)) {
-									randomList.add(track);
-									collectedAlbums.add(albumFullName);
-								}
-
-								Supervisor.getInstance().reportProgress(
-										"Gathering tracks...",
-										((float) (t + 1) / (float) trackCount));
-							}
-
-							Collections.shuffle(randomList);
-						} else {
-							Supervisor.getInstance().reportCrash(
-									"No tracks in iTunes");
-							return null;
-						}
-					}
-
-					ITTrack currentTrack = randomList.pop();
-
-					image = getScaledTrackArtwork(currentTrack, tileWidth,
-							tileHeight);
-
-					if (image == null) {
-						Supervisor.getInstance().reportTask(
-								"Looking for a track with an artwork...");
-					}
-
-				}
-
+				MosartArtExtractor extractor = new MosartArtExtractor(itunes, mosaicHeight * mosaicWidth, tileWidth, tileHeight);
+				extractor.run();
+				
+				Image image = extractor.getScaledImage();
+				
 				g2d.drawImage(image, tileX, tileY, null);
 
 				tileY += tileHeight;
