@@ -10,13 +10,13 @@ import javax.swing.SwingWorker;
 import dependent.com.dt.iTunesController.iTunes;
 import dependent.painter.MosaicPainter;
 
-public class MosArt extends SwingWorker<File, String> {
+public class MosArtLauncher extends SwingWorker<File, String> {
 
 	private static iTunes itunes;
 	private MosaicPainter painter;
 	private String targetFilename;
 
-	public MosArt() {
+	public MosArtLauncher() {
 		painter = null;
 		targetFilename = null;
 	}

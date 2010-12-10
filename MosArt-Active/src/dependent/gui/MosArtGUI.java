@@ -34,7 +34,7 @@ public class MosArtGUI extends JFrame {
 	private static final int DEFAULT_IMG_DIM = 3000;
 	private static final int DEFAULT_TILE_COUNT = 30;
 
-	private MosArt worker;
+	private MosArtLauncher worker;
 
 	private JProgressBar mainProgressBar;
 	private JProgressBar subProgressBar;
@@ -238,7 +238,7 @@ public class MosArtGUI extends JFrame {
 
 	private void buildWorker() throws MosArtException {
 		if (worker == null) {
-			this.worker = new MosArt();
+			this.worker = new MosArtLauncher();
 		}
 
 		this.worker.setMosaicProperties(
