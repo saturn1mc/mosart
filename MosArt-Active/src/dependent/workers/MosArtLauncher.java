@@ -1,4 +1,4 @@
-package dependent.gui;
+package dependent.workers;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -8,7 +8,9 @@ import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
 
 import dependent.com.dt.iTunesController.iTunes;
-import dependent.painter.MosaicPainter;
+import dependent.gui.MosArtException;
+import dependent.gui.Supervisor;
+import dependent.painters.MosaicPainter;
 
 public class MosArtLauncher extends SwingWorker<File, String> {
 
