@@ -1,4 +1,4 @@
-package dependent.gui;
+package dependent;
 
 public class MosArtException extends Exception {
 

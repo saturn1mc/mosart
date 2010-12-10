@@ -7,8 +7,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.swing.SwingWorker;
 
+import dependent.MosArtException;
 import dependent.com.dt.iTunesController.iTunes;
-import dependent.gui.MosArtException;
 import dependent.gui.Supervisor;
 import dependent.painters.MosaicPainter;
 
