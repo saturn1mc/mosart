@@ -16,7 +16,6 @@ public class MosartArtExtractorThread extends Thread {
 	private static final String TEMP_IMG = "MOSART_TEMP" + File.separator
 			+ "MOSART_TMP_IMG";
 
-	private int id;
 	private MosartArtExtractor central;
 	
 	private ArrayList<ITTrack> tracks;
@@ -29,7 +28,6 @@ public class MosartArtExtractorThread extends Thread {
 			int targetWidth, int targetHeight) {
 		
 		this.central = central;
-		this.id = id;
 		this.tracks = tracks;
 
 		tempFile = new File(TEMP_IMG + "_" + id);
@@ -62,8 +60,8 @@ public class MosartArtExtractorThread extends Thread {
 			for (ITTrack track : tracks) {
 				Image scaledImage = extractScaledTrackArtwork(track,
 						targetWidth, targetHeight);
-				//TODO
 				
+				central.putScaledImage(scaledImage);
 			}
 		} catch (IOException e) {
 			Supervisor.getInstance().reportCrash(e.getMessage());

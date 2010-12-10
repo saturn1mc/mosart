@@ -89,18 +89,20 @@ public class MosartArtExtractor extends Thread {
 	public void run() {
 		int packetSize = (expectedImageCount / MAX_THREAD) + 1;
 		int threadCount = (expectedImageCount / packetSize);
-
+		int leftTodo = expectedImageCount;
+		
 		for (int i = 0; i < threadCount; i++) {
 
 			ArrayList<ITTrack> tracks = new ArrayList<ITTrack>();
 
-			for (int t = 0; t < packetSize; t++) {
+			for (int t = 0; t < Math.min(packetSize, leftTodo); t++) {
 
 				if (randomList.size() < 1) {
 					gatherTracks();
 				}
 
 				tracks.add(randomList.pop());
+				leftTodo--;
 			}
 
 			new MosartArtExtractorThread(this, i, tracks, targetWidth,
