@@ -21,6 +21,8 @@ import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
+import dependent.workers.MosArtLauncher;
+
 public class MosArtGUI extends JFrame {
 
 	/**
