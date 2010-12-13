@@ -101,12 +101,12 @@ public class MosaicPainter extends Thread {
 			tileX += tileWidth;
 		}
 
-		g2d.dispose();
-
 		Supervisor.getInstance().reportMainProgress(
 				"(3/3) Saving work to " + targetFilename, 1);
 		ImageIO.write(mosaic, "PNG", new File(targetFilename));
-
+		
+		g2d.dispose();
+		
 		Supervisor.getInstance().reportMainTaskFinished();
 	}
 
