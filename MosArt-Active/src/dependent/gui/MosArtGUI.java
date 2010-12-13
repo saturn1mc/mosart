@@ -78,7 +78,8 @@ public class MosArtGUI extends JFrame {
 		// Text field
 		targetField = new JTextField();
 		targetField.setText("D:\\Mes Documents\\Mosaic.png"); // On my PC
-		//targetField.setText("/Users/camille/Downloads/Mosaic.png"); // On my Mac
+		// targetField.setText("/Users/camille/Downloads/Mosaic.png"); // On my
+		// Mac
 		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
 				FIELD_HEIGHT));
 
@@ -241,16 +242,18 @@ public class MosArtGUI extends JFrame {
 
 	private void buildWorker() throws MosArtException {
 		if (worker == null) {
-			this.worker = new MosArtLauncher();
+			this.worker = new MosArtLauncher(targetField.getText(),
+					Integer.parseInt(imgWidthField.getText()),
+					Integer.parseInt(imgHeightField.getText()),
+					Integer.parseInt(tileWidthField.getText()),
+					Integer.parseInt(tileHeightField.getText()));
+		} else {
+			this.worker.setMosaicProperties(targetField.getText(),
+					Integer.parseInt(imgWidthField.getText()),
+					Integer.parseInt(imgHeightField.getText()),
+					Integer.parseInt(tileWidthField.getText()),
+					Integer.parseInt(tileHeightField.getText()));
 		}
-
-		this.worker.setMosaicProperties(
-				Integer.parseInt(imgWidthField.getText()),
-				Integer.parseInt(imgHeightField.getText()),
-				Integer.parseInt(tileWidthField.getText()),
-				Integer.parseInt(tileHeightField.getText()));
-
-		this.worker.setTargetFilename(targetField.getText());
 
 	}
 
