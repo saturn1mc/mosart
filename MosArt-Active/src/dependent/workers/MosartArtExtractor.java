@@ -13,7 +13,7 @@ public class MosartArtExtractor extends Thread {
 
 	private final int MAX_THREAD = 100;
 
-	private static Stack<Image> scaledImages;
+	private Stack<Image> scaledImages;
 	private Stack<ITTrack> randomList;
 
 	private iTunes itunes;
@@ -39,7 +39,7 @@ public class MosartArtExtractor extends Thread {
 	}
 
 	public synchronized Image getScaledImage() {
-		while (scaledImages.size() < 1) {
+		while (scaledImages.empty()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -65,11 +65,14 @@ public class MosartArtExtractor extends Thread {
 				ITTrack track = itunes.getLibraryPlaylist().getTracks()
 						.getItem(t + 1);
 
-				String albumName = track.getAlbum();
+				if (track.getArtwork().getCount() > 0) {
 
-				if (!collectedAlbums.contains(albumName)) {
-					randomList.add(track);
-					collectedAlbums.add(albumName);
+					String albumName = track.getAlbum();
+
+					if (!collectedAlbums.contains(albumName)) {
+						randomList.add(track);
+						collectedAlbums.add(albumName);
+					}
 				}
 
 				Supervisor.getInstance().reportProgress("Gathering tracks...",
@@ -84,30 +87,29 @@ public class MosartArtExtractor extends Thread {
 
 	@Override
 	public void run() {
-		int packetSize = (expectedImageCount / MAX_THREAD);
-		if (packetSize == 0) {
-			packetSize = 1;
-		}
-
-		int threadCount = (expectedImageCount / packetSize);
+		int packetSize = Math.max((expectedImageCount / MAX_THREAD), 1)
+				+ Math.min((expectedImageCount % MAX_THREAD), 1);
+		int threadCount = 0;
 		int leftTodo = expectedImageCount;
 
-		for (int i = 0; i < threadCount; i++) {
+		while (leftTodo > 0) {
 
 			ArrayList<ITTrack> tracks = new ArrayList<ITTrack>();
 
 			for (int t = 0; t < Math.min(packetSize, leftTodo); t++) {
 
-				if (randomList.size() < 1) {
+				if (randomList.empty()) {
 					gatherTracks();
 				}
 
 				tracks.add(randomList.pop());
-				leftTodo--;
 			}
 
-			new MosartArtExtractorThread(this, i, tracks, targetWidth,
-					targetHeight).start();
+			threadCount++;
+			new MosartArtExtractorThread(this, threadCount, tracks,
+					targetWidth, targetHeight).start();
+
+			leftTodo -= packetSize;
 		}
 	}
 }
