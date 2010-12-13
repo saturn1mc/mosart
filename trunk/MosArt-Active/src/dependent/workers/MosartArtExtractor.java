@@ -11,7 +11,7 @@ import dependent.gui.Supervisor;
 
 public class MosartArtExtractor extends Thread {
 
-	private final int MAX_THREAD = 100;
+	private final int MAX_THREAD = 50;
 
 	private Stack<Image> scaledImages;
 	private Stack<ITTrack> randomList;
