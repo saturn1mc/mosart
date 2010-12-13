@@ -11,7 +11,7 @@ import dependent.gui.Supervisor;
 
 public class MosartArtExtractor extends Thread {
 
-	private final int MAX_THREAD = 30;
+	private final int MAX_THREAD = 100;
 
 	private static Stack<Image> scaledImages;
 	private Stack<ITTrack> randomList;
@@ -55,33 +55,30 @@ public class MosartArtExtractor extends Thread {
 	}
 
 	private void gatherTracks() {
-		if (randomList.size() == 0) {
-			int trackCount = itunes.getLibraryPlaylist().getTracks().getCount();
+		int trackCount = itunes.getLibraryPlaylist().getTracks().getCount();
 
-			ArrayList<String> collectedAlbums = new ArrayList<String>();
+		ArrayList<String> collectedAlbums = new ArrayList<String>();
 
-			if (trackCount > 0) {
-				for (int t = 0; t < trackCount; t++) {
+		if (trackCount > 0) {
+			for (int t = 0; t < trackCount; t++) {
 
-					ITTrack track = itunes.getLibraryPlaylist().getTracks()
-							.getItem(t + 1);
+				ITTrack track = itunes.getLibraryPlaylist().getTracks()
+						.getItem(t + 1);
 
-					String albumFullName = track.getArtist() + track.getAlbum();
+				String albumName = track.getAlbum();
 
-					if (!collectedAlbums.contains(albumFullName)) {
-						randomList.add(track);
-						collectedAlbums.add(albumFullName);
-					}
-
-					Supervisor.getInstance().reportProgress(
-							"Gathering tracks...",
-							((float) (t + 1) / (float) trackCount));
+				if (!collectedAlbums.contains(albumName)) {
+					randomList.add(track);
+					collectedAlbums.add(albumName);
 				}
 
-				Collections.shuffle(randomList);
-			} else {
-				Supervisor.getInstance().reportCrash("No tracks in iTunes");
+				Supervisor.getInstance().reportProgress("Gathering tracks...",
+						((float) (t + 1) / (float) trackCount));
 			}
+
+			Collections.shuffle(randomList);
+		} else {
+			Supervisor.getInstance().reportCrash("No tracks in iTunes");
 		}
 	}
 
