@@ -22,6 +22,7 @@ import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import dependent.MosArtException;
+import dependent.com.dt.iTunesController.iTunes;
 import dependent.workers.MosArtLauncher;
 
 public class MosArtGUI extends JFrame {
@@ -37,6 +38,11 @@ public class MosArtGUI extends JFrame {
 	private static final int DEFAULT_IMG_DIM = 3000;
 	private static final int DEFAULT_TILE_COUNT = 30;
 
+	private static enum DimInputs {
+		IMG_HEIGHT, IMG_WIDTH, TILE_HEIGHT, TILE_WIDTH
+	};
+	
+	private iTunes itunes;
 	private MosArtLauncher worker;
 
 	private JProgressBar mainProgressBar;
@@ -49,12 +55,25 @@ public class MosArtGUI extends JFrame {
 	private JTextField tileWidthField;
 	private JTextField tileHeightField;
 
-	private enum DimInputs {
-		IMG_HEIGHT, IMG_WIDTH, TILE_HEIGHT, TILE_WIDTH
-	};
-
 	private JButton launchButton;
 
+	private MosArtGUI() {
+
+		super("MosArt");
+
+		buildLaunchButton();
+		buildProgressBars();
+
+		buildCenterPanel();
+		buildSouthPanel();
+		buildEastPanel();
+
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.pack();
+		this.setAlwaysOnTop(true);
+		this.setLocationRelativeTo(null);
+	}
+	
 	private JPanel buildTargetPanel() {
 		JButton targetButton = new JButton("...");
 
@@ -241,6 +260,9 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void buildWorker() throws MosArtException {
+		
+		//TODO
+		
 		if (worker == null) {
 			this.worker = new MosArtLauncher(targetField.getText(),
 					Integer.parseInt(imgWidthField.getText()),
@@ -378,22 +400,15 @@ public class MosArtGUI extends JFrame {
 	public synchronized String getTarget() {
 		return targetField.getText();
 	}
-
-	private MosArtGUI() {
-
-		super("MosArt");
-
-		buildLaunchButton();
-		buildProgressBars();
-
-		buildCenterPanel();
-		buildSouthPanel();
-		buildEastPanel();
-
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		this.pack();
-		this.setAlwaysOnTop(true);
-		this.setLocationRelativeTo(null);
+	
+	@Override
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+		
+		if(b == true && itunes == null){
+			Supervisor.getInstance().reportTask("Connecting to iTunes");
+			itunes = new iTunes();
+		}
 	}
 
 	public static void main(String[] args) {

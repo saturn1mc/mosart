@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Stack;
 
 import dependent.com.dt.iTunesController.ITTrack;
-import dependent.com.dt.iTunesController.iTunes;
 import dependent.gui.Supervisor;
 
 public class MosartArtExtractor extends Thread {
@@ -16,18 +15,18 @@ public class MosartArtExtractor extends Thread {
 	private Stack<Image> scaledImages;
 	private Stack<ITTrack> randomList;
 
-	private iTunes itunes;
+	private ArrayList<ITTrack> selectedTracks;
 	private int expectedImageCount;
 	private int targetWidth;
 	private int targetHeight;
 
-	public MosartArtExtractor(iTunes itunes, int expectedImageCount,
+	public MosartArtExtractor(ArrayList<ITTrack> selectedTracks, int expectedImageCount,
 			int targetWidth, int targetHeight) {
 
 		scaledImages = new Stack<Image>();
 		randomList = new Stack<ITTrack>();
 
-		this.itunes = itunes;
+		this.selectedTracks = selectedTracks;
 		this.expectedImageCount = expectedImageCount;
 		this.targetWidth = targetWidth;
 		this.targetHeight = targetHeight;
@@ -54,17 +53,16 @@ public class MosartArtExtractor extends Thread {
 		return scaledImage;
 	}
 
-	private void gatherTracks() {
-		int trackCount = itunes.getLibraryPlaylist().getTracks().getCount();
+	private int gatherTracks() {
+		int trackCount = selectedTracks.size();
 
 		ArrayList<String> collectedAlbums = new ArrayList<String>();
 
 		if (trackCount > 0) {
-			for (int t = 0; t < trackCount; t++) {
+			for (ITTrack track : selectedTracks) {
 
-				ITTrack track = itunes.getLibraryPlaylist().getTracks()
-						.getItem(t + 1);
-
+				int t = 0;
+				
 				if (track.getArtwork().getCount() > 0) {
 
 					String albumName = track.getAlbum();
@@ -81,8 +79,10 @@ public class MosartArtExtractor extends Thread {
 
 			Collections.shuffle(randomList);
 		} else {
-			Supervisor.getInstance().reportCrash("No tracks in iTunes");
+			Supervisor.getInstance().reportCrash("No tracks selected");
 		}
+		
+		return randomList.size();
 	}
 
 	@Override
@@ -99,7 +99,9 @@ public class MosartArtExtractor extends Thread {
 			for (int t = 0; t < Math.min(packetSize, leftTodo); t++) {
 
 				if (randomList.empty()) {
-					gatherTracks();
+					if(gatherTracks() == 0){
+						return;
+					}
 				}
 
 				tracks.add(randomList.pop());

@@ -31,7 +31,6 @@ public class Supervisor {
 			new SwingWorker<Void, Void>() {
 				@Override
 				protected Void doInBackground() throws Exception {
-					gui.getMainProgressBar().setString(null);
 					gui.getMainProgressBar().setIndeterminate(false);
 					gui.getMainProgressBar().setValue(
 							gui.getMainProgressBar().getMaximum());

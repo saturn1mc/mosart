@@ -8,17 +8,18 @@ import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
 import dependent.MosArtException;
-import dependent.com.dt.iTunesController.iTunes;
+import dependent.com.dt.iTunesController.ITTrack;
 import dependent.gui.Supervisor;
 import dependent.workers.MosartArtExtractor;
 
 public class MosaicPainter extends Thread {
 
-	private iTunes itunes;
+	private ArrayList<ITTrack> selectedTracks;
 
 	private int imageWidth;
 	private int imageHeight;
@@ -29,17 +30,24 @@ public class MosaicPainter extends Thread {
 	private BufferedImage mosaic;
 	private String targetFilename;
 
-	public MosaicPainter(iTunes itunes, String targetFilename, int imageWidth,
-			int imageHeight, int mosaicWidth, int mosaicHeight)
-			throws MosArtException {
+	public MosaicPainter(ArrayList<ITTrack> selectedTracks,
+			String targetFilename, int imageWidth, int imageHeight,
+			int mosaicWidth, int mosaicHeight) throws MosArtException {
 
-		setProperties(itunes, targetFilename, imageWidth, imageHeight,
+		setProperties(selectedTracks, targetFilename, imageWidth, imageHeight,
 				mosaicWidth, mosaicHeight);
 	}
 
-	public void setProperties(iTunes itunes, String targetFilename,
-			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
-			throws MosArtException {
+	public void setProperties(ArrayList<ITTrack> selectedTracks,
+			String targetFilename, int imageWidth, int imageHeight,
+			int mosaicWidth, int mosaicHeight) throws MosArtException {
+
+		this.selectedTracks = selectedTracks;
+
+		this.imageWidth = imageWidth;
+		this.imageHeight = imageHeight;
+		this.mosaicWidth = mosaicWidth;
+		this.mosaicHeight = mosaicHeight;
 
 		File targetFile = new File(targetFilename);
 
@@ -50,13 +58,6 @@ public class MosaicPainter extends Thread {
 		}
 
 		this.targetFilename = targetFilename;
-
-		this.itunes = itunes;
-
-		this.imageWidth = imageWidth;
-		this.imageHeight = imageHeight;
-		this.mosaicWidth = mosaicWidth;
-		this.mosaicHeight = mosaicHeight;
 	}
 
 	private void createMosaic() throws IOException {
@@ -67,7 +68,7 @@ public class MosaicPainter extends Thread {
 		int tileY = 0;
 		int done = 0;
 
-		MosartArtExtractor extractor = new MosartArtExtractor(itunes,
+		MosartArtExtractor extractor = new MosartArtExtractor(selectedTracks,
 				mosaicHeight * mosaicWidth, tileWidth, tileHeight);
 		extractor.start();
 
@@ -102,11 +103,11 @@ public class MosaicPainter extends Thread {
 		}
 
 		Supervisor.getInstance().reportMainProgress(
-				"(3/3) Saving work to " + targetFilename, 1);
+				"Saving work to " + targetFilename, 0.66f);
 		ImageIO.write(mosaic, "PNG", new File(targetFilename));
-		
+
 		g2d.dispose();
-		
+
 		Supervisor.getInstance().reportMainTaskFinished();
 	}
 
