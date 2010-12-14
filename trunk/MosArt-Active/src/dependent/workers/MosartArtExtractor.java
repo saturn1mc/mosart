@@ -20,8 +20,8 @@ public class MosartArtExtractor extends Thread {
 	private int targetWidth;
 	private int targetHeight;
 
-	public MosartArtExtractor(ArrayList<ITTrack> selectedTracks, int expectedImageCount,
-			int targetWidth, int targetHeight) {
+	public MosartArtExtractor(ArrayList<ITTrack> selectedTracks,
+			int expectedImageCount, int targetWidth, int targetHeight) {
 
 		scaledImages = new Stack<Image>();
 		randomList = new Stack<ITTrack>();
@@ -53,7 +53,7 @@ public class MosartArtExtractor extends Thread {
 		return scaledImage;
 	}
 
-	private int gatherTracks() {
+	private int shuffleTracks() {
 		int trackCount = selectedTracks.size();
 
 		ArrayList<String> collectedAlbums = new ArrayList<String>();
@@ -62,7 +62,7 @@ public class MosartArtExtractor extends Thread {
 			for (ITTrack track : selectedTracks) {
 
 				int t = 0;
-				
+
 				if (track.getArtwork().getCount() > 0) {
 
 					String albumName = track.getAlbum();
@@ -73,7 +73,7 @@ public class MosartArtExtractor extends Thread {
 					}
 				}
 
-				Supervisor.getInstance().reportProgress("Gathering tracks...",
+				Supervisor.getInstance().reportProgress("Shuffling tracks...",
 						((float) (t + 1) / (float) trackCount));
 			}
 
@@ -81,7 +81,7 @@ public class MosartArtExtractor extends Thread {
 		} else {
 			Supervisor.getInstance().reportCrash("No tracks selected");
 		}
-		
+
 		return randomList.size();
 	}
 
@@ -99,7 +99,7 @@ public class MosartArtExtractor extends Thread {
 			for (int t = 0; t < Math.min(packetSize, leftTodo); t++) {
 
 				if (randomList.empty()) {
-					if(gatherTracks() == 0){
+					if (shuffleTracks() == 0) {
 						return;
 					}
 				}

@@ -7,6 +7,7 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -18,10 +19,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JTextField;
+import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 
 import dependent.MosArtException;
+import dependent.com.dt.iTunesController.ITTrack;
 import dependent.com.dt.iTunesController.iTunes;
 import dependent.workers.MosArtLauncher;
 
@@ -41,8 +44,9 @@ public class MosArtGUI extends JFrame {
 	private static enum DimInputs {
 		IMG_HEIGHT, IMG_WIDTH, TILE_HEIGHT, TILE_WIDTH
 	};
-	
+
 	private iTunes itunes;
+	private ArrayList<ITTrack> selectedTracks;
 	private MosArtLauncher worker;
 
 	private JProgressBar mainProgressBar;
@@ -73,7 +77,13 @@ public class MosArtGUI extends JFrame {
 		this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(null);
 	}
-	
+
+	private JPanel buildTreePanel() {
+		// TODO
+
+		return new JPanel();
+	}
+
 	private JPanel buildTargetPanel() {
 		JButton targetButton = new JButton("...");
 
@@ -122,11 +132,10 @@ public class MosArtGUI extends JFrame {
 				if (checking()) {
 
 					try {
-						buildWorker();
 						launchButton.setEnabled(false);
 						MosArtGUI.this.setCursor(Cursor
 								.getPredefinedCursor(Cursor.WAIT_CURSOR));
-						worker.execute();
+						launchWorker();
 					} catch (MosArtException me) {
 						JOptionPane.showMessageDialog(MosArtGUI.this,
 								me.getMessage(), "Can't start",
@@ -226,9 +235,22 @@ public class MosArtGUI extends JFrame {
 
 		centerPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Paths", TitledBorder.LEFT, TitledBorder.TOP));
+				"Target", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(centerPanel, BorderLayout.CENTER);
+	}
+
+	private void buildWestPanel() {
+		JPanel westPanel = new JPanel();
+		westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.PAGE_AXIS));
+
+		westPanel.add(buildTreePanel());
+
+		westPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Selection", TitledBorder.LEFT, TitledBorder.TOP));
+
+		this.getContentPane().add(westPanel, BorderLayout.CENTER);
 	}
 
 	private void buildSouthPanel() {
@@ -259,24 +281,53 @@ public class MosArtGUI extends JFrame {
 		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
 
-	private void buildWorker() throws MosArtException {
-		
-		//TODO
-		
-		if (worker == null) {
-			this.worker = new MosArtLauncher(targetField.getText(),
-					Integer.parseInt(imgWidthField.getText()),
-					Integer.parseInt(imgHeightField.getText()),
-					Integer.parseInt(tileWidthField.getText()),
-					Integer.parseInt(tileHeightField.getText()));
-		} else {
-			this.worker.setMosaicProperties(targetField.getText(),
-					Integer.parseInt(imgWidthField.getText()),
-					Integer.parseInt(imgHeightField.getText()),
-					Integer.parseInt(tileWidthField.getText()),
-					Integer.parseInt(tileHeightField.getText()));
-		}
+	private void launchWorker() throws MosArtException {
 
+		if (selectedTracks == null) {
+			new SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					selectedTracks = new ArrayList<ITTrack>();
+
+					int trackCount = itunes.getLibraryPlaylist().getTracks()
+							.getCount();
+
+					for (int t = 0; t < trackCount; t++) {
+						ITTrack track = itunes.getLibraryPlaylist().getTracks()
+								.getItem(t + 1);
+
+						if (track.getArtwork().getCount() > 0) {
+							selectedTracks.add(track);
+						}
+
+						Supervisor.getInstance().reportProgress(
+								"Gathering tracks",
+								((float) (t + 1) / (float) trackCount));
+					}
+
+					if (worker == null) {
+						worker = new MosArtLauncher(selectedTracks,
+								targetField.getText(),
+								Integer.parseInt(imgWidthField.getText()),
+								Integer.parseInt(imgHeightField.getText()),
+								Integer.parseInt(tileWidthField.getText()),
+								Integer.parseInt(tileHeightField.getText()));
+					} else {
+						worker.setMosaicProperties(selectedTracks,
+								targetField.getText(),
+								Integer.parseInt(imgWidthField.getText()),
+								Integer.parseInt(imgHeightField.getText()),
+								Integer.parseInt(tileWidthField.getText()),
+								Integer.parseInt(tileHeightField.getText()));
+					}
+
+					worker.execute();
+
+					return null;
+				}
+
+			}.execute();
+		}
 	}
 
 	private boolean checking() {
@@ -400,14 +451,22 @@ public class MosArtGUI extends JFrame {
 	public synchronized String getTarget() {
 		return targetField.getText();
 	}
-	
+
 	@Override
 	public void setVisible(boolean b) {
 		super.setVisible(b);
-		
-		if(b == true && itunes == null){
-			Supervisor.getInstance().reportTask("Connecting to iTunes");
-			itunes = new iTunes();
+
+		if (b == true && itunes == null) {
+			new SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					Supervisor.getInstance().reportTask("Connecting to iTunes");
+					launchButton.setEnabled(false);
+					itunes = new iTunes();
+					Supervisor.getInstance().reset();
+					return null;
+				}
+			}.execute();
 		}
 	}
 

@@ -26,6 +26,22 @@ public class Supervisor {
 		this.gui = gui;
 	}
 
+	public synchronized void reset() {
+		if (gui != null) {
+			gui.getMainProgressBar().setIndeterminate(false);
+			gui.getMainProgressBar().setString("Ready!");
+			gui.getMainProgressBar().setValue(
+					gui.getMainProgressBar().getMinimum());
+
+			gui.getSubProgressBar().setIndeterminate(false);
+			gui.getSubProgressBar().setString("Ready!");
+			gui.getSubProgressBar().setValue(
+					gui.getSubProgressBar().getMinimum());
+
+			gui.getLaunchButton().setEnabled(true);
+		}
+	}
+
 	public synchronized void reportMainTaskFinished() {
 		if (gui != null) {
 			new SwingWorker<Void, Void>() {
