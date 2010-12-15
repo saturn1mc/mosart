@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -22,6 +23,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.tree.DefaultMutableTreeNode;
 
 import dependent.MosArtException;
 import dependent.com.dt.iTunesController.ITTrack;
@@ -47,6 +49,14 @@ public class MosArtGUI extends JFrame {
 
 	private iTunes itunes;
 	private ArrayList<ITTrack> selectedTracks;
+	
+	private HashMap<String, ArrayList<DefaultMutableTreeNode>> nodesByGenre;
+	private HashMap<String, ArrayList<DefaultMutableTreeNode>> nodesByArtist;
+	private HashMap<String, ArrayList<DefaultMutableTreeNode>> nodesByAlbum;
+	private HashMap<ITTrack, ArrayList<DefaultMutableTreeNode>> nodesByTracks;
+	
+	private HashMap<DefaultMutableTreeNode, ArrayList<ITTrack>> tracksByNode;
+	
 	private MosArtLauncher worker;
 
 	private JProgressBar mainProgressBar;
@@ -70,6 +80,7 @@ public class MosArtGUI extends JFrame {
 
 		buildCenterPanel();
 		buildSouthPanel();
+		buildWestPanel();
 		buildEastPanel();
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,9 +90,35 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private JPanel buildTreePanel() {
-		// TODO
+		
+		
+		JPanel treePanel = new JPanel();
+		
+		launchButton.setEnabled(false);
 
-		return new JPanel();
+		int trackCount = itunes.getLibraryPlaylist().getTracks()
+				.getCount();
+
+		for (int t = 0; t < trackCount; t++) {
+			Supervisor.getInstance().reportProgress(
+					"Analysing library",
+					((float) (t + 1) / (float) trackCount));
+			
+			ITTrack track = itunes.getLibraryPlaylist().getTracks()
+					.getItem(t + 1);
+			
+			if (track.getArtwork().getCount() > 0) {
+				analyseTrack(track);
+			}
+		}
+		
+		launchButton.setEnabled(true);
+		
+		return treePanel;
+	}
+	
+	private void analyseTrack(ITTrack track){
+		
 	}
 
 	private JPanel buildTargetPanel() {
@@ -250,7 +287,7 @@ public class MosArtGUI extends JFrame {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Selection", TitledBorder.LEFT, TitledBorder.TOP));
 
-		this.getContentPane().add(westPanel, BorderLayout.CENTER);
+		this.getContentPane().add(westPanel, BorderLayout.WEST);
 	}
 
 	private void buildSouthPanel() {
@@ -283,10 +320,10 @@ public class MosArtGUI extends JFrame {
 
 	private void launchWorker() throws MosArtException {
 
-		if (selectedTracks == null) {
-			new SwingWorker<Void, Void>() {
-				@Override
-				protected Void doInBackground() throws Exception {
+		new SwingWorker<Void, Void>() {
+			@Override
+			protected Void doInBackground() throws Exception {
+				if (selectedTracks == null) {
 					selectedTracks = new ArrayList<ITTrack>();
 
 					int trackCount = itunes.getLibraryPlaylist().getTracks()
@@ -304,30 +341,30 @@ public class MosArtGUI extends JFrame {
 								"Gathering tracks",
 								((float) (t + 1) / (float) trackCount));
 					}
-
-					if (worker == null) {
-						worker = new MosArtLauncher(selectedTracks,
-								targetField.getText(),
-								Integer.parseInt(imgWidthField.getText()),
-								Integer.parseInt(imgHeightField.getText()),
-								Integer.parseInt(tileWidthField.getText()),
-								Integer.parseInt(tileHeightField.getText()));
-					} else {
-						worker.setMosaicProperties(selectedTracks,
-								targetField.getText(),
-								Integer.parseInt(imgWidthField.getText()),
-								Integer.parseInt(imgHeightField.getText()),
-								Integer.parseInt(tileWidthField.getText()),
-								Integer.parseInt(tileHeightField.getText()));
-					}
-
-					worker.execute();
-
-					return null;
 				}
 
-			}.execute();
-		}
+				if (worker == null) {
+					worker = new MosArtLauncher(selectedTracks,
+							targetField.getText(),
+							Integer.parseInt(imgWidthField.getText()),
+							Integer.parseInt(imgHeightField.getText()),
+							Integer.parseInt(tileWidthField.getText()),
+							Integer.parseInt(tileHeightField.getText()));
+				} else {
+					worker.setMosaicProperties(selectedTracks,
+							targetField.getText(),
+							Integer.parseInt(imgWidthField.getText()),
+							Integer.parseInt(imgHeightField.getText()),
+							Integer.parseInt(tileWidthField.getText()),
+							Integer.parseInt(tileHeightField.getText()));
+				}
+
+				worker.execute();
+
+				return null;
+			}
+
+		}.execute();
 	}
 
 	private boolean checking() {
