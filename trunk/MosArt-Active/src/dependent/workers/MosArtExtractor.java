@@ -56,24 +56,17 @@ public class MosArtExtractor extends Thread {
 	private int shuffleTracks() {
 		int trackCount = selectedTracks.size();
 
-		ArrayList<String> collectedAlbums = new ArrayList<String>();
-
 		if (trackCount > 0) {
 			for (ITTrack track : selectedTracks) {
 
 				int t = 0;
 
 				if (track.getArtwork().getCount() > 0) {
-
-					String albumName = track.getAlbum();
-
-					if (!collectedAlbums.contains(albumName)) {
-						randomList.add(track);
-						collectedAlbums.add(albumName);
-					}
+					randomList.add(track);
 				}
 
-				MosArtSupervisor.getInstance().reportProgress("Shuffling tracks...",
+				MosArtSupervisor.getInstance().reportProgress(
+						"Shuffling tracks...",
 						((float) (t + 1) / (float) trackCount));
 			}
 
@@ -108,8 +101,8 @@ public class MosArtExtractor extends Thread {
 			}
 
 			threadCount++;
-			new MosArtExtractorThread(this, threadCount, tracks,
-					targetWidth, targetHeight).start();
+			new MosArtExtractorThread(this, threadCount, tracks, targetWidth,
+					targetHeight).start();
 
 			leftTodo -= packetSize;
 		}

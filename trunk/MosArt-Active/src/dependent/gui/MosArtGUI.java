@@ -7,8 +7,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -23,7 +21,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.tree.DefaultMutableTreeNode;
 
 import dependent.MosArtException;
 import dependent.MosArtSupervisor;
@@ -49,7 +46,6 @@ public class MosArtGUI extends JFrame {
 	};
 
 	private iTunes itunes;
-	private ArrayList<ITTrack> selectedTracks;
 	private MosArtLibraryMirror libraryMirror;
 	
 	private MosArtLauncher worker;
@@ -86,6 +82,7 @@ public class MosArtGUI extends JFrame {
 
 	private JPanel buildTreePanel() {
 		
+		libraryMirror = new MosArtLibraryMirror();
 		
 		JPanel treePanel = new JPanel();
 		
@@ -103,17 +100,13 @@ public class MosArtGUI extends JFrame {
 					.getItem(t + 1);
 			
 			if (track.getArtwork().getCount() > 0) {
-				analyseTrack(track);
+				libraryMirror.addTrack(track);
 			}
 		}
 		
 		launchButton.setEnabled(true);
 		
 		return treePanel;
-	}
-	
-	private void analyseTrack(ITTrack track){
-		
 	}
 
 	private JPanel buildTargetPanel() {
@@ -318,35 +311,15 @@ public class MosArtGUI extends JFrame {
 		new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
-				if (selectedTracks == null) {
-					selectedTracks = new ArrayList<ITTrack>();
-
-					int trackCount = itunes.getLibraryPlaylist().getTracks()
-							.getCount();
-
-					for (int t = 0; t < trackCount; t++) {
-						ITTrack track = itunes.getLibraryPlaylist().getTracks()
-								.getItem(t + 1);
-
-						if (track.getArtwork().getCount() > 0) {
-							selectedTracks.add(track);
-						}
-
-						MosArtSupervisor.getInstance().reportProgress(
-								"Gathering tracks",
-								((float) (t + 1) / (float) trackCount));
-					}
-				}
-
 				if (worker == null) {
-					worker = new MosArtLauncher(selectedTracks,
+					worker = new MosArtLauncher(libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
 							Integer.parseInt(imgHeightField.getText()),
 							Integer.parseInt(tileWidthField.getText()),
 							Integer.parseInt(tileHeightField.getText()));
 				} else {
-					worker.setMosaicProperties(selectedTracks,
+					worker.setMosaicProperties(libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
 							Integer.parseInt(imgHeightField.getText()),
