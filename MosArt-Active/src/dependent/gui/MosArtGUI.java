@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -89,6 +90,11 @@ public class MosArtGUI extends JFrame {
 		int trackCount = itunes.getLibraryPlaylist().getTracks().getCount();
 
 		for (int t = 0; t < trackCount; t++) {
+			
+			if(t == 2063){
+				System.out.println("here!");
+			}
+			
 			MosArtSupervisor.getInstance().reportProgress("Analysing library",
 					((float) (t + 1) / (float) trackCount));
 
@@ -265,7 +271,7 @@ public class MosArtGUI extends JFrame {
 	private void buildWestPanel() {
 
 		JPanel westPanel = new JPanel();
-		westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.PAGE_AXIS));
+		westPanel.setLayout(new FlowLayout());
 
 		JScrollPane treeView = new JScrollPane();
 		buildTreePanel(treeView);
@@ -475,7 +481,8 @@ public class MosArtGUI extends JFrame {
 					MosArtSupervisor.getInstance().reset();
 					
 					buildWestPanel();
-					repaint();
+					MosArtGUI.this.pack();
+					MosArtGUI.this.repaint();
 					
 					return null;
 				}

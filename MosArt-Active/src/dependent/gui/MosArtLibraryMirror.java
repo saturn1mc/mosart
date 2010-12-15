@@ -63,7 +63,7 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 			rootNode.add(genreNode);
 
 			// Handling artist node
-			DefaultMutableTreeNode artistNode = nodesByGenre.get(artist);
+			DefaultMutableTreeNode artistNode = nodesByArtist.get(artist);
 
 			if (artistNode == null) {
 				artistNode = new DefaultMutableTreeNode(artist);
