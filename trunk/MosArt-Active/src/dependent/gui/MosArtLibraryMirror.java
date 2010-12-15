@@ -17,6 +17,7 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 	private DefaultMutableTreeNode rootNode;
 	private JTree libraryTree;
+	private boolean enabled;
 
 	private HashMap<String, DefaultMutableTreeNode> nodesByGenre;
 	private HashMap<String, DefaultMutableTreeNode> nodesByArtist;
@@ -41,6 +42,8 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 		nodesTracks = new HashMap<DefaultMutableTreeNode, ArrayList<ITTrack>>();
 
 		selectedTracks = new ArrayList<ITTrack>();
+
+		enabled = true;
 	}
 
 	public synchronized void addTrack(ITTrack track) {
@@ -126,30 +129,39 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 		return selectedTracks;
 	}
-	
+
 	public synchronized JTree getLibraryTree() {
 		return libraryTree;
 	}
 
+	public synchronized boolean isEnabled() {
+		return enabled;
+	}
+
+	public synchronized void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
+		if (isEnabled()) {
+			HashSet<ITTrack> distinctTracks = new HashSet<ITTrack>();
 
-		HashSet<ITTrack> distinctTracks = new HashSet<ITTrack>();
+			TreePath[] selection = libraryTree.getSelectionPaths();
 
-		TreePath[] selection = libraryTree.getSelectionPaths();
+			for (TreePath tp : selection) {
+				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp
+						.getLastPathComponent();
 
-		for (TreePath tp : selection) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp
-					.getLastPathComponent();
-
-			if (node.isLeaf()) {
-				distinctTracks.addAll(nodesTracks.get(node));
-			} else {
-				distinctTracks.addAll(nodesTracks.get(node.getLastChild()));
+				if (node.isLeaf()) {
+					distinctTracks.addAll(nodesTracks.get(node));
+				} else {
+					distinctTracks.addAll(nodesTracks.get(node.getLastChild()));
+				}
 			}
-		}
 
-		selectedTracks.clear();
-		selectedTracks.addAll(distinctTracks);
+			selectedTracks.clear();
+			selectedTracks.addAll(distinctTracks);
+		}
 	}
 }
