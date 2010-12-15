@@ -28,6 +28,12 @@ public class MosArtSupervisor {
 		this.gui = gui;
 	}
 
+	public synchronized void lock() {
+		if(gui != null){
+			gui.getLaunchButton().setEnabled(false);
+		}
+	}
+	
 	public synchronized void reset() {
 		if (gui != null) {
 			gui.getMainProgressBar().setIndeterminate(false);

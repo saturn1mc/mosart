@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingWorker;
 import javax.swing.border.EtchedBorder;
@@ -47,7 +48,7 @@ public class MosArtGUI extends JFrame {
 
 	private iTunes itunes;
 	private MosArtLibraryMirror libraryMirror;
-	
+
 	private MosArtLauncher worker;
 
 	private JProgressBar mainProgressBar;
@@ -71,7 +72,6 @@ public class MosArtGUI extends JFrame {
 
 		buildCenterPanel();
 		buildSouthPanel();
-		buildWestPanel();
 		buildEastPanel();
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,33 +80,29 @@ public class MosArtGUI extends JFrame {
 		this.setLocationRelativeTo(null);
 	}
 
-	private JPanel buildTreePanel() {
-		
+	private void buildTreePanel(JScrollPane treeView) {
+
 		libraryMirror = new MosArtLibraryMirror();
 		
-		JPanel treePanel = new JPanel();
-		
-		launchButton.setEnabled(false);
+		MosArtSupervisor.getInstance().lock();
 
-		int trackCount = itunes.getLibraryPlaylist().getTracks()
-				.getCount();
+		int trackCount = itunes.getLibraryPlaylist().getTracks().getCount();
 
 		for (int t = 0; t < trackCount; t++) {
-			MosArtSupervisor.getInstance().reportProgress(
-					"Analysing library",
+			MosArtSupervisor.getInstance().reportProgress("Analysing library",
 					((float) (t + 1) / (float) trackCount));
-			
+
 			ITTrack track = itunes.getLibraryPlaylist().getTracks()
 					.getItem(t + 1);
-			
+
 			if (track.getArtwork().getCount() > 0) {
 				libraryMirror.addTrack(track);
 			}
 		}
 		
-		launchButton.setEnabled(true);
+		treeView.setViewportView(libraryMirror.getLibraryTree());
 		
-		return treePanel;
+		MosArtSupervisor.getInstance().reset();
 	}
 
 	private JPanel buildTargetPanel() {
@@ -157,7 +153,8 @@ public class MosArtGUI extends JFrame {
 				if (checking()) {
 
 					try {
-						launchButton.setEnabled(false);
+						MosArtSupervisor.getInstance().lock();
+						
 						MosArtGUI.this.setCursor(Cursor
 								.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						launchWorker();
@@ -266,10 +263,13 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void buildWestPanel() {
+
 		JPanel westPanel = new JPanel();
 		westPanel.setLayout(new BoxLayout(westPanel, BoxLayout.PAGE_AXIS));
 
-		westPanel.add(buildTreePanel());
+		JScrollPane treeView = new JScrollPane();
+		buildTreePanel(treeView);
+		westPanel.add(treeView);
 
 		westPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
@@ -312,14 +312,16 @@ public class MosArtGUI extends JFrame {
 			@Override
 			protected Void doInBackground() throws Exception {
 				if (worker == null) {
-					worker = new MosArtLauncher(libraryMirror.getSelectedTracks(),
+					worker = new MosArtLauncher(
+							libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
 							Integer.parseInt(imgHeightField.getText()),
 							Integer.parseInt(tileWidthField.getText()),
 							Integer.parseInt(tileHeightField.getText()));
 				} else {
-					worker.setMosaicProperties(libraryMirror.getSelectedTracks(),
+					worker.setMosaicProperties(
+							libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
 							Integer.parseInt(imgHeightField.getText()),
@@ -465,10 +467,16 @@ public class MosArtGUI extends JFrame {
 			new SwingWorker<Void, Void>() {
 				@Override
 				protected Void doInBackground() throws Exception {
-					MosArtSupervisor.getInstance().reportTask("Connecting to iTunes");
-					launchButton.setEnabled(false);
+					MosArtSupervisor.getInstance().reportTask(
+							"Connecting to iTunes");
+					
+					MosArtSupervisor.getInstance().lock();
 					itunes = new iTunes();
 					MosArtSupervisor.getInstance().reset();
+					
+					buildWestPanel();
+					repaint();
+					
 					return null;
 				}
 			}.execute();
