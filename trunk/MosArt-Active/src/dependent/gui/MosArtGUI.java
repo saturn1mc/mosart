@@ -26,6 +26,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import dependent.MosArtException;
+import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.com.dt.iTunesController.iTunes;
 import dependent.workers.MosArtLauncher;
@@ -49,13 +50,7 @@ public class MosArtGUI extends JFrame {
 
 	private iTunes itunes;
 	private ArrayList<ITTrack> selectedTracks;
-	
-	private HashMap<String, ArrayList<DefaultMutableTreeNode>> nodesByGenre;
-	private HashMap<String, ArrayList<DefaultMutableTreeNode>> nodesByArtist;
-	private HashMap<String, ArrayList<DefaultMutableTreeNode>> nodesByAlbum;
-	private HashMap<ITTrack, ArrayList<DefaultMutableTreeNode>> nodesByTracks;
-	
-	private HashMap<DefaultMutableTreeNode, ArrayList<ITTrack>> tracksByNode;
+	private MosArtLibraryMirror libraryMirror;
 	
 	private MosArtLauncher worker;
 
@@ -100,7 +95,7 @@ public class MosArtGUI extends JFrame {
 				.getCount();
 
 		for (int t = 0; t < trackCount; t++) {
-			Supervisor.getInstance().reportProgress(
+			MosArtSupervisor.getInstance().reportProgress(
 					"Analysing library",
 					((float) (t + 1) / (float) trackCount));
 			
@@ -337,7 +332,7 @@ public class MosArtGUI extends JFrame {
 							selectedTracks.add(track);
 						}
 
-						Supervisor.getInstance().reportProgress(
+						MosArtSupervisor.getInstance().reportProgress(
 								"Gathering tracks",
 								((float) (t + 1) / (float) trackCount));
 					}
@@ -497,10 +492,10 @@ public class MosArtGUI extends JFrame {
 			new SwingWorker<Void, Void>() {
 				@Override
 				protected Void doInBackground() throws Exception {
-					Supervisor.getInstance().reportTask("Connecting to iTunes");
+					MosArtSupervisor.getInstance().reportTask("Connecting to iTunes");
 					launchButton.setEnabled(false);
 					itunes = new iTunes();
-					Supervisor.getInstance().reset();
+					MosArtSupervisor.getInstance().reset();
 					return null;
 				}
 			}.execute();
@@ -511,7 +506,7 @@ public class MosArtGUI extends JFrame {
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				MosArtGUI gui = new MosArtGUI();
-				Supervisor.getInstance().registerGUI(gui);
+				MosArtSupervisor.getInstance().registerGUI(gui);
 				gui.setVisible(true);
 			}
 		});

@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
-import dependent.gui.Supervisor;
 
 public class MosArtExtractorThread extends Thread {
 
@@ -64,7 +64,7 @@ public class MosArtExtractorThread extends Thread {
 				central.putScaledImage(scaledImage);
 			}
 		} catch (IOException e) {
-			Supervisor.getInstance().reportCrash(e.getMessage());
+			MosArtSupervisor.getInstance().reportCrash(e.getMessage());
 		}
 	}
 }

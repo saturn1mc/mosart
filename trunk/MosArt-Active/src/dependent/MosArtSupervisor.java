@@ -1,22 +1,24 @@
-package dependent.gui;
+package dependent;
 
 import java.awt.Cursor;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
-public class Supervisor {
+import dependent.gui.MosArtGUI;
 
-	private static Supervisor singleton = null;
+public class MosArtSupervisor {
+
+	private static MosArtSupervisor singleton = null;
 	private MosArtGUI gui;
 
-	private Supervisor() {
+	private MosArtSupervisor() {
 		gui = null;
 	}
 
-	public synchronized static Supervisor getInstance() {
+	public synchronized static MosArtSupervisor getInstance() {
 		if (singleton == null) {
-			singleton = new Supervisor();
+			singleton = new MosArtSupervisor();
 		}
 
 		return singleton;

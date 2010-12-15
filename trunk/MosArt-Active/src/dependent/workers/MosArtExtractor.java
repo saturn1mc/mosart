@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
+import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
-import dependent.gui.Supervisor;
 
 public class MosArtExtractor extends Thread {
 
@@ -73,13 +73,13 @@ public class MosArtExtractor extends Thread {
 					}
 				}
 
-				Supervisor.getInstance().reportProgress("Shuffling tracks...",
+				MosArtSupervisor.getInstance().reportProgress("Shuffling tracks...",
 						((float) (t + 1) / (float) trackCount));
 			}
 
 			Collections.shuffle(randomList);
 		} else {
-			Supervisor.getInstance().reportCrash("No tracks selected");
+			MosArtSupervisor.getInstance().reportCrash("No tracks selected");
 		}
 
 		return randomList.size();
