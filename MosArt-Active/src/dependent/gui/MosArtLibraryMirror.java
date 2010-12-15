@@ -149,19 +149,29 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 			TreePath[] selection = libraryTree.getSelectionPaths();
 
-			for (TreePath tp : selection) {
-				DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp
-						.getLastPathComponent();
+			if (selection != null) {
+				for (TreePath tp : selection) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp
+							.getLastPathComponent();
 
-				if (node.isLeaf()) {
-					distinctTracks.addAll(nodesTracks.get(node));
-				} else {
-					distinctTracks.addAll(nodesTracks.get(node.getLastChild()));
+					if (node.isLeaf()) {
+						System.out.println("Node is leaf : " + node.toString());
+						distinctTracks.addAll(nodesTracks.get(node));
+					} else {
+						System.out.println("Node : " + node.toString());
+						distinctTracks.addAll(nodesTracks.get(node
+								.getLastChild()));
+					}
 				}
-			}
 
-			selectedTracks.clear();
-			selectedTracks.addAll(distinctTracks);
+				System.out.println("Selection : ");
+				for (ITTrack t : distinctTracks) {
+					System.out.println(t.getName());
+				}
+
+				selectedTracks.clear();
+				selectedTracks.addAll(distinctTracks);
+			}
 		}
 	}
 }
