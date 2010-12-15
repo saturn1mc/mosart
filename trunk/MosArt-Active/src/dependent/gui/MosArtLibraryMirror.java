@@ -184,8 +184,6 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 				selectedTracks.clear();
 				selectedTracks.addAll(distinctTracks);
-
-				System.out.println("Selected : " + selectedTracks.size() + " tracks");
 			}
 		}
 	}

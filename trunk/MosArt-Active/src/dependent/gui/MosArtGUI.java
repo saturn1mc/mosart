@@ -37,11 +37,13 @@ public class MosArtGUI extends JFrame {
 	 */
 	private static final long serialVersionUID = -1328087492843746960L;
 	private static final int PATH_FIELD_WIDTH = 400;
-	private static final int DIM_FIELD_WIDTH = 30;
-	private static final int FIELD_HEIGHT = 10;
-
-	private static final int DEFAULT_IMG_DIM = 3000;
-	private static final int DEFAULT_TILE_COUNT = 30;
+	private static final int DIM_FIELD_WIDTH = 35;
+	private static final int FIELD_HEIGHT = 25;
+	private static final int TREE_WIDTH = 150;
+	private static final int TREE_HEIGHT = 250;
+	
+	private static final int DEFAULT_IMG_DIM = 2500;
+	private static final int DEFAULT_TILE_COUNT = 20;
 
 	private static enum DimInputs {
 		IMG_HEIGHT, IMG_WIDTH, TILE_HEIGHT, TILE_WIDTH
@@ -73,7 +75,6 @@ public class MosArtGUI extends JFrame {
 
 		buildCenterPanel();
 		buildSouthPanel();
-		buildEastPanel();
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
@@ -84,13 +85,13 @@ public class MosArtGUI extends JFrame {
 	private void buildTreePanel(JScrollPane treeView) {
 
 		libraryMirror = new MosArtLibraryMirror();
-		
+
 		MosArtSupervisor.getInstance().lock();
 
 		int trackCount = itunes.getLibraryPlaylist().getTracks().getCount();
 
 		for (int t = 0; t < trackCount; t++) {
-			
+
 			MosArtSupervisor.getInstance().reportProgress("Analysing library",
 					((float) (t + 1) / (float) trackCount));
 
@@ -101,10 +102,10 @@ public class MosArtGUI extends JFrame {
 				libraryMirror.addTrack(track);
 			}
 		}
-		
+
 		treeView.setViewportView(libraryMirror.getLibraryTree());
-		treeView.setPreferredSize(new Dimension(150, 250));
-		
+		treeView.setPreferredSize(new Dimension(TREE_WIDTH, TREE_HEIGHT));
+
 		MosArtSupervisor.getInstance().reset();
 	}
 
@@ -133,18 +134,24 @@ public class MosArtGUI extends JFrame {
 		targetField.setText("D:\\Mes Documents\\Mosaic.png"); // On my PC
 		// targetField.setText("/Users/camille/Downloads/Mosaic.png"); // On my
 		// Mac
-		targetField.setPreferredSize(new Dimension(PATH_FIELD_WIDTH,
-				FIELD_HEIGHT));
+		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
+		targetField.setPreferredSize(fieldDim);
+		targetField.setMaximumSize(fieldDim);
 
 		// Panel
-		JPanel panel = new JPanel();
-		panel.setLayout(new BoxLayout(panel, BoxLayout.LINE_AXIS));
+		JPanel targetPanel = new JPanel();
+		targetPanel.setLayout(new BoxLayout(targetPanel, BoxLayout.LINE_AXIS));
 
-		panel.add(new JLabel("Save in : "));
-		panel.add(targetField);
-		panel.add(targetButton);
+		targetPanel.add(new JLabel("Save in : "));
+		targetPanel.add(targetField);
+		targetPanel.add(targetButton);
 
-		return panel;
+		JPanel container = new JPanel();
+		container.setLayout(new FlowLayout(FlowLayout.LEFT));
+		
+		container.add(targetPanel);
+		
+		return container;
 	}
 
 	private JButton buildLaunchButton() {
@@ -157,7 +164,7 @@ public class MosArtGUI extends JFrame {
 
 					try {
 						MosArtSupervisor.getInstance().lock();
-						
+
 						MosArtGUI.this.setCursor(Cursor
 								.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						launchWorker();
@@ -182,14 +189,16 @@ public class MosArtGUI extends JFrame {
 
 	private JPanel buildDimensionsPanel() {
 
+		Dimension fieldDim = new Dimension(DIM_FIELD_WIDTH, FIELD_HEIGHT);
+
 		// Image dimensions
 		JPanel imgWpanel = new JPanel();
 		imgWpanel.setLayout(new BoxLayout(imgWpanel, BoxLayout.LINE_AXIS));
 		imgWpanel.add(new JLabel("Wallpaper width : "));
 		imgWidthField = new JTextField();
 		imgWidthField.setText(Integer.toString(DEFAULT_IMG_DIM));
-		imgWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
-				FIELD_HEIGHT));
+		imgWidthField.setPreferredSize(fieldDim);
+		imgWidthField.setMaximumSize(fieldDim);
 		imgWpanel.add(imgWidthField);
 
 		JPanel imgHpanel = new JPanel();
@@ -197,8 +206,8 @@ public class MosArtGUI extends JFrame {
 		imgHpanel.add(new JLabel("Wallpaper height : "));
 		imgHeightField = new JTextField();
 		imgHeightField.setText(Integer.toString(DEFAULT_IMG_DIM));
-		imgHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
-				FIELD_HEIGHT));
+		imgHeightField.setPreferredSize(fieldDim);
+		imgHeightField.setMaximumSize(fieldDim);
 		imgHpanel.add(imgHeightField);
 
 		JPanel imgPanel = new JPanel();
@@ -213,8 +222,8 @@ public class MosArtGUI extends JFrame {
 		tWcountPanel.add(new JLabel("Covers on width : "));
 		tileWidthField = new JTextField();
 		tileWidthField.setText(Integer.toString(DEFAULT_TILE_COUNT));
-		tileWidthField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
-				FIELD_HEIGHT));
+		tileWidthField.setPreferredSize(fieldDim);
+		tileWidthField.setMaximumSize(fieldDim);
 		tWcountPanel.add(tileWidthField);
 
 		JPanel tHcountPanel = new JPanel();
@@ -223,8 +232,8 @@ public class MosArtGUI extends JFrame {
 		tHcountPanel.add(new JLabel("Covers on height : "));
 		tileHeightField = new JTextField();
 		tileHeightField.setText(Integer.toString(DEFAULT_TILE_COUNT));
-		tileHeightField.setPreferredSize(new Dimension(DIM_FIELD_WIDTH,
-				FIELD_HEIGHT));
+		tileHeightField.setPreferredSize(fieldDim);
+		tileHeightField.setMaximumSize(fieldDim);
 		tHcountPanel.add(tileHeightField);
 
 		JPanel tilePanel = new JPanel();
@@ -238,8 +247,13 @@ public class MosArtGUI extends JFrame {
 				BoxLayout.LINE_AXIS));
 		dimensionsPanel.add(imgPanel);
 		dimensionsPanel.add(tilePanel);
-
-		return dimensionsPanel;
+		
+		JPanel container = new JPanel();
+		container.setLayout(new FlowLayout(FlowLayout.LEFT));
+		
+		container.add(dimensionsPanel);
+		
+		return container;
 	}
 
 	private void buildProgressBars() {
@@ -253,14 +267,28 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void buildCenterPanel() {
-		JPanel centerPanel = new JPanel();
-		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+		JPanel targetPanel = new JPanel();
+		targetPanel.setLayout(new BoxLayout(targetPanel, BoxLayout.PAGE_AXIS));
 
-		centerPanel.add(buildTargetPanel());
+		targetPanel.add(buildTargetPanel());
 
-		centerPanel.setBorder(BorderFactory.createTitledBorder(
+		targetPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Target", TitledBorder.LEFT, TitledBorder.TOP));
+
+		JPanel dimPanel = new JPanel();
+		dimPanel.setLayout(new BoxLayout(dimPanel, BoxLayout.PAGE_AXIS));
+
+		dimPanel.add(buildDimensionsPanel());
+
+		dimPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
+		
+		JPanel centerPanel = new JPanel();
+		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
+		centerPanel.add(targetPanel);
+		centerPanel.add(dimPanel);
 
 		this.getContentPane().add(centerPanel, BorderLayout.CENTER);
 	}
@@ -294,19 +322,6 @@ public class MosArtGUI extends JFrame {
 				"Creation", TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(southPanel, BorderLayout.SOUTH);
-	}
-
-	private void buildEastPanel() {
-		JPanel eastPanel = new JPanel();
-		eastPanel.setLayout(new BoxLayout(eastPanel, BoxLayout.PAGE_AXIS));
-
-		eastPanel.add(buildDimensionsPanel());
-
-		eastPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
-
-		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
 
 	private void launchWorker() throws MosArtException {
@@ -457,7 +472,7 @@ public class MosArtGUI extends JFrame {
 	public synchronized JButton getLaunchButton() {
 		return launchButton;
 	}
-	
+
 	public MosArtLibraryMirror getLibraryMirror() {
 		return libraryMirror;
 	}
@@ -476,15 +491,15 @@ public class MosArtGUI extends JFrame {
 				protected Void doInBackground() throws Exception {
 					MosArtSupervisor.getInstance().reportTask(
 							"Connecting to iTunes");
-					
+
 					MosArtSupervisor.getInstance().lock();
 					itunes = new iTunes();
 					MosArtSupervisor.getInstance().reset();
-					
+
 					buildWestPanel();
 					MosArtGUI.this.pack();
 					MosArtGUI.this.repaint();
-					
+
 					return null;
 				}
 			}.execute();
