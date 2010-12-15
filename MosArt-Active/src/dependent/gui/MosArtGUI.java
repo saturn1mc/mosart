@@ -91,10 +91,6 @@ public class MosArtGUI extends JFrame {
 
 		for (int t = 0; t < trackCount; t++) {
 			
-			if(t == 2063){
-				System.out.println("here!");
-			}
-			
 			MosArtSupervisor.getInstance().reportProgress("Analysing library",
 					((float) (t + 1) / (float) trackCount));
 

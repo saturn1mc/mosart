@@ -1,6 +1,7 @@
 package dependent.gui;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -33,6 +34,7 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 		libraryTree = new JTree(rootNode);
 		libraryTree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
+		libraryTree.setShowsRootHandles(true);
 		libraryTree.addTreeSelectionListener(this);
 
 		nodesByGenre = new HashMap<String, DefaultMutableTreeNode>();
@@ -141,6 +143,20 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 	public synchronized void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void addAllLeaves(DefaultMutableTreeNode node, ArrayList<DefaultMutableTreeNode> stack){
+		if(!node.isLeaf()){
+			Enumeration<DefaultMutableTreeNode> children = node.children();
+			
+			while(children.hasMoreElements()){
+				addAllLeaves(children.nextElement(), stack);
+			}
+		}
+		else{
+			stack.add(node);
+		}
+	}
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
@@ -148,6 +164,8 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 			HashSet<ITTrack> distinctTracks = new HashSet<ITTrack>();
 
 			TreePath[] selection = libraryTree.getSelectionPaths();
+
+			System.out.println("\n\n");
 
 			if (selection != null) {
 				for (TreePath tp : selection) {
@@ -158,19 +176,21 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 						System.out.println("Node is leaf : " + node.toString());
 						distinctTracks.addAll(nodesTracks.get(node));
 					} else {
-						System.out.println("Node : " + node.toString());
-						distinctTracks.addAll(nodesTracks.get(node
-								.getLastChild()));
+						ArrayList<DefaultMutableTreeNode> leaves = new ArrayList<DefaultMutableTreeNode>();
+						addAllLeaves(node, leaves);
+						
+						for(DefaultMutableTreeNode leaf : leaves){
+							distinctTracks.addAll(nodesTracks.get(leaf));
+						}
 					}
-				}
-
-				System.out.println("Selection : ");
-				for (ITTrack t : distinctTracks) {
-					System.out.println(t.getName());
 				}
 
 				selectedTracks.clear();
 				selectedTracks.addAll(distinctTracks);
+
+				for (ITTrack t : distinctTracks) {
+					System.out.println(t.getName());
+				}
 			}
 		}
 	}
