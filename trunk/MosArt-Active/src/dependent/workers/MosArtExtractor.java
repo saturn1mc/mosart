@@ -8,7 +8,7 @@ import java.util.Stack;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.gui.Supervisor;
 
-public class MosartArtExtractor extends Thread {
+public class MosArtExtractor extends Thread {
 
 	private final int MAX_THREAD = 50;
 
@@ -20,7 +20,7 @@ public class MosartArtExtractor extends Thread {
 	private int targetWidth;
 	private int targetHeight;
 
-	public MosartArtExtractor(ArrayList<ITTrack> selectedTracks,
+	public MosArtExtractor(ArrayList<ITTrack> selectedTracks,
 			int expectedImageCount, int targetWidth, int targetHeight) {
 
 		scaledImages = new Stack<Image>();
@@ -108,7 +108,7 @@ public class MosartArtExtractor extends Thread {
 			}
 
 			threadCount++;
-			new MosartArtExtractorThread(this, threadCount, tracks,
+			new MosArtExtractorThread(this, threadCount, tracks,
 					targetWidth, targetHeight).start();
 
 			leftTodo -= packetSize;

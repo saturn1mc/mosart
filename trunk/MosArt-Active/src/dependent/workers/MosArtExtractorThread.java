@@ -11,12 +11,12 @@ import javax.imageio.ImageIO;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.gui.Supervisor;
 
-public class MosartArtExtractorThread extends Thread {
+public class MosArtExtractorThread extends Thread {
 
 	private static final String TEMP_IMG = "MOSART_TEMP" + File.separator
 			+ "MOSART_TMP_IMG";
 
-	private MosartArtExtractor central;
+	private MosArtExtractor central;
 	
 	private ArrayList<ITTrack> tracks;
 	private File tempFile;
@@ -24,7 +24,7 @@ public class MosartArtExtractorThread extends Thread {
 	private int targetWidth;
 	private int targetHeight;
 
-	public MosartArtExtractorThread(MosartArtExtractor central, int id, ArrayList<ITTrack> tracks,
+	public MosArtExtractorThread(MosArtExtractor central, int id, ArrayList<ITTrack> tracks,
 			int targetWidth, int targetHeight) {
 		
 		this.central = central;

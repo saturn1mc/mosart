@@ -15,7 +15,7 @@ import javax.imageio.ImageIO;
 import dependent.MosArtException;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.gui.Supervisor;
-import dependent.workers.MosartArtExtractor;
+import dependent.workers.MosArtExtractor;
 
 public class MosaicPainter extends Thread {
 
@@ -68,7 +68,7 @@ public class MosaicPainter extends Thread {
 		int tileY = 0;
 		int done = 0;
 
-		MosartArtExtractor extractor = new MosartArtExtractor(selectedTracks,
+		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
 				mosaicHeight * mosaicWidth, tileWidth, tileHeight);
 		extractor.start();
 
