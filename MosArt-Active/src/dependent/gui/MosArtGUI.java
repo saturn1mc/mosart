@@ -107,6 +107,7 @@ public class MosArtGUI extends JFrame {
 		}
 		
 		treeView.setViewportView(libraryMirror.getLibraryTree());
+		treeView.setPreferredSize(new Dimension(150, 250));
 		
 		MosArtSupervisor.getInstance().reset();
 	}
@@ -459,6 +460,10 @@ public class MosArtGUI extends JFrame {
 
 	public synchronized JButton getLaunchButton() {
 		return launchButton;
+	}
+	
+	public MosArtLibraryMirror getLibraryMirror() {
+		return libraryMirror;
 	}
 
 	public synchronized String getTarget() {

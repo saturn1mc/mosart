@@ -63,6 +63,8 @@ public class MosArtExtractorThread extends Thread {
 				
 				central.putScaledImage(scaledImage);
 			}
+			
+			tempFile.delete();
 		} catch (IOException e) {
 			MosArtSupervisor.getInstance().reportCrash(e.getMessage());
 		}
