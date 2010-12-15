@@ -31,7 +31,10 @@ public class MosArtSupervisor {
 	public synchronized void lock() {
 		if(gui != null){
 			gui.getLaunchButton().setEnabled(false);
-			gui.getLibraryMirror().setEnabled(false);
+			
+			if(gui.getLibraryMirror() != null){
+				gui.getLibraryMirror().setEnabled(false);
+			}
 		}
 	}
 	
@@ -48,7 +51,10 @@ public class MosArtSupervisor {
 					gui.getSubProgressBar().getMinimum());
 
 			gui.getLaunchButton().setEnabled(true);
-			gui.getLibraryMirror().setEnabled(true);
+			
+			if(gui.getLibraryMirror() != null){
+				gui.getLibraryMirror().setEnabled(true);
+			}
 		}
 	}
 
