@@ -13,11 +13,11 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 import dependent.MosArtException;
+import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
-import dependent.gui.Supervisor;
 import dependent.workers.MosArtExtractor;
 
-public class MosaicPainter extends Thread {
+public class MosArtMosaicPainter extends Thread {
 
 	private ArrayList<ITTrack> selectedTracks;
 
@@ -30,7 +30,7 @@ public class MosaicPainter extends Thread {
 	private BufferedImage mosaic;
 	private String targetFilename;
 
-	public MosaicPainter(ArrayList<ITTrack> selectedTracks,
+	public MosArtMosaicPainter(ArrayList<ITTrack> selectedTracks,
 			String targetFilename, int imageWidth, int imageHeight,
 			int mosaicWidth, int mosaicHeight) throws MosArtException {
 
@@ -94,7 +94,7 @@ public class MosaicPainter extends Thread {
 				float progress = ((float) ++done)
 						/ ((float) mosaicHeight * (float) mosaicWidth);
 
-				Supervisor.getInstance().reportProgress(
+				MosArtSupervisor.getInstance().reportProgress(
 						"Adding tile to (" + tileX + "," + tileY + ")",
 						progress);
 			}
@@ -102,13 +102,13 @@ public class MosaicPainter extends Thread {
 			tileX += tileWidth;
 		}
 
-		Supervisor.getInstance().reportMainProgress(
+		MosArtSupervisor.getInstance().reportMainProgress(
 				"Saving work to " + targetFilename, 0.66f);
 		ImageIO.write(mosaic, "PNG", new File(targetFilename));
 
 		g2d.dispose();
 
-		Supervisor.getInstance().reportMainTaskFinished();
+		MosArtSupervisor.getInstance().reportMainTaskFinished();
 	}
 
 	@Override
@@ -116,7 +116,7 @@ public class MosaicPainter extends Thread {
 		try {
 			createMosaic();
 		} catch (IOException e) {
-			Supervisor.getInstance().reportCrash(e.getMessage());
+			MosArtSupervisor.getInstance().reportCrash(e.getMessage());
 		}
 	}
 }

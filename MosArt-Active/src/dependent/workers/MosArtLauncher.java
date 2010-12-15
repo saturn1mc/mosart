@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import javax.swing.SwingWorker;
 
 import dependent.MosArtException;
+import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.com.dt.iTunesController.ITTrackCollection;
-import dependent.gui.Supervisor;
-import dependent.painters.MosaicPainter;
+import dependent.painters.MosArtMosaicPainter;
 
 public class MosArtLauncher extends SwingWorker<Void, String> {
 
-	private MosaicPainter painter;
+	private MosArtMosaicPainter painter;
 
 	public MosArtLauncher(ArrayList<ITTrack> selectedTracks,
 			String targetFilename, int imageWidth, int imageHeight,
@@ -33,7 +33,7 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 
 		for (int i = 0; i < trackCount; i++) {
 			tracks.add(selectedTracks.getItem(i + 1));
-			Supervisor.getInstance().reportProgress(
+			MosArtSupervisor.getInstance().reportProgress(
 					"Listing selected tracks...",
 					((float) (i + 1) / (float) trackCount));
 		}
@@ -47,7 +47,7 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 			int mosaicWidth, int mosaicHeight) throws MosArtException {
 
 		if (painter == null) {
-			painter = new MosaicPainter(selectedTracks, targetFilename,
+			painter = new MosArtMosaicPainter(selectedTracks, targetFilename,
 					imageWidth, imageHeight, mosaicWidth, mosaicHeight);
 		} else {
 			painter.setProperties(selectedTracks, targetFilename, imageWidth,
@@ -59,12 +59,12 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 	private Void paint() throws IOException {
 
 		try {
-			Supervisor.getInstance().reportMainProgress("Generating Mosaic",
+			MosArtSupervisor.getInstance().reportMainProgress("Generating Mosaic",
 					0.33f);
 			painter.start();
 
 		} catch (Exception e) {
-			Supervisor.getInstance().reportCrash(e.getMessage());
+			MosArtSupervisor.getInstance().reportCrash(e.getMessage());
 		}
 
 		return null;
