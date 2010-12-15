@@ -165,15 +165,12 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 			TreePath[] selection = libraryTree.getSelectionPaths();
 
-			System.out.println("\n\n");
-
 			if (selection != null) {
 				for (TreePath tp : selection) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp
 							.getLastPathComponent();
 
 					if (node.isLeaf()) {
-						System.out.println("Node is leaf : " + node.toString());
 						distinctTracks.addAll(nodesTracks.get(node));
 					} else {
 						ArrayList<DefaultMutableTreeNode> leaves = new ArrayList<DefaultMutableTreeNode>();
@@ -188,9 +185,7 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 				selectedTracks.clear();
 				selectedTracks.addAll(distinctTracks);
 
-				for (ITTrack t : distinctTracks) {
-					System.out.println(t.getName());
-				}
+				System.out.println("Selected : " + selectedTracks.size() + " tracks");
 			}
 		}
 	}
