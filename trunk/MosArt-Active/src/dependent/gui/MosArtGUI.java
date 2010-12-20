@@ -41,7 +41,7 @@ public class MosArtGUI extends JFrame {
 	private static final int FIELD_HEIGHT = 25;
 	private static final int TREE_WIDTH = 150;
 	private static final int TREE_HEIGHT = 250;
-	
+
 	private static final int DEFAULT_IMG_DIM = 2500;
 	private static final int DEFAULT_TILE_COUNT = 20;
 
@@ -148,9 +148,9 @@ public class MosArtGUI extends JFrame {
 
 		JPanel container = new JPanel();
 		container.setLayout(new FlowLayout(FlowLayout.LEFT));
-		
+
 		container.add(targetPanel);
-		
+
 		return container;
 	}
 
@@ -247,12 +247,12 @@ public class MosArtGUI extends JFrame {
 				BoxLayout.LINE_AXIS));
 		dimensionsPanel.add(imgPanel);
 		dimensionsPanel.add(tilePanel);
-		
+
 		JPanel container = new JPanel();
 		container.setLayout(new FlowLayout(FlowLayout.LEFT));
-		
+
 		container.add(dimensionsPanel);
-		
+
 		return container;
 	}
 
@@ -284,7 +284,7 @@ public class MosArtGUI extends JFrame {
 		dimPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
-		
+
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
 		centerPanel.add(targetPanel);
@@ -326,11 +326,13 @@ public class MosArtGUI extends JFrame {
 
 	private void launchWorker() throws MosArtException {
 
+		final int mode = MosArtLauncher.MOSAIC_MODE; // FOR TEST PURPOSE
+
 		new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				if (worker == null) {
-					worker = new MosArtLauncher(
+					worker = new MosArtLauncher(mode,
 							libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
@@ -338,7 +340,7 @@ public class MosArtGUI extends JFrame {
 							Integer.parseInt(tileWidthField.getText()),
 							Integer.parseInt(tileHeightField.getText()));
 				} else {
-					worker.setMosaicProperties(
+					worker.setMosaicProperties(mode,
 							libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
