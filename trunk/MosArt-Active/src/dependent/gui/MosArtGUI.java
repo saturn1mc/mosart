@@ -8,7 +8,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -172,6 +176,10 @@ public class MosArtGUI extends JFrame {
 						JOptionPane.showMessageDialog(MosArtGUI.this,
 								me.getMessage(), "Can't start",
 								JOptionPane.ERROR_MESSAGE);
+					} catch (IOException ioe) {
+						JOptionPane.showMessageDialog(MosArtGUI.this,
+								ioe.getMessage(), "Can't start",
+								JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
 					JOptionPane.showMessageDialog(MosArtGUI.this,
@@ -324,15 +332,17 @@ public class MosArtGUI extends JFrame {
 		this.getContentPane().add(southPanel, BorderLayout.SOUTH);
 	}
 
-	private void launchWorker() throws MosArtException {
+	private void launchWorker() throws MosArtException, IOException {
 
-		final int mode = MosArtLauncher.MOSAIC_MODE; // FOR TEST PURPOSE
+		final int mode = MosArtLauncher.PHOTO_MODE; // FOR TEST PURPOSE
+		final BufferedImage source = ImageIO.read(new File(
+				"D:\\Mes Documents\\google_logo.jpg"));
 
 		new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
 				if (worker == null) {
-					worker = new MosArtLauncher(mode,
+					worker = new MosArtLauncher(source, mode,
 							libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
@@ -340,7 +350,7 @@ public class MosArtGUI extends JFrame {
 							Integer.parseInt(tileWidthField.getText()),
 							Integer.parseInt(tileHeightField.getText()));
 				} else {
-					worker.setMosaicProperties(mode,
+					worker.setPainterProperties(source, mode,
 							libraryMirror.getSelectedTracks(),
 							targetField.getText(),
 							Integer.parseInt(imgWidthField.getText()),
