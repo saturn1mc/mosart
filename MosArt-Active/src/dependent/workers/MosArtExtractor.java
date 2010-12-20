@@ -1,7 +1,6 @@
 package dependent.workers;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;

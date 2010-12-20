@@ -8,60 +8,61 @@ import javax.swing.SwingWorker;
 import dependent.MosArtException;
 import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
-import dependent.com.dt.iTunesController.ITTrackCollection;
 import dependent.painters.MosArtMosaicPainter;
+import dependent.painters.MosArtPhotoPainter;
 
 public class MosArtLauncher extends SwingWorker<Void, String> {
 
-	private MosArtMosaicPainter painter;
+	public static final int MOSAIC_MODE = 0;
+	public static final int PHOTO_MODE = 1;
 
-	public MosArtLauncher(ArrayList<ITTrack> selectedTracks,
+	private MosArtMosaicPainter mosaicPainter;
+	private MosArtPhotoPainter photoPainter;
+
+	public MosArtLauncher(int mode, ArrayList<ITTrack> selectedTracks,
 			String targetFilename, int imageWidth, int imageHeight,
 			int mosaicWidth, int mosaicHeight) throws MosArtException {
 
-		setMosaicProperties(selectedTracks, targetFilename, imageWidth,
+		setMosaicProperties(mode, selectedTracks, targetFilename, imageWidth,
 				imageHeight, mosaicWidth, mosaicHeight);
 	}
 
-	public MosArtLauncher(ITTrackCollection selectedTracks,
-			String targetFilename, int imageWidth, int imageHeight,
-			int mosaicWidth, int mosaicHeight) throws MosArtException {
+	public void setMosaicProperties(int mode,
+			ArrayList<ITTrack> selectedTracks, String targetFilename,
+			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
+			throws MosArtException {
 
-		ArrayList<ITTrack> tracks = new ArrayList<ITTrack>();
+		switch (mode) {
+		case MOSAIC_MODE:
+			if (mosaicPainter == null) {
+				mosaicPainter = new MosArtMosaicPainter(selectedTracks,
+						targetFilename, imageWidth, imageHeight, mosaicWidth,
+						mosaicHeight);
+			} else {
+				mosaicPainter.setProperties(selectedTracks, targetFilename,
+						imageWidth, imageHeight, mosaicWidth, mosaicHeight);
+			}
+			break;
 
-		int trackCount = selectedTracks.getCount();
-
-		for (int i = 0; i < trackCount; i++) {
-			tracks.add(selectedTracks.getItem(i + 1));
-			MosArtSupervisor.getInstance().reportProgress(
-					"Listing selected tracks...",
-					((float) (i + 1) / (float) trackCount));
+		case PHOTO_MODE:
+			if (photoPainter == null) {
+				photoPainter = new MosArtPhotoPainter(selectedTracks,
+						targetFilename, imageWidth, imageHeight, mosaicWidth,
+						mosaicHeight);
+			} else {
+				photoPainter.setProperties(selectedTracks, targetFilename,
+						imageWidth, imageHeight, mosaicWidth, mosaicHeight);
+			}
+			break;
 		}
-
-		setMosaicProperties(tracks, targetFilename, imageWidth, imageHeight,
-				mosaicWidth, mosaicHeight);
-	}
-
-	public void setMosaicProperties(ArrayList<ITTrack> selectedTracks,
-			String targetFilename, int imageWidth, int imageHeight,
-			int mosaicWidth, int mosaicHeight) throws MosArtException {
-
-		if (painter == null) {
-			painter = new MosArtMosaicPainter(selectedTracks, targetFilename,
-					imageWidth, imageHeight, mosaicWidth, mosaicHeight);
-		} else {
-			painter.setProperties(selectedTracks, targetFilename, imageWidth,
-					imageHeight, mosaicWidth, mosaicHeight);
-		}
-
 	}
 
 	private Void paint() throws IOException {
 
 		try {
-			MosArtSupervisor.getInstance().reportMainProgress("Generating Mosaic",
-					0.33f);
-			painter.start();
+			MosArtSupervisor.getInstance().reportMainProgress(
+					"Generating Mosaic", 0.33f);
+			mosaicPainter.start();
 
 		} catch (Exception e) {
 			MosArtSupervisor.getInstance().reportCrash(e.getMessage());

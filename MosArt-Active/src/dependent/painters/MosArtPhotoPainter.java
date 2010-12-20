@@ -154,7 +154,7 @@ public class MosArtPhotoPainter extends Thread {
 
 		for (int i = 0; i < selectedTracks.size(); i++) {
 
-			Image image = extractor.getScaledImage(i);
+			Image image = extractor.popScaledImage();
 
 			BufferedImage artwork = gConf.createCompatibleImage(tileWidth,
 					tileHeight);
