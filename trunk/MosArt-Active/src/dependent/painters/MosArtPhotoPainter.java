@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
@@ -31,7 +30,7 @@ public class MosArtPhotoPainter extends Thread {
 
 	private BufferedImage source;
 	private ArrayList<ITTrack> selectedTracks;
-	private LinkedList<BufferedImage> sortedArtworks;
+	private ArrayList<MosArtArtworkDistance> sortedArtworks;
 
 	private int imageWidth;
 	private int imageHeight;
@@ -57,12 +56,12 @@ public class MosArtPhotoPainter extends Thread {
 
 		this.selectedTracks = selectedTracks;
 		this.source = source;
-		this.sortedArtworks = new LinkedList<BufferedImage>();
+		this.sortedArtworks = new ArrayList<MosArtArtworkDistance>();
 
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
-		this.mosaicWidth = mosaicWidth;
-		this.mosaicHeight = mosaicHeight;
+		this.mosaicWidth = Math.max(mosaicWidth, source.getWidth());
+		this.mosaicHeight = Math.max(mosaicHeight, source.getHeight());
 
 		File targetFile = new File(targetFilename);
 
@@ -126,18 +125,8 @@ public class MosArtPhotoPainter extends Thread {
 	private BufferedImage getClosestArtworkFor(int[] RGB) {
 
 		double minDist = Double.POSITIVE_INFINITY;
-		BufferedImage closest = null;
-
-		for (BufferedImage image : sortedArtworks) {
-			double dist = distance(getAverageRGB(image), RGB);
-
-			if (dist > minDist) {
-				break;
-			} else {
-				minDist = dist;
-				closest = image;
-			}
-		}
+		
+		//TODO
 
 		return closest;
 	}
@@ -145,6 +134,7 @@ public class MosArtPhotoPainter extends Thread {
 	private void sortArtwork() {
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
+		int[] white = { 0, 0, 0 };
 
 		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
 				selectedTracks.size(), tileWidth, tileHeight);
@@ -164,7 +154,8 @@ public class MosArtPhotoPainter extends Thread {
 			Graphics2D g2d = artwork.createGraphics();
 			g2d.drawImage(image, 0, 0, null);
 
-			sortedArtworks.add(artwork);
+			sortedArtworks.add(new MosArtArtworkDistance(artwork, distance(
+					white, getAverageRGB(artwork))));
 			MosArtSupervisor.getInstance().reportProgress("Getting artwork",
 					(float) i / (float) selectedTracks.size());
 		}
@@ -172,31 +163,28 @@ public class MosArtPhotoPainter extends Thread {
 		MosArtSupervisor.getInstance().reportTask(
 				"Sorting artworks by average color");
 
-		Comparator<BufferedImage> imageComparator = new Comparator<BufferedImage>() {
-			@Override
-			public int compare(BufferedImage o1, BufferedImage o2) {
-				int[] white = { 0, 0, 0 };
-				double dist1 = distance(white, getAverageRGB(o1));
-				double dist2 = distance(white, getAverageRGB(o2));
-				double diff = dist1 - dist2;
+		Comparator<MosArtArtworkDistance> adComp = new Comparator<MosArtArtworkDistance>() {
 
-				if (diff > 0) {
+			@Override
+			public int compare(MosArtArtworkDistance o1,
+					MosArtArtworkDistance o2) {
+				if (o1.getDistance() > o2.getDistance()) {
 					return 1;
-				} else if (diff < 0) {
+				} else if (o1.getDistance() < o2.getDistance()) {
 					return -1;
 				} else {
 					return 0;
 				}
-
 			}
 		};
 
-		Collections.sort(sortedArtworks, imageComparator);
-
+		Collections.sort(sortedArtworks, adComp);
 		MosArtSupervisor.getInstance().reportTask("Artworks sorted !");
 	}
 
 	public void paintPhoto() throws IOException {
+		float wRatio = (float) source.getWidth() / (float) imageWidth;
+		float hRatio = (float) source.getHeight() / (float) imageHeight;
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
 		int tileX = 0;
@@ -220,8 +208,8 @@ public class MosArtPhotoPainter extends Thread {
 			for (int j = 0; j < mosaicHeight; j++) {
 
 				BufferedImage image = getClosestArtworkFor(getAverageRGB(
-						source, i * tileWidth, j * tileHeight, tileWidth,
-						tileHeight));
+						source, (int) (i * tileWidth * wRatio), (int) (j
+								* tileHeight * hRatio), tileWidth, tileHeight));
 
 				g2d.drawImage(image, tileX, tileY, null);
 

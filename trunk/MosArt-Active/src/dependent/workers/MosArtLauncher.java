@@ -17,6 +17,7 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 	public static final int MOSAIC_MODE = 0;
 	public static final int PHOTO_MODE = 1;
 
+	private int mode;
 	private MosArtMosaicPainter mosaicPainter;
 	private MosArtPhotoPainter photoPainter;
 
@@ -33,6 +34,8 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 			ArrayList<ITTrack> selectedTracks, String targetFilename,
 			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
 			throws MosArtException {
+
+		this.mode = mode;
 
 		switch (mode) {
 		case MOSAIC_MODE:
@@ -65,7 +68,15 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 		try {
 			MosArtSupervisor.getInstance().reportMainProgress(
 					"Generating Mosaic", 0.33f);
-			mosaicPainter.start();
+
+			switch (mode) {
+			case MOSAIC_MODE:
+				mosaicPainter.start();
+				break;
+			case PHOTO_MODE:
+				photoPainter.start();
+				break;
+			}
 
 		} catch (Exception e) {
 			MosArtSupervisor.getInstance().reportCrash(e.getMessage());
