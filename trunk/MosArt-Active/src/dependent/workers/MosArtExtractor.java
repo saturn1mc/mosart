@@ -1,9 +1,10 @@
 package dependent.workers;
 
 import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Stack;
+import java.util.LinkedList;
 
 import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
@@ -12,8 +13,8 @@ public class MosArtExtractor extends Thread {
 
 	private final int MAX_THREAD = 50;
 
-	private Stack<Image> scaledImages;
-	private Stack<ITTrack> randomList;
+	private LinkedList<Image> scaledImages;
+	private LinkedList<ITTrack> randomList;
 
 	private ArrayList<ITTrack> selectedTracks;
 	private int expectedImageCount;
@@ -23,8 +24,8 @@ public class MosArtExtractor extends Thread {
 	public MosArtExtractor(ArrayList<ITTrack> selectedTracks,
 			int expectedImageCount, int targetWidth, int targetHeight) {
 
-		scaledImages = new Stack<Image>();
-		randomList = new Stack<ITTrack>();
+		scaledImages = new LinkedList<Image>();
+		randomList = new LinkedList<ITTrack>();
 
 		this.selectedTracks = selectedTracks;
 		this.expectedImageCount = expectedImageCount;
@@ -37,8 +38,8 @@ public class MosArtExtractor extends Thread {
 		notifyAll();
 	}
 
-	public synchronized Image getScaledImage() {
-		while (scaledImages.empty()) {
+	public synchronized Image popScaledImage() {
+		while (scaledImages.isEmpty()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -51,6 +52,27 @@ public class MosArtExtractor extends Thread {
 		notifyAll();
 
 		return scaledImage;
+	}
+
+	public synchronized Image getScaledImage(int index) {
+		if (index >= 0) {
+
+			if (index >= scaledImages.size()) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			Image scaledImage = scaledImages.get(index);
+
+			notifyAll();
+
+			return scaledImage;
+		} else {
+			return null;
+		}
 	}
 
 	private int shuffleTracks() {
@@ -91,7 +113,7 @@ public class MosArtExtractor extends Thread {
 
 			for (int t = 0; t < Math.min(packetSize, leftTodo); t++) {
 
-				if (randomList.empty()) {
+				if (randomList.isEmpty()) {
 					if (shuffleTracks() == 0) {
 						return;
 					}

@@ -27,7 +27,6 @@ public class MosArtMosaicPainter extends Thread {
 	private int mosaicWidth;
 	private int mosaicHeight;
 
-	private BufferedImage mosaic;
 	private String targetFilename;
 
 	public MosArtMosaicPainter(ArrayList<ITTrack> selectedTracks,
@@ -76,7 +75,7 @@ public class MosArtMosaicPainter extends Thread {
 				.getLocalGraphicsEnvironment();
 		GraphicsDevice gDevice = gEnv.getDefaultScreenDevice();
 		GraphicsConfiguration gConf = gDevice.getDefaultConfiguration();
-		mosaic = gConf.createCompatibleImage(imageWidth, imageHeight);
+		BufferedImage mosaic = gConf.createCompatibleImage(imageWidth, imageHeight);
 		Graphics2D g2d = mosaic.createGraphics();
 
 		for (int i = 0; i < mosaicWidth; i++) {
@@ -85,7 +84,7 @@ public class MosArtMosaicPainter extends Thread {
 
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				Image image = extractor.getScaledImage();
+				Image image = extractor.popScaledImage();
 
 				g2d.drawImage(image, tileX, tileY, null);
 
