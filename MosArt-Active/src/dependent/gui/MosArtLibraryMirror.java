@@ -50,7 +50,7 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 	public synchronized void addTrack(ITTrack track) {
 
-		String album = track.getArtist() + track.getAlbum();
+		String album = track.getAlbum();
 		DefaultMutableTreeNode albumNode = nodesByAlbum.get(album);
 
 		if (albumNode == null) {
@@ -78,7 +78,7 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 			genreNode.add(artistNode);
 
 			// Handling album node
-			albumNode = new DefaultMutableTreeNode(track.getAlbum());
+			albumNode = new DefaultMutableTreeNode(album);
 			nodesByAlbum.put(album, albumNode);
 
 			// Add track to root node list
