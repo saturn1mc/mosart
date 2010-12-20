@@ -41,19 +41,22 @@ public class MosArtPhotoPainter extends Thread {
 
 	private String targetFilename;
 
-	public MosArtPhotoPainter(ArrayList<ITTrack> selectedTracks,
-			String targetFilename, int imageWidth, int imageHeight,
-			int mosaicWidth, int mosaicHeight) throws MosArtException {
+	public MosArtPhotoPainter(BufferedImage source,
+			ArrayList<ITTrack> selectedTracks, String targetFilename,
+			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
+			throws MosArtException {
 
-		setProperties(selectedTracks, targetFilename, imageWidth, imageHeight,
-				mosaicWidth, mosaicHeight);
+		setProperties(source, selectedTracks, targetFilename, imageWidth,
+				imageHeight, mosaicWidth, mosaicHeight);
 	}
 
-	public void setProperties(ArrayList<ITTrack> selectedTracks,
-			String targetFilename, int imageWidth, int imageHeight,
-			int mosaicWidth, int mosaicHeight) throws MosArtException {
+	public void setProperties(BufferedImage source,
+			ArrayList<ITTrack> selectedTracks, String targetFilename,
+			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
+			throws MosArtException {
 
 		this.selectedTracks = selectedTracks;
+		this.source = source;
 		this.sortedArtworks = new LinkedList<BufferedImage>();
 
 		this.imageWidth = imageWidth;

@@ -1,5 +1,6 @@
 package dependent.workers;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -19,15 +20,16 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 	private MosArtMosaicPainter mosaicPainter;
 	private MosArtPhotoPainter photoPainter;
 
-	public MosArtLauncher(int mode, ArrayList<ITTrack> selectedTracks,
-			String targetFilename, int imageWidth, int imageHeight,
-			int mosaicWidth, int mosaicHeight) throws MosArtException {
+	public MosArtLauncher(BufferedImage source, int mode,
+			ArrayList<ITTrack> selectedTracks, String targetFilename,
+			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
+			throws MosArtException {
 
-		setMosaicProperties(mode, selectedTracks, targetFilename, imageWidth,
-				imageHeight, mosaicWidth, mosaicHeight);
+		setPainterProperties(source, mode, selectedTracks, targetFilename,
+				imageWidth, imageHeight, mosaicWidth, mosaicHeight);
 	}
 
-	public void setMosaicProperties(int mode,
+	public void setPainterProperties(BufferedImage source, int mode,
 			ArrayList<ITTrack> selectedTracks, String targetFilename,
 			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
 			throws MosArtException {
@@ -46,12 +48,13 @@ public class MosArtLauncher extends SwingWorker<Void, String> {
 
 		case PHOTO_MODE:
 			if (photoPainter == null) {
-				photoPainter = new MosArtPhotoPainter(selectedTracks,
+				photoPainter = new MosArtPhotoPainter(source, selectedTracks,
 						targetFilename, imageWidth, imageHeight, mosaicWidth,
 						mosaicHeight);
 			} else {
-				photoPainter.setProperties(selectedTracks, targetFilename,
-						imageWidth, imageHeight, mosaicWidth, mosaicHeight);
+				photoPainter.setProperties(source, selectedTracks,
+						targetFilename, imageWidth, imageHeight, mosaicWidth,
+						mosaicHeight);
 			}
 			break;
 		}
