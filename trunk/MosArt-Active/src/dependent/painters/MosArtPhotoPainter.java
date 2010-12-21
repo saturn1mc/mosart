@@ -221,7 +221,7 @@ public class MosArtPhotoPainter extends Thread {
 			for (int j = 0; j < mosaicHeight; j++) {
 
 				int propW = (int) ((float) tileWidth * wRatio);
-				int propH = (int) ((float) tileHeight * wRatio);
+				int propH = (int) ((float) tileHeight * hRatio);
 				int propX = (int) ((float) i * (float) propW);
 				int propY = (int) ((float) j * (float) propH);
 
