@@ -60,8 +60,8 @@ public class MosArtPhotoPainter extends Thread {
 
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
-		this.mosaicWidth = Math.max(mosaicWidth, source.getWidth());
-		this.mosaicHeight = Math.max(mosaicHeight, source.getHeight());
+		this.mosaicWidth = mosaicWidth;
+		this.mosaicHeight = mosaicHeight;
 
 		File targetFile = new File(targetFilename);
 
@@ -124,9 +124,21 @@ public class MosArtPhotoPainter extends Thread {
 
 	private BufferedImage getClosestArtworkFor(int[] RGB) {
 
-		double minDist = Double.POSITIVE_INFINITY;
-		
-		//TODO
+		int[] white = { 0, 0, 0 };
+		double refDist = distance(white, RGB);
+		double minDelta = Double.POSITIVE_INFINITY;
+		BufferedImage closest = null;
+
+		for (MosArtArtworkDistance ad : sortedArtworks) {
+			double delta = Math.abs(refDist - ad.getDistance());
+
+			if (delta < minDelta) {
+				closest = ad.getArtwork();
+				minDelta = delta;
+			} else {
+				break;
+			}
+		}
 
 		return closest;
 	}
@@ -156,6 +168,7 @@ public class MosArtPhotoPainter extends Thread {
 
 			sortedArtworks.add(new MosArtArtworkDistance(artwork, distance(
 					white, getAverageRGB(artwork))));
+
 			MosArtSupervisor.getInstance().reportProgress("Getting artwork",
 					(float) i / (float) selectedTracks.size());
 		}
@@ -207,10 +220,13 @@ public class MosArtPhotoPainter extends Thread {
 
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				BufferedImage image = getClosestArtworkFor(getAverageRGB(
-						source, (int) (i * tileWidth * wRatio), (int) (j
-								* tileHeight * hRatio), tileWidth, tileHeight));
+				int propW = (int) ((float) tileWidth * wRatio);
+				int propH = (int) ((float) tileHeight * wRatio);
+				int propX = (int) ((float) i * (float) propW);
+				int propY = (int) ((float) j * (float) propH);
 
+				BufferedImage image = getClosestArtworkFor(getAverageRGB(
+						source, propX, propY, propW, propH));
 				g2d.drawImage(image, tileX, tileY, null);
 
 				tileY += tileHeight;
