@@ -10,7 +10,7 @@ import dependent.com.dt.iTunesController.ITTrack;
 
 public class MosArtExtractor extends Thread {
 
-	private final int MAX_THREAD = 50;
+	private static final int MAX_THREAD = 100;
 
 	private LinkedList<Image> scaledImages;
 	private LinkedList<ITTrack> randomList;
