@@ -30,7 +30,7 @@ public class MosArtPhotoPainter extends Thread {
 
 	private BufferedImage source;
 	private ArrayList<ITTrack> selectedTracks;
-	private ArrayList<MosArtArtworkDistance> sortedArtworks;
+	private ArrayList<MosArtArtworkRGB> artworksRGB;
 
 	private int imageWidth;
 	private int imageHeight;
@@ -56,7 +56,7 @@ public class MosArtPhotoPainter extends Thread {
 
 		this.selectedTracks = selectedTracks;
 		this.source = source;
-		this.sortedArtworks = new ArrayList<MosArtArtworkDistance>();
+		this.artworksRGB = new ArrayList<MosArtArtworkRGB>();
 
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
@@ -92,7 +92,7 @@ public class MosArtPhotoPainter extends Thread {
 
 	private void scale(int[] target, float coeff) {
 		for (int i = 0; i < target.length; i++) {
-			target[i] *= coeff;
+			target[i] = (int) (coeff * (float) target[i]);
 		}
 	}
 
@@ -106,7 +106,7 @@ public class MosArtPhotoPainter extends Thread {
 			}
 		}
 
-		scale(rgb, (1.0f / (squareW * squareH)));
+		scale(rgb, (1.0f / (float) (squareW * squareH)));
 
 		return rgb;
 	}
@@ -124,19 +124,15 @@ public class MosArtPhotoPainter extends Thread {
 
 	private BufferedImage getClosestArtworkFor(int[] RGB) {
 
-		int[] white = { 0, 0, 0 };
-		double refDist = distance(white, RGB);
 		double minDelta = Double.POSITIVE_INFINITY;
 		BufferedImage closest = null;
 
-		for (MosArtArtworkDistance ad : sortedArtworks) {
-			double delta = Math.abs(refDist - ad.getDistance());
+		for (MosArtArtworkRGB ad : artworksRGB) {
+			double dist = distance(ad.getRGB(), RGB);
 
-			if (delta < minDelta) {
+			if (dist < minDelta) {
 				closest = ad.getArtwork();
-				minDelta = delta;
-			} else {
-				break;
+				minDelta = dist;
 			}
 		}
 
@@ -146,7 +142,6 @@ public class MosArtPhotoPainter extends Thread {
 	private void sortArtwork() {
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
-		int[] white = { 0, 0, 0 };
 
 		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
 				selectedTracks.size(), tileWidth, tileHeight);
@@ -166,33 +161,13 @@ public class MosArtPhotoPainter extends Thread {
 			Graphics2D g2d = artwork.createGraphics();
 			g2d.drawImage(image, 0, 0, null);
 
-			sortedArtworks.add(new MosArtArtworkDistance(artwork, distance(
-					white, getAverageRGB(artwork))));
+			artworksRGB.add(new MosArtArtworkRGB(artwork,
+					getAverageRGB(artwork)));
 
-			MosArtSupervisor.getInstance().reportProgress("Getting artwork",
+			MosArtSupervisor.getInstance().reportProgress(
+					"Analyzing artwork color",
 					(float) i / (float) selectedTracks.size());
 		}
-
-		MosArtSupervisor.getInstance().reportTask(
-				"Sorting artworks by average color");
-
-		Comparator<MosArtArtworkDistance> adComp = new Comparator<MosArtArtworkDistance>() {
-
-			@Override
-			public int compare(MosArtArtworkDistance o1,
-					MosArtArtworkDistance o2) {
-				if (o1.getDistance() > o2.getDistance()) {
-					return 1;
-				} else if (o1.getDistance() < o2.getDistance()) {
-					return -1;
-				} else {
-					return 0;
-				}
-			}
-		};
-
-		Collections.sort(sortedArtworks, adComp);
-		MosArtSupervisor.getInstance().reportTask("Artworks sorted !");
 	}
 
 	public void paintPhoto() throws IOException {

@@ -2,21 +2,21 @@ package dependent.painters;
 
 import java.awt.image.BufferedImage;
 
-public class MosArtArtworkDistance {
+public class MosArtArtworkRGB {
 	private BufferedImage artwork;
-	private double distance;
+	private int[] rgb;
 
-	public MosArtArtworkDistance(BufferedImage artwork, double distance) {
+	public MosArtArtworkRGB(BufferedImage artwork, int[] rgb) {
 		super();
 		this.artwork = artwork;
-		this.distance = distance;
+		this.rgb = rgb;
 	}
 
 	public BufferedImage getArtwork() {
 		return artwork;
 	}
 
-	public double getDistance() {
-		return distance;
+	public int[] getRGB() {
+		return rgb;
 	}
 }
