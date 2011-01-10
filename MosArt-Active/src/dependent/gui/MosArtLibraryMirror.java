@@ -8,7 +8,6 @@ import java.util.HashSet;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -16,20 +15,20 @@ import dependent.com.dt.iTunesController.ITTrack;
 
 public class MosArtLibraryMirror implements TreeSelectionListener {
 
-	private DefaultMutableTreeNode rootNode;
+	private MosArtMutableTreeNode rootNode;
 	private JTree libraryTree;
 	private boolean enabled;
 
-	private HashMap<String, DefaultMutableTreeNode> nodesByGenre;
-	private HashMap<String, DefaultMutableTreeNode> nodesByArtist;
-	private HashMap<String, DefaultMutableTreeNode> nodesByAlbum;
+	private HashMap<String, MosArtMutableTreeNode> nodesByGenre;
+	private HashMap<String, MosArtMutableTreeNode> nodesByArtist;
+	private HashMap<String, MosArtMutableTreeNode> nodesByAlbum;
 
-	private HashMap<DefaultMutableTreeNode, ArrayList<ITTrack>> nodesTracks;
+	private HashMap<MosArtMutableTreeNode, ArrayList<ITTrack>> nodesTracks;
 
 	private ArrayList<ITTrack> selectedTracks;
 
 	public MosArtLibraryMirror() {
-		rootNode = new DefaultMutableTreeNode("iTunes Library");
+		rootNode = new MosArtMutableTreeNode("iTunes Library");
 
 		libraryTree = new JTree(rootNode);
 		libraryTree.getSelectionModel().setSelectionMode(
@@ -37,11 +36,11 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 		libraryTree.setShowsRootHandles(true);
 		libraryTree.addTreeSelectionListener(this);
 
-		nodesByGenre = new HashMap<String, DefaultMutableTreeNode>();
-		nodesByArtist = new HashMap<String, DefaultMutableTreeNode>();
-		nodesByAlbum = new HashMap<String, DefaultMutableTreeNode>();
+		nodesByGenre = new HashMap<String, MosArtMutableTreeNode>();
+		nodesByArtist = new HashMap<String, MosArtMutableTreeNode>();
+		nodesByAlbum = new HashMap<String, MosArtMutableTreeNode>();
 
-		nodesTracks = new HashMap<DefaultMutableTreeNode, ArrayList<ITTrack>>();
+		nodesTracks = new HashMap<MosArtMutableTreeNode, ArrayList<ITTrack>>();
 
 		selectedTracks = new ArrayList<ITTrack>();
 
@@ -51,35 +50,36 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 	public synchronized void addTrack(ITTrack track) {
 
 		String album = track.getAlbum();
-		DefaultMutableTreeNode albumNode = nodesByAlbum.get(album);
+		MosArtMutableTreeNode albumNode = nodesByAlbum.get(album);
 
 		if (albumNode == null) {
 			String genre = track.getGenre();
 			String artist = track.getArtist();
 
 			// Handling genre node
-			DefaultMutableTreeNode genreNode = nodesByGenre.get(genre);
+			MosArtMutableTreeNode genreNode = nodesByGenre.get(genre);
 
 			if (genreNode == null) {
-				genreNode = new DefaultMutableTreeNode(genre);
+				genreNode = new MosArtMutableTreeNode(genre);
 				nodesByGenre.put(genre, genreNode);
 			}
 
 			rootNode.add(genreNode);
 
 			// Handling artist node
-			DefaultMutableTreeNode artistNode = nodesByArtist.get(artist);
+			MosArtMutableTreeNode artistNode = nodesByArtist.get(artist);
 
 			if (artistNode == null) {
-				artistNode = new DefaultMutableTreeNode(artist);
+				artistNode = new MosArtMutableTreeNode(artist);
 				nodesByArtist.put(artist, artistNode);
 			}
 
 			genreNode.add(artistNode);
 
 			// Handling album node
-			albumNode = new DefaultMutableTreeNode(album);
+			albumNode = new MosArtMutableTreeNode(album);
 			nodesByAlbum.put(album, albumNode);
+			artistNode.add(albumNode);
 
 			// Add track to root node list
 			ArrayList<ITTrack> tracks = nodesTracks.get(rootNode);
@@ -143,17 +143,17 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 	public synchronized void setEnabled(boolean enabled) {
 		this.enabled = enabled;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private void addAllLeaves(DefaultMutableTreeNode node, ArrayList<DefaultMutableTreeNode> stack){
-		if(!node.isLeaf()){
-			Enumeration<DefaultMutableTreeNode> children = node.children();
-			
-			while(children.hasMoreElements()){
+	private void addAllLeaves(MosArtMutableTreeNode node,
+			ArrayList<MosArtMutableTreeNode> stack) {
+		if (!node.isLeaf()) {
+			Enumeration<MosArtMutableTreeNode> children = node.children();
+
+			while (children.hasMoreElements()) {
 				addAllLeaves(children.nextElement(), stack);
 			}
-		}
-		else{
+		} else {
 			stack.add(node);
 		}
 	}
@@ -167,16 +167,16 @@ public class MosArtLibraryMirror implements TreeSelectionListener {
 
 			if (selection != null) {
 				for (TreePath tp : selection) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) tp
+					MosArtMutableTreeNode node = (MosArtMutableTreeNode) tp
 							.getLastPathComponent();
 
 					if (node.isLeaf()) {
 						distinctTracks.addAll(nodesTracks.get(node));
 					} else {
-						ArrayList<DefaultMutableTreeNode> leaves = new ArrayList<DefaultMutableTreeNode>();
+						ArrayList<MosArtMutableTreeNode> leaves = new ArrayList<MosArtMutableTreeNode>();
 						addAllLeaves(node, leaves);
-						
-						for(DefaultMutableTreeNode leaf : leaves){
+
+						for (MosArtMutableTreeNode leaf : leaves) {
 							distinctTracks.addAll(nodesTracks.get(leaf));
 						}
 					}
