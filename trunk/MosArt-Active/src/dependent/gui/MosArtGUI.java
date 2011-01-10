@@ -65,9 +65,10 @@ public class MosArtGUI extends JFrame {
 	private JProgressBar subProgressBar;
 
 	private JTextField targetField;
-	
+
 	private JPanel sourcePanel;
 	private JTextField sourceField;
+	private JButton sourceButton;
 
 	private JTextField imgWidthField;
 	private JTextField imgHeightField;
@@ -142,7 +143,9 @@ public class MosArtGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText("D:\\Mes Documents\\Mosaic.png"); //TODO replace with relative path
+		targetField.setText("D:\\Mes Documents\\Mosaic.png"); // TODO replace
+																// with relative
+																// path
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		targetField.setPreferredSize(fieldDim);
 		targetField.setMaximumSize(fieldDim);
@@ -162,21 +165,23 @@ public class MosArtGUI extends JFrame {
 
 		return container;
 	}
-	
+
 	private JPanel buildSourcePanel() {
-		JButton sourceButton = new JButton("...");
+		sourceButton = new JButton("...");
 
 		MouseAdapter sourceMouse = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
-				JFileChooser fc = new JFileChooser();
-				fc.setDialogType(JFileChooser.OPEN_DIALOG);
-				fc.setMultiSelectionEnabled(false);
+				if (sourceButton.isEnabled()) {
+					JFileChooser fc = new JFileChooser();
+					fc.setDialogType(JFileChooser.OPEN_DIALOG);
+					fc.setMultiSelectionEnabled(false);
 
-				int returnVal = fc.showOpenDialog(null);
+					int returnVal = fc.showOpenDialog(null);
 
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-					targetField.setText(fc.getSelectedFile().getPath());
+					if (returnVal == JFileChooser.APPROVE_OPTION) {
+						sourceField.setText(fc.getSelectedFile().getPath());
+					}
 				}
 			}
 		};
@@ -184,17 +189,17 @@ public class MosArtGUI extends JFrame {
 		sourceButton.addMouseListener(sourceMouse);
 
 		// Text field
-		targetField = new JTextField();
+		sourceField = new JTextField();
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
-		targetField.setPreferredSize(fieldDim);
-		targetField.setMaximumSize(fieldDim);
+		sourceField.setPreferredSize(fieldDim);
+		sourceField.setMaximumSize(fieldDim);
 
 		// Source Panel
 		sourcePanel = new JPanel();
 		sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.LINE_AXIS));
 
 		sourcePanel.add(new JLabel("Source : "));
-		sourcePanel.add(targetField);
+		sourcePanel.add(sourceField);
 		sourcePanel.add(sourceButton);
 
 		JPanel container = new JPanel();
@@ -310,49 +315,56 @@ public class MosArtGUI extends JFrame {
 
 		return container;
 	}
-	
-	private JPanel buildModePanel(){
-		//Mosaic mode button
+
+	private JPanel buildModePanel() {
+		// Mosaic mode button
 		JRadioButton modeMosaic = new JRadioButton("Mosaic");
-		
+
 		MouseAdapter mosaicAdapter = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				mode = MosArtLauncher.MOSAIC_MODE;
-				sourcePanel.setEnabled(false);
+				sourceField.setEnabled(false);
+				sourceButton.setEnabled(false);
+				sourceField.setBackground(Color.GRAY);
 			}
 		};
-		
+
 		modeMosaic.addMouseListener(mosaicAdapter);
-		
-		//Photo mode button
+
+		// Photo mode button
 		JRadioButton modePhoto = new JRadioButton("Photo");
-		
+
 		MouseAdapter photoAdapter = new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				mode = MosArtLauncher.PHOTO_MODE;
-				sourcePanel.setEnabled(true);
+				sourceField.setEnabled(true);
+				sourceButton.setEnabled(true);
+				sourceField.setBackground(Color.WHITE);
 			}
 		};
-		
+
 		modePhoto.addMouseListener(photoAdapter);
-		
-		//Set default selection
+
+		// Set default selection
 		ButtonGroup modeGroup = new ButtonGroup();
 		modeGroup.add(modeMosaic);
 		modeGroup.add(modePhoto);
-		sourcePanel.setEnabled(false);
+		
+		sourceField.setEnabled(false);
+		sourceButton.setEnabled(false);
+		sourceField.setBackground(Color.LIGHT_GRAY);
+		
 		modeMosaic.setSelected(true);
 		mode = MosArtLauncher.MOSAIC_MODE;
-		
-		//Mode Panel
+
+		// Mode Panel
 		JPanel modePanel = new JPanel();
-		modePanel.setLayout(new BoxLayout(modePanel,
-				BoxLayout.LINE_AXIS));
+		modePanel.setLayout(new BoxLayout(modePanel, BoxLayout.LINE_AXIS));
 		modePanel.add(modeMosaic);
 		modePanel.add(modePhoto);
-		
+
 		return modePanel;
 	}
 
@@ -367,7 +379,7 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void buildCenterPanel() {
-		//Target panel
+		// Target panel
 		JPanel targetPanel = new JPanel();
 		targetPanel.setLayout(new BoxLayout(targetPanel, BoxLayout.PAGE_AXIS));
 
@@ -377,17 +389,17 @@ public class MosArtGUI extends JFrame {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Target", TitledBorder.LEFT, TitledBorder.TOP));
 
-		//Source panel
+		// Source panel
 		JPanel sourcePanel = new JPanel();
 		sourcePanel.setLayout(new BoxLayout(sourcePanel, BoxLayout.PAGE_AXIS));
 
 		sourcePanel.add(buildSourcePanel());
-		
+
 		sourcePanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Source", TitledBorder.LEFT, TitledBorder.TOP));
-		
-		//Dimension panel
+
+		// Dimension panel
 		JPanel dimPanel = new JPanel();
 		dimPanel.setLayout(new BoxLayout(dimPanel, BoxLayout.PAGE_AXIS));
 
@@ -397,25 +409,25 @@ public class MosArtGUI extends JFrame {
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Dimensions", TitledBorder.LEFT, TitledBorder.TOP));
 
-		
-		//Center panel
+		// Center panel
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
 		centerPanel.add(targetPanel);
+		centerPanel.add(sourcePanel);
 		centerPanel.add(dimPanel);
 
 		this.getContentPane().add(centerPanel, BorderLayout.CENTER);
 	}
-	
-	private void buildEastPanel(){
+
+	private void buildEastPanel() {
 		JPanel eastPanel = new JPanel();
 		eastPanel.setLayout(new FlowLayout());
 
 		eastPanel.add(buildModePanel());
-		
+
 		eastPanel.setBorder(BorderFactory.createTitledBorder(
-				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Mode", TitledBorder.LEFT, TitledBorder.TOP));
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED), "Mode",
+				TitledBorder.LEFT, TitledBorder.TOP));
 
 		this.getContentPane().add(eastPanel, BorderLayout.EAST);
 	}
@@ -452,10 +464,10 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void launchWorker() throws MosArtException, IOException {
-		
-		final BufferedImage source = ImageIO.read(new File(
-				sourceField.getText()));
-		
+
+		final BufferedImage source = ImageIO.read(new File(sourceField
+				.getText()));
+
 		new SwingWorker<Void, Void>() {
 			@Override
 			protected Void doInBackground() throws Exception {
@@ -495,11 +507,11 @@ public class MosArtGUI extends JFrame {
 		} else {
 			targetField.setBackground(Color.WHITE);
 		}
-		
+
 		if (sourceField.isEnabled() && sourceField.getText().isEmpty()) {
 			sourceField.setBackground(Color.RED);
 			allFilled = false;
-		} else if(sourceField.isEnabled()){
+		} else if (sourceField.isEnabled()) {
 			sourceField.setBackground(Color.WHITE);
 		}
 
