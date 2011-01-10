@@ -137,10 +137,12 @@ public class MosArtPhotoPainter extends Thread {
 		return closest;
 	}
 
-	private void sortArtwork() {
+	private void analyzeArtwork() {
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
-
+		
+		artworksRGB.clear();
+		
 		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
 				selectedTracks.size(), tileWidth, tileHeight);
 		extractor.start();
@@ -177,7 +179,7 @@ public class MosArtPhotoPainter extends Thread {
 		int tileY = 0;
 		int done = 0;
 
-		sortArtwork();
+		analyzeArtwork();
 
 		GraphicsEnvironment gEnv = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();

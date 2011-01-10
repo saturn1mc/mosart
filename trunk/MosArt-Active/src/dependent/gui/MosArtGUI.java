@@ -336,7 +336,7 @@ public class MosArtGUI extends JFrame {
 
 		final int mode = MosArtLauncher.PHOTO_MODE; // FOR TEST PURPOSE
 		final BufferedImage source = ImageIO.read(new File(
-				"D:\\Mes Documents\\google_logo.jpg"));
+				"D:\\Mes Documents\\seb.JPG"));
 
 		new SwingWorker<Void, Void>() {
 			@Override
