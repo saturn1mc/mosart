@@ -1,6 +1,7 @@
 package dependent.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -23,6 +24,9 @@ public class MosArtPreviewFrame extends JFrame {
 	private BufferedImage image;
 	private Graphics2D g2d;
 
+	private int prevWidth;
+	private int prevHeight;
+	
 	private MosArtPreviewFrame() {
 		super("Preview");
 	}
@@ -43,8 +47,8 @@ public class MosArtPreviewFrame extends JFrame {
 		image = gConf.createCompatibleImage(imageWidth, imageHeight);
 		g2d = image.createGraphics();
 		
-		this.setSize(this.getWidth(), this.getHeight() + this.getInsets().top);
-		this.setResizable(false);  
+		prevWidth = imageWidth;
+		prevHeight = imageHeight;
 	}
 
 	public BufferedImage getImage() {
@@ -53,27 +57,38 @@ public class MosArtPreviewFrame extends JFrame {
 
 	public void drawImage(Image toDraw, int x, int y) {
 		g2d.drawImage(toDraw, x, y, null);
-		
+
 		drawPreview();
 	}
 
 	public void showTarget(int x, int y, int width, int height) {
 		g2d.setColor(Color.GREEN);
 		g2d.drawRect(x, y, width, height);
-		
+
 		drawPreview();
 	}
 
 	public void diposeG2D() {
 		g2d.dispose();
 	}
-	
+
 	private void drawPreview() {
-		BufferStrategy bf = this.getBufferStrategy();
-		if (bf != null) {
-			 Graphics g = bf.getDrawGraphics();
-			 g.translate(0, this.getInsets().top);
-			 g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
+		if (this.isVisible()) {
+
+			new Thread() {
+				@Override
+				public void run() {
+					BufferStrategy bf = MosArtPreviewFrame.this
+							.getBufferStrategy();
+					if (bf != null) {
+						Graphics g = bf.getDrawGraphics();
+						g.translate(0, MosArtPreviewFrame.this.getInsets().top);
+						g.clearRect(0, 0, image.getWidth(), image.getHeight());
+						g.drawImage(image, 0, 0, image.getWidth(),
+								image.getHeight(), null);
+					}
+				}
+			}.start();
 		}
 	}
 
@@ -83,6 +98,12 @@ public class MosArtPreviewFrame extends JFrame {
 
 		if (b) {
 			this.createBufferStrategy(2);
+			Dimension frameDim = new Dimension(prevWidth, prevHeight
+					+ this.getInsets().top);
+
+			this.setSize(frameDim);
+			this.setPreferredSize(frameDim);
+			this.setResizable(false);
 		}
 	}
 }

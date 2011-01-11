@@ -183,6 +183,7 @@ public class MosArtPhotoPainter extends Thread {
 		analyzeArtwork();
 
 		MosArtPreviewFrame.getInstance().init(imageWidth, imageHeight);
+		MosArtPreviewFrame.getInstance().setVisible(true);
 		MosArtPreviewFrame.getInstance().drawImage(source.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH), 0, 0);
 
 		for (int i = 0; i < mosaicWidth; i++) {

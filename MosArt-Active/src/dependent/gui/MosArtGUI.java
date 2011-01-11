@@ -48,7 +48,7 @@ public class MosArtGUI extends JFrame {
 	private static final int TREE_WIDTH = 150;
 	private static final int TREE_HEIGHT = 250;
 
-	private static final int DEFAULT_IMG_DIM = 2500;
+	private static final int DEFAULT_IMG_DIM = 400;
 	private static final int DEFAULT_TILE_COUNT = 20;
 
 	private static enum DimInputs {
@@ -228,15 +228,22 @@ public class MosArtGUI extends JFrame {
 						JOptionPane.showMessageDialog(MosArtGUI.this,
 								me.getMessage(), "Can't start",
 								JOptionPane.ERROR_MESSAGE);
+						
+						MosArtSupervisor.getInstance().reset();
+						
 					} catch (IOException ioe) {
 						JOptionPane.showMessageDialog(MosArtGUI.this,
 								ioe.getMessage(), "Can't start",
 								JOptionPane.ERROR_MESSAGE);
+						
+						MosArtSupervisor.getInstance().reset();
 					}
 				} else {
 					JOptionPane.showMessageDialog(MosArtGUI.this,
 							"Please check inputs", "Can't start",
 							JOptionPane.WARNING_MESSAGE);
+					
+					MosArtSupervisor.getInstance().reset();
 				}
 			}
 		};
@@ -351,17 +358,17 @@ public class MosArtGUI extends JFrame {
 		ButtonGroup modeGroup = new ButtonGroup();
 		modeGroup.add(modeMosaic);
 		modeGroup.add(modePhoto);
-		
+
 		sourceField.setEnabled(false);
 		sourceButton.setEnabled(false);
 		sourceField.setBackground(Color.LIGHT_GRAY);
-		
+
 		modeMosaic.setSelected(true);
 		mode = MosArtLauncher.MOSAIC_MODE;
 
 		// Mode Panel
 		JPanel modePanel = new JPanel();
-		modePanel.setLayout(new BoxLayout(modePanel, BoxLayout.LINE_AXIS));
+		modePanel.setLayout(new BoxLayout(modePanel, BoxLayout.PAGE_AXIS));
 		modePanel.add(modeMosaic);
 		modePanel.add(modePhoto);
 
@@ -464,13 +471,17 @@ public class MosArtGUI extends JFrame {
 	}
 
 	private void launchWorker() throws MosArtException, IOException {
-
-		final BufferedImage source = ImageIO.read(new File(sourceField
-				.getText()));
-
 		new SwingWorker<Void, Void>() {
+
 			@Override
 			protected Void doInBackground() throws Exception {
+
+				BufferedImage source = null;
+
+				if (mode == MosArtLauncher.PHOTO_MODE) {
+					source = ImageIO.read(new File(sourceField.getText()));
+				}
+
 				if (worker == null) {
 					worker = new MosArtLauncher(source, mode,
 							libraryMirror.getSelectedTracks(),
@@ -648,6 +659,7 @@ public class MosArtGUI extends JFrame {
 					buildWestPanel();
 					MosArtGUI.this.pack();
 					MosArtGUI.this.repaint();
+					MosArtGUI.this.setLocationRelativeTo(null);
 
 					return null;
 				}
