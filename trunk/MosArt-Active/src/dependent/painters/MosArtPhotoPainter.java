@@ -197,7 +197,7 @@ public class MosArtPhotoPainter extends Thread {
 				int propX = (int) ((float) i * (float) propW);
 				int propY = (int) ((float) j * (float) propH);
 
-				MosArtPreviewFrame.getInstance().showTarget(tileX, tileY, tileWidth, tileHeight);
+				MosArtPreviewFrame.getInstance().targetPreview(tileX, tileY, tileWidth, tileHeight);
 				
 				BufferedImage image = getClosestArtworkFor(getAverageRGB(
 						source, propX, propY, propW, propH));
