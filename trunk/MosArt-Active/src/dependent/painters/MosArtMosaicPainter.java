@@ -57,8 +57,8 @@ public class MosArtMosaicPainter extends Thread {
 
 	private void createMosaic() throws IOException {
 
-		int tileWidth = imageWidth / mosaicWidth;
-		int tileHeight = imageHeight / mosaicHeight;
+		int tileWidth = (int)(Math.ceil((float)imageWidth / (float)mosaicWidth));
+		int tileHeight = (int)(Math.ceil((float)imageHeight / (float)mosaicHeight));
 		int tileX = 0;
 		int tileY = 0;
 		int done = 0;

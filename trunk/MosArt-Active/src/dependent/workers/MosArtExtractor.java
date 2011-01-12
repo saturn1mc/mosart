@@ -101,8 +101,7 @@ public class MosArtExtractor extends Thread {
 
 	@Override
 	public void run() {
-		int packetSize = Math.max((expectedImageCount / MAX_THREAD), 1)
-				+ Math.min((expectedImageCount % MAX_THREAD), 1);
+		int packetSize = (int)Math.ceil(((float)expectedImageCount / (float)MAX_THREAD));
 		int threadCount = 0;
 		int leftTodo = expectedImageCount;
 
