@@ -8,9 +8,9 @@ import java.util.LinkedList;
 import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
 
-public class MosArtExtractor extends Thread {
+public class MosArtExtractor {
 
-	private static final int MAX_THREAD = 100;
+	private static final int MAX_THREAD = 1000;
 
 	private LinkedList<Image> scaledImages;
 	private LinkedList<ITTrack> randomList;
@@ -48,8 +48,6 @@ public class MosArtExtractor extends Thread {
 
 		Image scaledImage = scaledImages.pop();
 
-		notifyAll();
-
 		return scaledImage;
 	}
 
@@ -78,9 +76,9 @@ public class MosArtExtractor extends Thread {
 		return randomList.size();
 	}
 
-	@Override
-	public void run() {
-		int packetSize = (int)Math.ceil(((float)expectedImageCount / (float)MAX_THREAD));
+	public void launch() {
+		int packetSize = (int) Math
+				.ceil(((float) expectedImageCount / (float) MAX_THREAD));
 		int threadCount = 0;
 		int leftTodo = expectedImageCount;
 

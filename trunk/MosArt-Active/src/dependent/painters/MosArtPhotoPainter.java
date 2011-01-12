@@ -98,9 +98,10 @@ public class MosArtPhotoPainter extends Thread {
 		int tileY = 0;
 		int done = 0;
 
-		MosArtColorExtractor colorExtractor = new MosArtColorExtractor(selectedTracks, tileWidth, tileHeight);
-		colorExtractor.start();
-		
+		MosArtColorExtractor colorExtractor = new MosArtColorExtractor(
+				selectedTracks, tileWidth, tileHeight);
+		colorExtractor.launch();
+
 		artworksRGB = colorExtractor.getArtworksRGB();
 
 		MosArtPreviewFrame.getInstance().init(imageWidth, imageHeight);
@@ -123,8 +124,8 @@ public class MosArtPhotoPainter extends Thread {
 				MosArtPreviewFrame.getInstance().targetPreview(tileX, tileY,
 						tileWidth, tileHeight);
 
-				BufferedImage image = getClosestArtworkFor(MosArtColorTools.getAverageRGB(
-						source, propX, propY, propW, propH));
+				BufferedImage image = getClosestArtworkFor(MosArtColorTools
+						.getAverageRGB(source, propX, propY, propW, propH));
 
 				MosArtPreviewFrame.getInstance().drawImage(image, tileX, tileY);
 

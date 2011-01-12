@@ -6,9 +6,9 @@ import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.painters.MosArtArtworkRGB;
 
-public class MosArtColorExtractor extends Thread {
+public class MosArtColorExtractor {
 
-	private static final int MAX_THREAD = 50;
+	private static final int MAX_THREAD = 1000;
 
 	private ArrayList<MosArtArtworkRGB> artworksRGB;
 
@@ -50,8 +50,7 @@ public class MosArtColorExtractor extends Thread {
 		return artworksRGB;
 	}
 
-	@Override
-	public void run() {
+	public void launch() {
 		int packetSize = (int) Math
 				.ceil(((float) selectedTracks.size() / (float) MAX_THREAD));
 		int threadCount = 0;
