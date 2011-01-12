@@ -99,13 +99,16 @@ public class MosArtPhotoPainter extends Thread {
 			int squareH) {
 		int[] rgb = new int[] { 0, 0, 0 };
 
-		for (int i = x; i < x + squareW; i++) {
-			for (int j = y; j < y + squareH; j++) {
+		int xStop = Math.min(x + squareW, image.getWidth());
+		int yStop = Math.min(y + squareH, image.getHeight());
+
+		for (int i = x; i < xStop; i++) {
+			for (int j = y; j < yStop; j++) {
 				addTo(rgb, getRGB(image, i, j));
 			}
 		}
 
-		scale(rgb, (1.0f / (float) (squareW * squareH)));
+		scale(rgb, (1.0f / Math.max(((xStop - x) * (yStop - y)), 1)));
 
 		return rgb;
 	}
@@ -141,9 +144,9 @@ public class MosArtPhotoPainter extends Thread {
 	private void analyzeArtwork() {
 		int tileWidth = imageWidth / mosaicWidth;
 		int tileHeight = imageHeight / mosaicHeight;
-		
+
 		artworksRGB.clear();
-		
+
 		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
 				selectedTracks.size(), tileWidth, tileHeight);
 		extractor.start();
@@ -174,8 +177,10 @@ public class MosArtPhotoPainter extends Thread {
 	public void paintPhoto() throws IOException {
 		float wRatio = (float) source.getWidth() / (float) imageWidth;
 		float hRatio = (float) source.getHeight() / (float) imageHeight;
-		int tileWidth = imageWidth / mosaicWidth;
-		int tileHeight = imageHeight / mosaicHeight;
+		int tileWidth = (int) (Math.ceil((float) imageWidth
+				/ (float) mosaicWidth));
+		int tileHeight = (int) (Math.ceil((float) imageHeight
+				/ (float) mosaicHeight));
 		int tileX = 0;
 		int tileY = 0;
 		int done = 0;
@@ -184,7 +189,9 @@ public class MosArtPhotoPainter extends Thread {
 
 		MosArtPreviewFrame.getInstance().init(imageWidth, imageHeight);
 		MosArtPreviewFrame.getInstance().setVisible(true);
-		MosArtPreviewFrame.getInstance().drawImage(source.getScaledInstance(imageWidth, imageHeight, Image.SCALE_SMOOTH), 0, 0);
+		MosArtPreviewFrame.getInstance().drawImage(
+				source.getScaledInstance(imageWidth, imageHeight,
+						Image.SCALE_SMOOTH), 0, 0);
 
 		for (int i = 0; i < mosaicWidth; i++) {
 
@@ -197,11 +204,12 @@ public class MosArtPhotoPainter extends Thread {
 				int propX = (int) ((float) i * (float) propW);
 				int propY = (int) ((float) j * (float) propH);
 
-				MosArtPreviewFrame.getInstance().targetPreview(tileX, tileY, tileWidth, tileHeight);
-				
+				MosArtPreviewFrame.getInstance().targetPreview(tileX, tileY,
+						tileWidth, tileHeight);
+
 				BufferedImage image = getClosestArtworkFor(getAverageRGB(
 						source, propX, propY, propW, propH));
-				
+
 				MosArtPreviewFrame.getInstance().drawImage(image, tileX, tileY);
 
 				tileY += tileHeight;
@@ -219,7 +227,8 @@ public class MosArtPhotoPainter extends Thread {
 
 		MosArtSupervisor.getInstance().reportMainProgress(
 				"Saving work to " + targetFilename, 0.66f);
-		ImageIO.write(MosArtPreviewFrame.getInstance().getImage(), "PNG", new File(targetFilename));
+		ImageIO.write(MosArtPreviewFrame.getInstance().getImage(), "PNG",
+				new File(targetFilename));
 
 		MosArtPreviewFrame.getInstance().diposeG2D();
 
