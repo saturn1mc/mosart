@@ -3,10 +3,6 @@
  */
 package dependent.painters;
 
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -15,11 +11,12 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import dependent.MosArtColorTools;
 import dependent.MosArtException;
 import dependent.MosArtSupervisor;
 import dependent.com.dt.iTunesController.ITTrack;
 import dependent.gui.MosArtPreviewFrame;
-import dependent.workers.MosArtExtractor;
+import dependent.workers.MosArtColorExtractor;
 
 /**
  * @author cmaurice2
@@ -73,105 +70,21 @@ public class MosArtPhotoPainter extends Thread {
 		this.targetFilename = targetFilename;
 	}
 
-	private int[] getRGB(BufferedImage image, int x, int y) {
-
-		int rgb = image.getRGB(x, y);
-		int r = (rgb & 0x00ff0000) >> 16;
-		int g = (rgb & 0x0000ff00) >> 8;
-		int b = (rgb & 0x000000ff);
-
-		return new int[] { r, g, b };
-	}
-
-	private void addTo(int[] target, int[] source) {
-		for (int i = 0; i < target.length; i++) {
-			target[i] += source[i];
-		}
-	}
-
-	private void scale(int[] target, float coeff) {
-		for (int i = 0; i < target.length; i++) {
-			target[i] = (int) (coeff * (float) target[i]);
-		}
-	}
-
-	private int[] getAverageRGB(BufferedImage image, int x, int y, int squareW,
-			int squareH) {
-		int[] rgb = new int[] { 0, 0, 0 };
-
-		int xStop = Math.min(x + squareW, image.getWidth());
-		int yStop = Math.min(y + squareH, image.getHeight());
-
-		for (int i = x; i < xStop; i++) {
-			for (int j = y; j < yStop; j++) {
-				addTo(rgb, getRGB(image, i, j));
-			}
-		}
-
-		scale(rgb, (1.0f / Math.max(((xStop - x) * (yStop - y)), 1)));
-
-		return rgb;
-	}
-
-	private int[] getAverageRGB(BufferedImage image) {
-		return getAverageRGB(image, 0, 0, image.getWidth(), image.getHeight());
-	}
-
-	private double distance(int[] rgb1, int[] rgb2) {
-		double dist2 = Math.pow(rgb1[0] - rgb2[0], 2)
-				+ Math.pow(rgb1[1] - rgb2[1], 2)
-				+ Math.pow(rgb1[2] - rgb2[2], 2);
-		return Math.pow(dist2, 1.0d / 2.0d);
-	}
-
 	private BufferedImage getClosestArtworkFor(int[] RGB) {
 
 		double minDelta = Double.POSITIVE_INFINITY;
 		BufferedImage closest = null;
 
-		for (MosArtArtworkRGB ad : artworksRGB) {
-			double dist = distance(ad.getRGB(), RGB);
+		for (MosArtArtworkRGB candidate : artworksRGB) {
+			double dist = MosArtColorTools.distance(candidate.getRGB(), RGB);
 
 			if (dist < minDelta) {
-				closest = ad.getArtwork();
+				closest = candidate.getArtwork();
 				minDelta = dist;
 			}
 		}
 
 		return closest;
-	}
-
-	private void analyzeArtwork() {
-		int tileWidth = imageWidth / mosaicWidth;
-		int tileHeight = imageHeight / mosaicHeight;
-
-		artworksRGB.clear();
-
-		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
-				selectedTracks.size(), tileWidth, tileHeight);
-		extractor.start();
-
-		GraphicsEnvironment gEnv = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
-		GraphicsDevice gDevice = gEnv.getDefaultScreenDevice();
-		GraphicsConfiguration gConf = gDevice.getDefaultConfiguration();
-
-		for (int i = 0; i < selectedTracks.size(); i++) {
-
-			Image image = extractor.popScaledImage();
-
-			BufferedImage artwork = gConf.createCompatibleImage(tileWidth,
-					tileHeight);
-			Graphics2D g2d = artwork.createGraphics();
-			g2d.drawImage(image, 0, 0, null);
-
-			artworksRGB.add(new MosArtArtworkRGB(artwork,
-					getAverageRGB(artwork)));
-
-			MosArtSupervisor.getInstance().reportProgress(
-					"Analyzing artwork color",
-					(float) i / (float) selectedTracks.size());
-		}
 	}
 
 	public void paintPhoto() throws IOException {
@@ -185,7 +98,10 @@ public class MosArtPhotoPainter extends Thread {
 		int tileY = 0;
 		int done = 0;
 
-		analyzeArtwork();
+		MosArtColorExtractor colorExtractor = new MosArtColorExtractor(selectedTracks, tileWidth, tileHeight);
+		colorExtractor.start();
+		
+		artworksRGB = colorExtractor.getArtworksRGB();
 
 		MosArtPreviewFrame.getInstance().init(imageWidth, imageHeight);
 		MosArtPreviewFrame.getInstance().setVisible(true);
@@ -207,7 +123,7 @@ public class MosArtPhotoPainter extends Thread {
 				MosArtPreviewFrame.getInstance().targetPreview(tileX, tileY,
 						tileWidth, tileHeight);
 
-				BufferedImage image = getClosestArtworkFor(getAverageRGB(
+				BufferedImage image = getClosestArtworkFor(MosArtColorTools.getAverageRGB(
 						source, propX, propY, propW, propH));
 
 				MosArtPreviewFrame.getInstance().drawImage(image, tileX, tileY);

@@ -53,27 +53,6 @@ public class MosArtExtractor extends Thread {
 		return scaledImage;
 	}
 
-	public synchronized Image getScaledImage(int index) {
-		if (index >= 0) {
-
-			if (index >= scaledImages.size()) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-
-			Image scaledImage = scaledImages.get(index);
-
-			notifyAll();
-
-			return scaledImage;
-		} else {
-			return null;
-		}
-	}
-
 	private int shuffleTracks() {
 		int trackCount = selectedTracks.size();
 
