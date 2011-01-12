@@ -26,9 +26,10 @@ public class MosArtPreviewFrame extends JFrame {
 
 	private int prevWidth;
 	private int prevHeight;
-	
+
 	private MosArtPreviewFrame() {
 		super("Preview");
+		setBackground(Color.BLACK);
 	}
 
 	public static MosArtPreviewFrame getInstance() {
@@ -46,49 +47,44 @@ public class MosArtPreviewFrame extends JFrame {
 		GraphicsConfiguration gConf = gDevice.getDefaultConfiguration();
 		image = gConf.createCompatibleImage(imageWidth, imageHeight);
 		g2d = image.createGraphics();
-		
+
 		prevWidth = imageWidth;
 		prevHeight = imageHeight;
 	}
 
-	public BufferedImage getImage() {
-		return image;
-	}
-
 	public void drawImage(Image toDraw, int x, int y) {
 		g2d.drawImage(toDraw, x, y, null);
-
-		drawPreview();
-	}
-
-	public void showTarget(int x, int y, int width, int height) {
-		g2d.setColor(Color.GREEN);
-		g2d.drawRect(x, y, width, height);
-
-		drawPreview();
+		drawPreview(toDraw, x, y);
 	}
 
 	public void diposeG2D() {
 		g2d.dispose();
 	}
 
-	private void drawPreview() {
+	public void drawPreview(Image toDraw, int x, int y) {
 		if (this.isVisible()) {
-
-			new Thread() {
-				@Override
-				public void run() {
-					BufferStrategy bf = MosArtPreviewFrame.this
-							.getBufferStrategy();
-					if (bf != null) {
-						Graphics g = bf.getDrawGraphics();
-						g.translate(0, MosArtPreviewFrame.this.getInsets().top);
-						g.clearRect(0, 0, image.getWidth(), image.getHeight());
-						g.drawImage(image, 0, 0, image.getWidth(),
-								image.getHeight(), null);
-					}
-				}
-			}.start();
+			BufferStrategy bf = getBufferStrategy();
+			if (bf != null) {
+				Graphics g = bf.getDrawGraphics();
+				g.translate(0, getInsets().top);
+				g.drawImage(toDraw, x, y, null);
+				
+				bf.show();
+			}
+		}
+	}
+	
+	public void targetPreview(int x, int y, int width, int height) {
+		if (this.isVisible()) {
+			BufferStrategy bf = getBufferStrategy();
+			if (bf != null) {
+				Graphics g = bf.getDrawGraphics();
+				g.translate(0, getInsets().top);
+				g.setColor(Color.GREEN);
+				g.drawRect(x, y, width, height);
+				
+				bf.show();
+			}
 		}
 	}
 
@@ -99,11 +95,15 @@ public class MosArtPreviewFrame extends JFrame {
 		if (b) {
 			this.createBufferStrategy(2);
 			Dimension frameDim = new Dimension(prevWidth, prevHeight
-					+ this.getInsets().top);
+					+ getInsets().top);
 
 			this.setSize(frameDim);
 			this.setPreferredSize(frameDim);
 			this.setResizable(false);
 		}
+	}
+	
+	public BufferedImage getImage() {
+		return image;
 	}
 }

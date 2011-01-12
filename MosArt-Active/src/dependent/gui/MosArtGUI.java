@@ -90,7 +90,6 @@ public class MosArtGUI extends JFrame {
 
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.pack();
-		this.setAlwaysOnTop(true);
 		this.setLocationRelativeTo(null);
 	}
 

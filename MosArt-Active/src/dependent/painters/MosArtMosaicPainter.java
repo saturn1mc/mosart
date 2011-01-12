@@ -79,7 +79,7 @@ public class MosArtMosaicPainter extends Thread {
 				Image image = extractor.popScaledImage();
 
 				MosArtPreviewFrame.getInstance().drawImage(image, tileX, tileY);
-
+				
 				tileY += tileHeight;
 
 				float progress = ((float) ++done)
