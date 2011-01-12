@@ -65,7 +65,7 @@ public class MosArtMosaicPainter extends Thread {
 
 		MosArtExtractor extractor = new MosArtExtractor(selectedTracks,
 				mosaicHeight * mosaicWidth, tileWidth, tileHeight);
-		extractor.start();
+		extractor.launch();
 
 		MosArtPreviewFrame.getInstance().init(imageWidth, imageHeight);
 		MosArtPreviewFrame.getInstance().setVisible(true);

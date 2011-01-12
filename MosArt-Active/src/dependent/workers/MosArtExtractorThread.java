@@ -17,7 +17,7 @@ public class MosArtExtractorThread extends Thread {
 			+ "MOSART_TMP_IMG";
 
 	private MosArtExtractor central;
-
+	
 	private ArrayList<ITTrack> tracks;
 	private File tempFile;
 
@@ -29,7 +29,7 @@ public class MosArtExtractorThread extends Thread {
 
 		this.central = central;
 		this.tracks = tracks;
-
+		
 		tempFile = new File(TEMP_IMG + "_" + id);
 		tempFile.getParentFile().mkdirs();
 
@@ -66,7 +66,7 @@ public class MosArtExtractorThread extends Thread {
 
 				sImgs.add(scaledImage);
 			}
-
+			
 			central.putScaledImages(sImgs);
 
 			tempFile.delete();
