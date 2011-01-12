@@ -32,8 +32,8 @@ public class MosArtExtractor extends Thread {
 		this.targetHeight = targetHeight;
 	}
 
-	public synchronized void putScaledImage(Image scaledImage) {
-		scaledImages.add(scaledImage);
+	public synchronized void putScaledImages(ArrayList<Image> sImgs) {
+		scaledImages.addAll(sImgs);
 		notifyAll();
 	}
 
