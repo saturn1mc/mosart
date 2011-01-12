@@ -63,6 +63,9 @@ public class MosArtColorExtractorThread extends Thread {
 	@Override
 	public void run() {
 		try {
+			
+			ArrayList<MosArtArtworkRGB> aRGBs = new ArrayList<MosArtArtworkRGB>();
+			
 			GraphicsEnvironment gEnv = GraphicsEnvironment
 					.getLocalGraphicsEnvironment();
 			GraphicsDevice gDevice = gEnv.getDefaultScreenDevice();
@@ -77,10 +80,12 @@ public class MosArtColorExtractorThread extends Thread {
 				Graphics2D g2d = artwork.createGraphics();
 				g2d.drawImage(scaledImage, 0, 0, null);
 				
-				central.putArtworkRGB(new MosArtArtworkRGB(artwork,
-						MosArtColorTools.getAverageRGB(artwork)));
+				aRGBs.add(new MosArtArtworkRGB(artwork,
+					MosArtColorTools.getAverageRGB(artwork)));
 			}
 
+			central.putArtworkRGB(aRGBs);
+			
 			tempFile.delete();
 		} catch (IOException e) {
 			MosArtSupervisor.getInstance().reportCrash(e.getMessage());

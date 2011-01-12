@@ -8,7 +8,7 @@ import dependent.painters.MosArtArtworkRGB;
 
 public class MosArtColorExtractor extends Thread {
 
-	private static final int MAX_THREAD = 100;
+	private static final int MAX_THREAD = 50;
 
 	private ArrayList<MosArtArtworkRGB> artworksRGB;
 
@@ -26,8 +26,8 @@ public class MosArtColorExtractor extends Thread {
 		this.targetHeight = targetHeight;
 	}
 
-	public synchronized void putArtworkRGB(MosArtArtworkRGB artworkRGB) {
-		artworksRGB.add(artworkRGB);
+	public synchronized void putArtworkRGB(ArrayList<MosArtArtworkRGB> aRGBs) {
+		artworksRGB.addAll(aRGBs);
 		
 		MosArtSupervisor.getInstance().reportProgress(
 				"Analyzing artwork color",
