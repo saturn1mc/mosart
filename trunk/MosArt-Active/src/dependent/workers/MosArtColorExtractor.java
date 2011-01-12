@@ -28,9 +28,11 @@ public class MosArtColorExtractor extends Thread {
 
 	public synchronized void putArtworkRGB(MosArtArtworkRGB artworkRGB) {
 		artworksRGB.add(artworkRGB);
+		
 		MosArtSupervisor.getInstance().reportProgress(
 				"Analyzing artwork color",
 				(float) artworksRGB.size() / (float) selectedTracks.size());
+		
 		notifyAll();
 	}
 
@@ -60,11 +62,12 @@ public class MosArtColorExtractor extends Thread {
 			ArrayList<ITTrack> tracks = new ArrayList<ITTrack>();
 
 			tracks.addAll(selectedTracks.subList(done,
-					Math.max(done + packetSize, selectedTracks.size())));
+					Math.min(done + packetSize, selectedTracks.size())));
 
 			new MosArtColorExtractorThread(this, threadCount, tracks,
 					targetWidth, targetHeight).start();
 
+			threadCount++;
 			done += packetSize;
 		}
 	}
