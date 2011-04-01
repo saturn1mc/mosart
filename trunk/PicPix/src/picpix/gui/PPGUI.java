@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -81,7 +82,7 @@ public class PPGUI extends JFrame {
 	private PPGUI() {
 
 		super("MosArt");
-
+		
 		buildLaunchButton();
 		buildProgressBars();
 
@@ -138,7 +139,7 @@ public class PPGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText("D:\\Mosaic.png"); // TODO replace with relative
+		targetField.setText(System.getProperty("user.home") + File.separator + "Mosaic.png"); // TODO replace with relative
 												// path
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		targetField.setPreferredSize(fieldDim);
@@ -190,8 +191,7 @@ public class PPGUI extends JFrame {
 
 		// Text field
 		imgFolderField = new JTextField();
-		imgFolderField.setText("D:\\Pictures"); // TODO replace with relative
-												// path
+		imgFolderField.setText(System.getProperty("user.home") + File.separator + "Pictures");
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		imgFolderField.setPreferredSize(fieldDim);
 		imgFolderField.setMaximumSize(fieldDim);
@@ -462,7 +462,7 @@ public class PPGUI extends JFrame {
 
 		sourcePanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
-				"Source", TitledBorder.LEFT, TitledBorder.TOP));
+				"Model", TitledBorder.LEFT, TitledBorder.TOP));
 
 		// Dimension panel
 		JPanel dimPanel = new JPanel();
@@ -719,8 +719,10 @@ public class PPGUI extends JFrame {
 			}.execute();
 		}
 	}
-
+	
 	public static void main(String[] args) {
+		
+		
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				PPGUI gui = new PPGUI();
