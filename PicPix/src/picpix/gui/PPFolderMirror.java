@@ -1,12 +1,10 @@
 package picpix.gui;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-import javax.imageio.ImageIO;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
@@ -72,18 +70,23 @@ public class PPFolderMirror implements TreeSelectionListener {
 	}
 
 	private void handleFile(File file, PPMutableTreeNode parentNode) {
-		try {
-			if (ImageIO.read(file) != null) {
+		if (isImage(file) && file.canRead()) {
 
-				PPMutableTreeNode fileNode = new PPMutableTreeNode(
-						file.getName());
-				parentNode.add(fileNode);
+			PPMutableTreeNode fileNode = new PPMutableTreeNode(file.getName());
+			parentNode.add(fileNode);
 
-				linkLeafToAllParent(file, parentNode);
-				nodesFile.put(fileNode, file);
-			}
-		} catch (IOException e) {
-			// Nothing
+			linkLeafToAllParent(file, parentNode);
+			nodesFile.put(fileNode, file);
+		}
+	}
+
+	private boolean isImage(File file) {
+		if (file.getName().endsWith(".png") || file.getName().endsWith(".jpg")
+				|| file.getName().endsWith(".jpeg")
+				|| file.getName().endsWith(".bmp")) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
