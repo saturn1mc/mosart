@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -82,7 +81,7 @@ public class PPGUI extends JFrame {
 	private PPGUI() {
 
 		super("MosArt");
-		
+
 		buildLaunchButton();
 		buildProgressBars();
 
@@ -139,8 +138,9 @@ public class PPGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText(System.getProperty("user.home") + File.separator + "Mosaic.png"); // TODO replace with relative
-												// path
+		targetField.setText(System.getProperty("user.home") + File.separator
+				+ "Mosaic.png"); // TODO replace with relative
+		// path
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		targetField.setPreferredSize(fieldDim);
 		targetField.setMaximumSize(fieldDim);
@@ -176,7 +176,7 @@ public class PPGUI extends JFrame {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					imgFolderField.setText(fc.getSelectedFile().getPath());
-					
+
 					new SwingWorker<Void, Void>() {
 						protected Void doInBackground() throws Exception {
 							updateTree();
@@ -191,7 +191,8 @@ public class PPGUI extends JFrame {
 
 		// Text field
 		imgFolderField = new JTextField();
-		imgFolderField.setText(System.getProperty("user.home") + File.separator + "Pictures");
+		imgFolderField.setText(System.getProperty("user.home") + File.separator
+				+ "Pictures");
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		imgFolderField.setPreferredSize(fieldDim);
 		imgFolderField.setMaximumSize(fieldDim);
@@ -719,10 +720,9 @@ public class PPGUI extends JFrame {
 			}.execute();
 		}
 	}
-	
+
 	public static void main(String[] args) {
-		
-		
+
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				PPGUI gui = new PPGUI();
