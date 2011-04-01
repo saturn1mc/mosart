@@ -55,14 +55,18 @@ public class PPGUI extends JFrame {
 
 	private int mode;
 
-	private PPLibraryMirror libraryMirror;
+	private PPFolderMirror libraryMirror;
 	private PPLauncher worker;
 
 	private JProgressBar mainProgressBar;
 	private JProgressBar subProgressBar;
 
 	private JTextField targetField;
+	
+	private JTextField imgFolderField;
 
+	private JScrollPane treeView;
+	
 	private JPanel sourcePanel;
 	private JTextField sourceField;
 	private JButton sourceButton;
@@ -90,24 +94,23 @@ public class PPGUI extends JFrame {
 		this.setLocationRelativeTo(null);
 	}
 
-	private void buildTreePanel(JScrollPane treeView) {
+	private void buildTreePanel() {
 
-		File imageFolder = new File(sourceField.getText());
+		File imageFolder = new File(imgFolderField.getText());
 		if (imageFolder != null && imageFolder.canRead()
 				&& imageFolder.isDirectory()) {
 
 			PPSupervisor.getInstance().lock();
 
 			PPSupervisor.getInstance().reportTask("Analysing folder");
-			libraryMirror = new PPLibraryMirror(imageFolder);
-
+			libraryMirror = new PPFolderMirror(imageFolder);
+			
 			treeView.setViewportView(libraryMirror.getLibraryTree());
 			treeView.setPreferredSize(new Dimension(TREE_WIDTH, TREE_HEIGHT));
 
+			this.repaint();
+			
 			PPSupervisor.getInstance().reset();
-		} else {
-			PPSupervisor.getInstance().reportCrash(
-					"Can't read '" + imageFolder.getAbsolutePath() + "'");
 		}
 	}
 
@@ -150,6 +153,51 @@ public class PPGUI extends JFrame {
 		container.setLayout(new FlowLayout(FlowLayout.LEFT));
 
 		container.add(targetPanel);
+
+		return container;
+	}
+	
+	private JPanel buildImgFolderPanel() {
+		JButton imgFolderButton = new JButton("...");
+
+		MouseAdapter imgFolderMouse = new MouseAdapter() {
+			@Override
+			public void mousePressed(MouseEvent e) {
+				JFileChooser fc = new JFileChooser();
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setMultiSelectionEnabled(false);
+				fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+
+				int returnVal = fc.showOpenDialog(null);
+
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+					imgFolderField.setText(fc.getSelectedFile().getPath());
+					buildTreePanel();
+				}
+			}
+		};
+
+		imgFolderButton.addMouseListener(imgFolderMouse);
+
+		// Text field
+		imgFolderField = new JTextField();
+		imgFolderField.setText("D:\\Pictures"); //TODO replace with relative path
+		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
+		imgFolderField.setPreferredSize(fieldDim);
+		imgFolderField.setMaximumSize(fieldDim);
+
+		// Panel
+		JPanel imgFolderPanel = new JPanel();
+		imgFolderPanel.setLayout(new BoxLayout(imgFolderPanel, BoxLayout.LINE_AXIS));
+
+		imgFolderPanel.add(new JLabel("Image folder : "));
+		imgFolderPanel.add(imgFolderField);
+		imgFolderPanel.add(imgFolderButton);
+
+		JPanel container = new JPanel();
+		container.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+		container.add(imgFolderPanel);
 
 		return container;
 	}
@@ -383,6 +431,16 @@ public class PPGUI extends JFrame {
 		targetPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Target", TitledBorder.LEFT, TitledBorder.TOP));
+		
+		// Image folder panel
+		JPanel imageFolderPanel = new JPanel();
+		imageFolderPanel.setLayout(new BoxLayout(imageFolderPanel, BoxLayout.PAGE_AXIS));
+
+		imageFolderPanel.add(buildImgFolderPanel());
+
+		imageFolderPanel.setBorder(BorderFactory.createTitledBorder(
+				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
+				"Images", TitledBorder.LEFT, TitledBorder.TOP));
 
 		// Source panel
 		JPanel sourcePanel = new JPanel();
@@ -408,6 +466,7 @@ public class PPGUI extends JFrame {
 		JPanel centerPanel = new JPanel();
 		centerPanel.setLayout(new BoxLayout(centerPanel, BoxLayout.PAGE_AXIS));
 		centerPanel.add(targetPanel);
+		centerPanel.add(imageFolderPanel);
 		centerPanel.add(sourcePanel);
 		centerPanel.add(dimPanel);
 
@@ -432,8 +491,8 @@ public class PPGUI extends JFrame {
 		JPanel westPanel = new JPanel();
 		westPanel.setLayout(new FlowLayout());
 
-		JScrollPane treeView = new JScrollPane();
-		buildTreePanel(treeView);
+		treeView = new JScrollPane();
+		buildTreePanel();
 		westPanel.add(treeView);
 
 		westPanel.setBorder(BorderFactory.createTitledBorder(
@@ -621,7 +680,7 @@ public class PPGUI extends JFrame {
 		return launchButton;
 	}
 
-	public PPLibraryMirror getLibraryMirror() {
+	public PPFolderMirror getLibraryMirror() {
 		return libraryMirror;
 	}
 

@@ -1,96 +1,113 @@
 package picpix.gui;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 
+import javax.imageio.ImageIO;
 import javax.swing.JTree;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-public class PPLibraryMirror implements TreeSelectionListener {
+public class PPFolderMirror implements TreeSelectionListener {
 
 	private PPMutableTreeNode rootNode;
 	private JTree libraryTree;
 	private boolean enabled;
-	
-	HashMap<PPMutableTreeNode, ArrayList<File>> nodesFileChildren;
+
+	HashMap<PPMutableTreeNode, ArrayList<File>> nodesLeaves;
+	HashMap<PPMutableTreeNode, File> nodesFile;
 	private ArrayList<File> selectedFiles;
 
-	public PPLibraryMirror(File imageFolder) {
-		rootNode = new PPMutableTreeNode("Image Folder");
+	public PPFolderMirror(File imageFolder) {
+		rootNode = new PPMutableTreeNode(imageFolder.getName());
 
 		libraryTree = new JTree(rootNode);
 		libraryTree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
 		libraryTree.setShowsRootHandles(true);
 		libraryTree.addTreeSelectionListener(this);
+		libraryTree.setAutoscrolls(true);
 
-		nodesFileChildren = new HashMap<PPMutableTreeNode, ArrayList<File>>();
+		nodesLeaves = new HashMap<PPMutableTreeNode, ArrayList<File>>();
+		nodesFile = new HashMap<PPMutableTreeNode, File>();
 
 		selectedFiles = new ArrayList<File>();
 
 		enabled = true;
-		
+
 		parseFolder(imageFolder);
+
+		for (int i = 0; i < libraryTree.getRowCount(); i++) {
+			libraryTree.expandRow(i);
+		}
 	}
 
-	private void parseFolder(File imageFolder){
-		for(File f : imageFolder.listFiles()){
-			if(f.isDirectory()){
+	private void parseFolder(File imageFolder) {
+		for (File f : imageFolder.listFiles()) {
+			if (f.isDirectory()) {
 				handleFolder(f, rootNode);
-			}
-			else{
+			} else {
 				handleFile(f, rootNode);
 			}
 		}
 	}
-	
-	private void handleFolder(File folder, PPMutableTreeNode parentNode){
-		
+
+	private void handleFolder(File folder, PPMutableTreeNode parentNode) {
+
 		PPMutableTreeNode folderNode = new PPMutableTreeNode(folder.getName());
 		parentNode.add(folderNode);
-		
-		for(File f : folder.listFiles()){
-			if(f.isDirectory()){
+
+		for (File f : folder.listFiles()) {
+			if (f.isDirectory()) {
 				handleFolder(f, folderNode);
-			}
-			else{
+			} else {
 				handleFile(f, folderNode);
 			}
 		}
 	}
-	
-	private void handleFile(File file, PPMutableTreeNode parentNode){
-		PPMutableTreeNode fileNode = new PPMutableTreeNode(file.getName());
-		parentNode.add(fileNode);
-		
-		addFileAsChild(fileNode, file);
-	}
-	
-	private void addFileAsChild(PPMutableTreeNode node, File file){
-		ArrayList<File> files = nodesFileChildren.get(node);
-		
-		if(files == null){
-			files = new ArrayList<File>();
-			nodesFileChildren.put(node, files);
+
+	private void handleFile(File file, PPMutableTreeNode parentNode) {
+		try {
+			if (ImageIO.read(file) != null) {
+
+				PPMutableTreeNode fileNode = new PPMutableTreeNode(
+						file.getName());
+				parentNode.add(fileNode);
+
+				linkLeafToAllParent(file, parentNode);
+				nodesFile.put(fileNode, file);
+			}
+		} catch (IOException e) {
+			// Nothing
 		}
-		
-		files.add(file);
-		
-		if(node.getParent() != null){
-			addFileAsChild((PPMutableTreeNode)node.getParent(), file);
+	}
+
+	private void linkLeafToAllParent(File file, PPMutableTreeNode parentNode) {
+
+		if (parentNode != null) {
+			ArrayList<File> files = nodesLeaves.get(parentNode);
+
+			if (files == null) {
+				files = new ArrayList<File>();
+				nodesLeaves.put(parentNode, files);
+			}
+
+			files.add(file);
+
+			linkLeafToAllParent(file,
+					(PPMutableTreeNode) parentNode.getParent());
 		}
 	}
 
 	public synchronized ArrayList<File> getSelectedFiles() {
 
 		if (selectedFiles.isEmpty()) {
-			selectedFiles = nodesFileChildren.get(rootNode);
+			selectedFiles = nodesLeaves.get(rootNode);
 		}
 
 		return selectedFiles;
@@ -109,8 +126,8 @@ public class PPLibraryMirror implements TreeSelectionListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addAllLeaves(PPMutableTreeNode node,
-			ArrayList<PPMutableTreeNode> stack) {
+	private void addAllLeaves(PPMutableTreeNode node, ArrayList<File> stack) {
+
 		if (!node.isLeaf()) {
 			Enumeration<PPMutableTreeNode> children = node.children();
 
@@ -118,14 +135,17 @@ public class PPLibraryMirror implements TreeSelectionListener {
 				addAllLeaves(children.nextElement(), stack);
 			}
 		} else {
-			stack.add(node);
+			File file = nodesFile.get(node);
+			if (file != null) {
+				stack.add(file);
+			}
 		}
 	}
 
 	@Override
 	public void valueChanged(TreeSelectionEvent e) {
 		if (isEnabled()) {
-			HashSet<File> distinctTracks = new HashSet<File>();
+			selectedFiles.clear();
 
 			TreePath[] selection = libraryTree.getSelectionPaths();
 
@@ -134,20 +154,12 @@ public class PPLibraryMirror implements TreeSelectionListener {
 					PPMutableTreeNode node = (PPMutableTreeNode) tp
 							.getLastPathComponent();
 
-					if (node.isLeaf()) {
-						distinctTracks.addAll(nodesFileChildren.get(node));
+					if (!node.isLeaf()) {
+						addAllLeaves(node, selectedFiles);
 					} else {
-						ArrayList<PPMutableTreeNode> leaves = new ArrayList<PPMutableTreeNode>();
-						addAllLeaves(node, leaves);
-
-						for (PPMutableTreeNode leaf : leaves) {
-							distinctTracks.addAll(nodesFileChildren.get(leaf));
-						}
+						selectedFiles.add(nodesFile.get(node));
 					}
 				}
-
-				selectedFiles.clear();
-				selectedFiles.addAll(distinctTracks);
 			}
 		}
 	}
