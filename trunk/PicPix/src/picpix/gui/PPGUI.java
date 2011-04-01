@@ -62,11 +62,11 @@ public class PPGUI extends JFrame {
 	private JProgressBar subProgressBar;
 
 	private JTextField targetField;
-	
+
 	private JTextField imgFolderField;
 
 	private JScrollPane treeView;
-	
+
 	private JPanel sourcePanel;
 	private JTextField sourceField;
 	private JButton sourceButton;
@@ -94,7 +94,7 @@ public class PPGUI extends JFrame {
 		this.setLocationRelativeTo(null);
 	}
 
-	private void buildTreePanel() {
+	private void updateTree() {
 
 		File imageFolder = new File(imgFolderField.getText());
 		if (imageFolder != null && imageFolder.canRead()
@@ -102,14 +102,16 @@ public class PPGUI extends JFrame {
 
 			PPSupervisor.getInstance().lock();
 
+			if (libraryMirror != null) {
+				treeView.remove(libraryMirror.getTree());
+			}
+
 			PPSupervisor.getInstance().reportTask("Analysing folder");
 			libraryMirror = new PPFolderMirror(imageFolder);
-			
-			treeView.setViewportView(libraryMirror.getLibraryTree());
+
+			treeView.setViewportView(libraryMirror.getTree());
 			treeView.setPreferredSize(new Dimension(TREE_WIDTH, TREE_HEIGHT));
 
-			this.repaint();
-			
 			PPSupervisor.getInstance().reset();
 		}
 	}
@@ -136,7 +138,8 @@ public class PPGUI extends JFrame {
 
 		// Text field
 		targetField = new JTextField();
-		targetField.setText("D:\\Mosaic.png"); //TODO replace with relative path
+		targetField.setText("D:\\Mosaic.png"); // TODO replace with relative
+												// path
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		targetField.setPreferredSize(fieldDim);
 		targetField.setMaximumSize(fieldDim);
@@ -156,7 +159,7 @@ public class PPGUI extends JFrame {
 
 		return container;
 	}
-	
+
 	private JPanel buildImgFolderPanel() {
 		JButton imgFolderButton = new JButton("...");
 
@@ -172,7 +175,13 @@ public class PPGUI extends JFrame {
 
 				if (returnVal == JFileChooser.APPROVE_OPTION) {
 					imgFolderField.setText(fc.getSelectedFile().getPath());
-					buildTreePanel();
+					
+					new SwingWorker<Void, Void>() {
+						protected Void doInBackground() throws Exception {
+							updateTree();
+							return null;
+						};
+					}.execute();
 				}
 			}
 		};
@@ -181,14 +190,16 @@ public class PPGUI extends JFrame {
 
 		// Text field
 		imgFolderField = new JTextField();
-		imgFolderField.setText("D:\\Pictures"); //TODO replace with relative path
+		imgFolderField.setText("D:\\Pictures"); // TODO replace with relative
+												// path
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		imgFolderField.setPreferredSize(fieldDim);
 		imgFolderField.setMaximumSize(fieldDim);
 
 		// Panel
 		JPanel imgFolderPanel = new JPanel();
-		imgFolderPanel.setLayout(new BoxLayout(imgFolderPanel, BoxLayout.LINE_AXIS));
+		imgFolderPanel.setLayout(new BoxLayout(imgFolderPanel,
+				BoxLayout.LINE_AXIS));
 
 		imgFolderPanel.add(new JLabel("Image folder : "));
 		imgFolderPanel.add(imgFolderField);
@@ -431,10 +442,11 @@ public class PPGUI extends JFrame {
 		targetPanel.setBorder(BorderFactory.createTitledBorder(
 				BorderFactory.createEtchedBorder(EtchedBorder.LOWERED),
 				"Target", TitledBorder.LEFT, TitledBorder.TOP));
-		
+
 		// Image folder panel
 		JPanel imageFolderPanel = new JPanel();
-		imageFolderPanel.setLayout(new BoxLayout(imageFolderPanel, BoxLayout.PAGE_AXIS));
+		imageFolderPanel.setLayout(new BoxLayout(imageFolderPanel,
+				BoxLayout.PAGE_AXIS));
 
 		imageFolderPanel.add(buildImgFolderPanel());
 
@@ -492,7 +504,7 @@ public class PPGUI extends JFrame {
 		westPanel.setLayout(new FlowLayout());
 
 		treeView = new JScrollPane();
-		buildTreePanel();
+		updateTree();
 		westPanel.add(treeView);
 
 		westPanel.setBorder(BorderFactory.createTitledBorder(

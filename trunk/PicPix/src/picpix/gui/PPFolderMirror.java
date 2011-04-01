@@ -16,7 +16,7 @@ import javax.swing.tree.TreeSelectionModel;
 public class PPFolderMirror implements TreeSelectionListener {
 
 	private PPMutableTreeNode rootNode;
-	private JTree libraryTree;
+	private JTree tree;
 	private boolean enabled;
 
 	HashMap<PPMutableTreeNode, ArrayList<File>> nodesLeaves;
@@ -26,12 +26,12 @@ public class PPFolderMirror implements TreeSelectionListener {
 	public PPFolderMirror(File imageFolder) {
 		rootNode = new PPMutableTreeNode(imageFolder.getName());
 
-		libraryTree = new JTree(rootNode);
-		libraryTree.getSelectionModel().setSelectionMode(
+		tree = new JTree(rootNode);
+		tree.getSelectionModel().setSelectionMode(
 				TreeSelectionModel.DISCONTIGUOUS_TREE_SELECTION);
-		libraryTree.setShowsRootHandles(true);
-		libraryTree.addTreeSelectionListener(this);
-		libraryTree.setAutoscrolls(true);
+		tree.setShowsRootHandles(true);
+		tree.addTreeSelectionListener(this);
+		tree.setAutoscrolls(true);
 
 		nodesLeaves = new HashMap<PPMutableTreeNode, ArrayList<File>>();
 		nodesFile = new HashMap<PPMutableTreeNode, File>();
@@ -42,8 +42,8 @@ public class PPFolderMirror implements TreeSelectionListener {
 
 		parseFolder(imageFolder);
 
-		for (int i = 0; i < libraryTree.getRowCount(); i++) {
-			libraryTree.expandRow(i);
+		for (int i = 0; i < tree.getRowCount(); i++) {
+			tree.expandRow(i);
 		}
 	}
 
@@ -113,8 +113,8 @@ public class PPFolderMirror implements TreeSelectionListener {
 		return selectedFiles;
 	}
 
-	public synchronized JTree getLibraryTree() {
-		return libraryTree;
+	public synchronized JTree getTree() {
+		return tree;
 	}
 
 	public synchronized boolean isEnabled() {
@@ -147,7 +147,7 @@ public class PPFolderMirror implements TreeSelectionListener {
 		if (isEnabled()) {
 			selectedFiles.clear();
 
-			TreePath[] selection = libraryTree.getSelectionPaths();
+			TreePath[] selection = tree.getSelectionPaths();
 
 			if (selection != null) {
 				for (TreePath tp : selection) {
