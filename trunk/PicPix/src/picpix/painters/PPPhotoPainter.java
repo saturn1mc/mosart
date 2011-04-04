@@ -14,6 +14,7 @@ import javax.imageio.ImageIO;
 import picpix.gui.PPPreviewFrame;
 import picpix.tools.PPColorTools;
 import picpix.tools.PPException;
+import picpix.tools.PPImageRGB;
 import picpix.tools.PPSupervisor;
 import picpix.workers.PPColorExtractor;
 
@@ -80,7 +81,7 @@ public class PPPhotoPainter extends Thread {
 			double dist = PPColorTools.distance(candidate.getRGB(), RGB);
 
 			if (dist < minDelta) {
-				closest = candidate.getArtwork();
+				closest = candidate.getImage();
 				minDelta = dist;
 			}
 		}

@@ -12,15 +12,15 @@ import javax.imageio.ImageIO;
 import picpix.gui.PPPreviewFrame;
 import picpix.tools.PPException;
 import picpix.tools.PPSupervisor;
-import picpix.workers.PPMosaicLoad;
+import picpix.workers.PPWorkerLoad;
 import picpix.workers.PPMosaicWorker;
 
 public class PPMosaicPainter extends Thread {
 
-	private static final int MAX_THREAD = 10;
+	private static final int MAX_THREAD = 20;
 
 	private ArrayList<String> selectedFiles;
-	private LinkedList<PPMosaicLoad> workLoad;
+	private LinkedList<PPWorkerLoad> workLoad;
 	private LinkedList<PPMosaicWorker> workers;
 
 	private int imageWidth;
@@ -46,7 +46,7 @@ public class PPMosaicPainter extends Thread {
 			int mosaicWidth, int mosaicHeight) throws PPException {
 
 		this.selectedFiles = selectedFiles;
-		this.workLoad = new LinkedList<PPMosaicLoad>();
+		this.workLoad = new LinkedList<PPWorkerLoad>();
 		this.workers = new LinkedList<PPMosaicWorker>();
 
 		this.imageWidth = imageWidth;
@@ -66,6 +66,9 @@ public class PPMosaicPainter extends Thread {
 
 	public synchronized void drawTile(Image image, int x, int y) {
 		PPPreviewFrame.getInstance().drawImage(image, x, y);
+		PPSupervisor.getInstance().reportProgress(
+				"Drawing tile (" + x + ", " + y + ")",
+				((float) done) / ((float) mosaicHeight * (float) mosaicWidth));
 		done++;
 		notifyAll();
 	}
@@ -73,10 +76,6 @@ public class PPMosaicPainter extends Thread {
 	public synchronized void watchProgress() {
 		while (!workLoad.isEmpty()) {
 			try {
-				PPSupervisor.getInstance().reportProgress(
-						"Painting...",
-						((float) done)
-								/ ((float) mosaicHeight * (float) mosaicWidth));
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -84,7 +83,7 @@ public class PPMosaicPainter extends Thread {
 		}
 	}
 
-	public synchronized PPMosaicLoad getWork() {
+	public synchronized PPWorkerLoad getWork() {
 		while (workLoad.isEmpty()) {
 			try {
 				wait();
@@ -96,7 +95,7 @@ public class PPMosaicPainter extends Thread {
 		return workLoad.pop();
 	}
 
-	public synchronized void putWork(PPMosaicLoad load) {
+	public synchronized void putWork(PPWorkerLoad load) {
 		workLoad.add(load);
 		notifyAll();
 	}
@@ -142,7 +141,7 @@ public class PPMosaicPainter extends Thread {
 
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				putWork(new PPMosaicLoad(selectedFiles.get(index
+				putWork(new PPWorkerLoad(selectedFiles.get(index
 						% selectedFiles.size()), new Point(tileX, tileY)));
 
 				index++;
@@ -159,6 +158,7 @@ public class PPMosaicPainter extends Thread {
 
 		PPSupervisor.getInstance().reportMainProgress(
 				"Saving work to " + targetFilename, 0.66f);
+
 		ImageIO.write(PPPreviewFrame.getInstance().getImage(), "PNG", new File(
 				targetFilename));
 

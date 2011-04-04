@@ -7,7 +7,6 @@ import javax.swing.SwingWorker;
 
 import picpix.gui.PPGUI;
 
-
 public class PPSupervisor {
 
 	private static PPSupervisor singleton = null;
@@ -30,15 +29,15 @@ public class PPSupervisor {
 	}
 
 	public synchronized void lock() {
-		if(gui != null){
+		if (gui != null) {
 			gui.getLaunchButton().setEnabled(false);
-			
-			if(gui.getLibraryMirror() != null){
+
+			if (gui.getLibraryMirror() != null) {
 				gui.getLibraryMirror().setEnabled(false);
 			}
 		}
 	}
-	
+
 	public synchronized void reset() {
 		if (gui != null) {
 			gui.getMainProgressBar().setIndeterminate(false);
@@ -51,9 +50,11 @@ public class PPSupervisor {
 			gui.getSubProgressBar().setValue(
 					gui.getSubProgressBar().getMinimum());
 
+			gui.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
 			gui.getLaunchButton().setEnabled(true);
-			
-			if(gui.getLibraryMirror() != null){
+
+			if (gui.getLibraryMirror() != null) {
 				gui.getLibraryMirror().setEnabled(true);
 			}
 		}
@@ -64,14 +65,7 @@ public class PPSupervisor {
 			new SwingWorker<Void, Void>() {
 				@Override
 				protected Void doInBackground() throws Exception {
-					gui.getMainProgressBar().setIndeterminate(false);
-					gui.getMainProgressBar().setValue(
-							gui.getMainProgressBar().getMaximum());
-					gui.getMainProgressBar().setString("Done");
-
-					gui.setCursor(Cursor
-							.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					gui.getLaunchButton().setEnabled(true);
+					reset();
 
 					JOptionPane.showMessageDialog(gui, "Wallpaper saved to : "
 							+ gui.getTarget(), "Done",
@@ -168,6 +162,44 @@ public class PPSupervisor {
 			}.execute();
 		} else {
 			System.out.println(task);
+		}
+	}
+
+	public synchronized void reportProgress(final String message) {
+		if (gui != null) {
+			new SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					gui.getSubProgressBar().setString(null);
+					gui.getSubProgressBar().setIndeterminate(false);
+					gui.getSubProgressBar().setString(
+							Math.round(gui.getSubProgressBar()
+									.getPercentComplete() * 100f)
+									+ "% - "
+									+ message);
+
+					return null;
+				}
+			}.execute();
+		} else {
+			System.out.println(message);
+		}
+	}
+
+	public synchronized void reportProgress(final float progress) {
+		if (gui != null) {
+			new SwingWorker<Void, Void>() {
+				@Override
+				protected Void doInBackground() throws Exception {
+					gui.getSubProgressBar().setString(null);
+					gui.getSubProgressBar().setIndeterminate(false);
+					gui.getSubProgressBar().setValue((int) (100f * progress));
+
+					return null;
+				}
+			}.execute();
+		} else {
+			System.out.println(Math.round(progress * 100f) + "%");
 		}
 	}
 
