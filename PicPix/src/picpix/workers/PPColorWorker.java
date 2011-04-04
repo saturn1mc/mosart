@@ -12,31 +12,24 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import picpix.painters.PPImageRGB;
 import picpix.tools.PPColorTools;
+import picpix.tools.PPImageRGB;
 import picpix.tools.PPSupervisor;
 
-public class PPColorExtractorThread extends Thread {
-
-	private static final String TEMP_IMG = "MOSART_TEMP" + File.separator
-			+ "MOSART_TMP_IMG";
+public class PPColorWorker extends Thread {
 
 	private PPColorExtractor central;
 
 	private ArrayList<String> files;
-	private File tempFile;
 
 	private int targetWidth;
 	private int targetHeight;
 
-	public PPColorExtractorThread(PPColorExtractor central, int id,
+	public PPColorWorker(PPColorExtractor central, int id,
 			ArrayList<String> files, int targetWidth, int targetHeight) {
 
 		this.central = central;
 		this.files = files;
-
-		tempFile = new File(TEMP_IMG + "_" + id);
-		tempFile.getParentFile().mkdirs();
 
 		this.targetWidth = targetWidth;
 		this.targetHeight = targetHeight;
@@ -77,7 +70,6 @@ public class PPColorExtractorThread extends Thread {
 
 			central.putArtworkRGB(aRGBs);
 
-			tempFile.delete();
 		} catch (IOException e) {
 			PPSupervisor.getInstance().reportCrash(e.getMessage());
 		}

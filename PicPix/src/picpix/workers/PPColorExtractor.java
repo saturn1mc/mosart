@@ -2,7 +2,7 @@ package picpix.workers;
 
 import java.util.ArrayList;
 
-import picpix.painters.PPImageRGB;
+import picpix.tools.PPImageRGB;
 import picpix.tools.PPSupervisor;
 
 
@@ -62,7 +62,7 @@ public class PPColorExtractor {
 			tracks.addAll(selectedFiles.subList(done,
 					Math.min(done + packetSize, selectedFiles.size())));
 
-			new PPColorExtractorThread(this, threadCount, tracks,
+			new PPColorWorker(this, threadCount, tracks,
 					targetWidth, targetHeight).start();
 
 			threadCount++;

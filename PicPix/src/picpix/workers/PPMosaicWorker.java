@@ -33,19 +33,18 @@ public class PPMosaicWorker extends Thread {
 	
 	public void kill(){
 		killed = true;
-		interrupt();
 	}
 
 	@Override
 	public void run() {
 		try {
 			while (!killed) {
-				PPMosaicLoad load = central.getWork();
+				PPWorkerLoad load = central.getWork();
 				BufferedImage image = ImageIO.read(new File(load.getFile()));
 
 				
 				central.drawTile(image.getScaledInstance(targetWidth, targetHeight,
-								Image.SCALE_SMOOTH), load.getTile().x,
+								Image.SCALE_FAST), load.getTile().x,
 						load.getTile().y);
 
 				image.flush();

@@ -1,19 +1,19 @@
-package picpix.painters;
+package picpix.tools;
 
 import java.awt.image.BufferedImage;
 
 public class PPImageRGB {
-	private BufferedImage artwork;
+	private BufferedImage image;
 	private int[] rgb;
 
 	public PPImageRGB(BufferedImage artwork, int[] rgb) {
 		super();
-		this.artwork = artwork;
+		this.image = artwork;
 		this.rgb = rgb;
 	}
 
-	public BufferedImage getArtwork() {
-		return artwork;
+	public BufferedImage getImage() {
+		return image;
 	}
 
 	public int[] getRGB() {
