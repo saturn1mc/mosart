@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
@@ -197,6 +199,17 @@ public class PPGUI extends JFrame {
 		imgFolderField.setPreferredSize(fieldDim);
 		imgFolderField.setMaximumSize(fieldDim);
 
+		KeyAdapter imgFolderFieldKey = new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					updateTree();
+				}
+			}
+		};
+		
+		imgFolderField.addKeyListener(imgFolderFieldKey);
+		
 		// Panel
 		JPanel imgFolderPanel = new JPanel();
 		imgFolderPanel.setLayout(new BoxLayout(imgFolderPanel,
