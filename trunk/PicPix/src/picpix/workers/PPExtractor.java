@@ -1,7 +1,6 @@
 package picpix.workers;
 
 import java.awt.Image;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -12,21 +11,21 @@ import picpix.tools.PPSupervisor;
 
 public class PPExtractor {
 
-	private static final int MAX_THREAD = 1000;
+	private static final int MAX_THREAD = 100;
 
 	private LinkedList<Image> scaledImages;
-	private LinkedList<File> randomList;
+	private LinkedList<String> randomList;
 
-	private ArrayList<File> selectedfiles;
+	private ArrayList<String> selectedfiles;
 	private int expectedImageCount;
 	private int targetWidth;
 	private int targetHeight;
 
-	public PPExtractor(ArrayList<File> selectedfiles,
+	public PPExtractor(ArrayList<String> selectedfiles,
 			int expectedImageCount, int targetWidth, int targetHeight) {
 
 		scaledImages = new LinkedList<Image>();
-		randomList = new LinkedList<File>();
+		randomList = new LinkedList<String>();
 
 		this.selectedfiles = selectedfiles;
 		this.expectedImageCount = expectedImageCount;
@@ -57,7 +56,7 @@ public class PPExtractor {
 		int fileCount = selectedfiles.size();
 
 		if (fileCount > 0) {
-			for (File file : selectedfiles) {
+			for (String file : selectedfiles) {
 
 				int t = 0;
 
@@ -84,7 +83,7 @@ public class PPExtractor {
 
 		while (leftTodo > 0) {
 
-			ArrayList<File> files = new ArrayList<File>();
+			ArrayList<String> files = new ArrayList<String>();
 
 			for (int t = 0; t < Math.min(packetSize, leftTodo); t++) {
 

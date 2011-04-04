@@ -1,6 +1,5 @@
 package picpix.workers;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import picpix.painters.PPImageRGB;
@@ -10,15 +9,15 @@ import picpix.tools.PPSupervisor;
 
 public class PPColorExtractor {
 
-	private static final int MAX_THREAD = 1000;
+	private static final int MAX_THREAD = 100;
 
 	private ArrayList<PPImageRGB> artworksRGB;
 
-	private ArrayList<File> selectedFiles;
+	private ArrayList<String> selectedFiles;
 	private int targetWidth;
 	private int targetHeight;
 
-	public PPColorExtractor(ArrayList<File> selectedFiles,
+	public PPColorExtractor(ArrayList<String> selectedFiles,
 			int targetWidth, int targetHeight) {
 
 		artworksRGB = new ArrayList<PPImageRGB>();
@@ -58,7 +57,7 @@ public class PPColorExtractor {
 
 		while (done < selectedFiles.size()) {
 
-			ArrayList<File> tracks = new ArrayList<File>();
+			ArrayList<String> tracks = new ArrayList<String>();
 
 			tracks.addAll(selectedFiles.subList(done,
 					Math.min(done + packetSize, selectedFiles.size())));

@@ -30,6 +30,7 @@ public class PPPreviewFrame extends JFrame {
 	private PPPreviewFrame() {
 		super("Preview");
 		setBackground(Color.BLACK);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 	}
 
 	public static PPPreviewFrame getInstance() {

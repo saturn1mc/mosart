@@ -17,9 +17,9 @@ public class PPFolderMirror implements TreeSelectionListener {
 	private JTree tree;
 	private boolean enabled;
 
-	HashMap<PPMutableTreeNode, ArrayList<File>> nodesLeaves;
-	HashMap<PPMutableTreeNode, File> nodesFile;
-	private ArrayList<File> selectedFiles;
+	HashMap<PPMutableTreeNode, ArrayList<String>> nodesLeaves;
+	HashMap<PPMutableTreeNode, String> nodesFile;
+	private ArrayList<String> selectedFiles;
 
 	public PPFolderMirror(File imageFolder) {
 		rootNode = new PPMutableTreeNode(imageFolder.getName());
@@ -31,10 +31,10 @@ public class PPFolderMirror implements TreeSelectionListener {
 		tree.addTreeSelectionListener(this);
 		tree.setAutoscrolls(true);
 
-		nodesLeaves = new HashMap<PPMutableTreeNode, ArrayList<File>>();
-		nodesFile = new HashMap<PPMutableTreeNode, File>();
+		nodesLeaves = new HashMap<PPMutableTreeNode, ArrayList<String>>();
+		nodesFile = new HashMap<PPMutableTreeNode, String>();
 
-		selectedFiles = new ArrayList<File>();
+		selectedFiles = new ArrayList<String>();
 
 		enabled = true;
 
@@ -76,7 +76,7 @@ public class PPFolderMirror implements TreeSelectionListener {
 			parentNode.add(fileNode);
 
 			linkLeafToAllParent(file, parentNode);
-			nodesFile.put(fileNode, file);
+			nodesFile.put(fileNode, file.getAbsolutePath());
 		}
 	}
 
@@ -93,21 +93,21 @@ public class PPFolderMirror implements TreeSelectionListener {
 	private void linkLeafToAllParent(File file, PPMutableTreeNode parentNode) {
 
 		if (parentNode != null) {
-			ArrayList<File> files = nodesLeaves.get(parentNode);
+			ArrayList<String> files = nodesLeaves.get(parentNode);
 
 			if (files == null) {
-				files = new ArrayList<File>();
+				files = new ArrayList<String>();
 				nodesLeaves.put(parentNode, files);
 			}
 
-			files.add(file);
+			files.add(file.getAbsolutePath());
 
 			linkLeafToAllParent(file,
 					(PPMutableTreeNode) parentNode.getParent());
 		}
 	}
 
-	public synchronized ArrayList<File> getSelectedFiles() {
+	public synchronized ArrayList<String> getSelectedFiles() {
 
 		if (selectedFiles.isEmpty()) {
 			selectedFiles = nodesLeaves.get(rootNode);
@@ -129,7 +129,7 @@ public class PPFolderMirror implements TreeSelectionListener {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void addAllLeaves(PPMutableTreeNode node, ArrayList<File> stack) {
+	private void addAllLeaves(PPMutableTreeNode node, ArrayList<String> stack) {
 
 		if (!node.isLeaf()) {
 			Enumeration<PPMutableTreeNode> children = node.children();
@@ -138,7 +138,7 @@ public class PPFolderMirror implements TreeSelectionListener {
 				addAllLeaves(children.nextElement(), stack);
 			}
 		} else {
-			File file = nodesFile.get(node);
+			String file = nodesFile.get(node);
 			if (file != null) {
 				stack.add(file);
 			}

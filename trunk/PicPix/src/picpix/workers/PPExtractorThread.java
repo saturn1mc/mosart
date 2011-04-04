@@ -17,14 +17,14 @@ public class PPExtractorThread extends Thread {
 
 	private PPExtractor central;
 
-	private ArrayList<File> files;
+	private ArrayList<String> files;
 	private File tempFile;
 
 	private int targetWidth;
 	private int targetHeight;
 
 	public PPExtractorThread(PPExtractor central, int id,
-			ArrayList<File> files, int targetWidth, int targetHeight) {
+			ArrayList<String> files, int targetWidth, int targetHeight) {
 
 		this.central = central;
 		this.files = files;
@@ -36,10 +36,10 @@ public class PPExtractorThread extends Thread {
 		this.targetHeight = targetHeight;
 	}
 
-	private Image extractScaledfileArtwork(File file, int targetWidth,
+	private Image extractScaledfileArtwork(String file, int targetWidth,
 			int targetHeight) throws IOException {
 
-		BufferedImage image = ImageIO.read(file);
+		BufferedImage image = ImageIO.read(new File(file));
 
 		return image.getScaledInstance(targetWidth, targetHeight,
 				Image.SCALE_SMOOTH);
@@ -51,7 +51,7 @@ public class PPExtractorThread extends Thread {
 
 			ArrayList<Image> sImgs = new ArrayList<Image>();
 
-			for (File file : files) {
+			for (String file : files) {
 				Image scaledImage = extractScaledfileArtwork(file, targetWidth,
 						targetHeight);
 
