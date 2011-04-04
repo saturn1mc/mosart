@@ -16,7 +16,7 @@ import picpix.workers.PPExtractor;
 
 public class PPMosaicPainter extends Thread {
 
-	private ArrayList<File> selectedFiles;
+	private ArrayList<String> selectedFiles;
 
 	private int imageWidth;
 	private int imageHeight;
@@ -26,7 +26,7 @@ public class PPMosaicPainter extends Thread {
 
 	private String targetFilename;
 
-	public PPMosaicPainter(ArrayList<File> selectedFiles,
+	public PPMosaicPainter(ArrayList<String> selectedFiles,
 			String targetFilename, int imageWidth, int imageHeight,
 			int mosaicWidth, int mosaicHeight) throws PPException {
 
@@ -34,7 +34,7 @@ public class PPMosaicPainter extends Thread {
 				mosaicWidth, mosaicHeight);
 	}
 
-	public void setProperties(ArrayList<File> selectedFiles,
+	public void setProperties(ArrayList<String> selectedFiles,
 			String targetFilename, int imageWidth, int imageHeight,
 			int mosaicWidth, int mosaicHeight) throws PPException {
 

@@ -1,7 +1,6 @@
 package picpix.workers;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -24,7 +23,7 @@ public class PPLauncher extends SwingWorker<Void, String> {
 	private PPPhotoPainter photoPainter;
 
 	public PPLauncher(BufferedImage source, int mode,
-			ArrayList<File> selectedFiles, String targetFilename,
+			ArrayList<String> selectedFiles, String targetFilename,
 			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
 			throws PPException {
 
@@ -33,7 +32,7 @@ public class PPLauncher extends SwingWorker<Void, String> {
 	}
 
 	public void setPainterProperties(BufferedImage source, int mode,
-			ArrayList<File> selectedFiles, String targetFilename,
+			ArrayList<String> selectedFiles, String targetFilename,
 			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
 			throws PPException {
 

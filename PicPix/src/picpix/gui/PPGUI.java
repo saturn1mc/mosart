@@ -202,14 +202,14 @@ public class PPGUI extends JFrame {
 		KeyAdapter imgFolderFieldKey = new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					updateTree();
 				}
 			}
 		};
-		
+
 		imgFolderField.addKeyListener(imgFolderFieldKey);
-		
+
 		// Panel
 		JPanel imgFolderPanel = new JPanel();
 		imgFolderPanel.setLayout(new BoxLayout(imgFolderPanel,
@@ -255,15 +255,17 @@ public class PPGUI extends JFrame {
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		sourceField.setPreferredSize(fieldDim);
 		sourceField.setMaximumSize(fieldDim);
-		
+
 		KeyAdapter sourceFieldkey = new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					updateTargetDimension();
 				}
 			}
 		};
+
+		sourceField.addKeyListener(sourceFieldkey);
 
 		// Source Panel
 		sourcePanel = new JPanel();
@@ -280,12 +282,13 @@ public class PPGUI extends JFrame {
 
 		return container;
 	}
-	
-	private void updateTargetDimension(){
+
+	private void updateTargetDimension() {
 		try {
-			BufferedImage source = ImageIO.read(new File(sourceField.getText()));
+			BufferedImage source = ImageIO
+					.read(new File(sourceField.getText()));
 			imgWidthField.setText(Integer.toString(source.getWidth()));
-			imgHeightField.setText(Integer.toString(source.getHeight()));	
+			imgHeightField.setText(Integer.toString(source.getHeight()));
 		} catch (IOException e) {
 			// Nothing
 		}

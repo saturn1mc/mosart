@@ -23,14 +23,14 @@ public class PPColorExtractorThread extends Thread {
 
 	private PPColorExtractor central;
 
-	private ArrayList<File> files;
+	private ArrayList<String> files;
 	private File tempFile;
 
 	private int targetWidth;
 	private int targetHeight;
 
 	public PPColorExtractorThread(PPColorExtractor central, int id,
-			ArrayList<File> files, int targetWidth, int targetHeight) {
+			ArrayList<String> files, int targetWidth, int targetHeight) {
 
 		this.central = central;
 		this.files = files;
@@ -42,10 +42,10 @@ public class PPColorExtractorThread extends Thread {
 		this.targetHeight = targetHeight;
 	}
 
-	private Image extractScaledfileArtwork(File file, int targetWidth,
+	private Image extractScaledfileArtwork(String file, int targetWidth,
 			int targetHeight) throws IOException {
 
-		BufferedImage image = ImageIO.read(file);
+		BufferedImage image = ImageIO.read(new File(file));
 
 		return image.getScaledInstance(targetWidth, targetHeight,
 				Image.SCALE_SMOOTH);
@@ -62,7 +62,7 @@ public class PPColorExtractorThread extends Thread {
 			GraphicsDevice gDevice = gEnv.getDefaultScreenDevice();
 			GraphicsConfiguration gConf = gDevice.getDefaultConfiguration();
 
-			for (File file : files) {
+			for (String file : files) {
 				Image scaledImage = extractScaledfileArtwork(file,
 						targetWidth, targetHeight);
 

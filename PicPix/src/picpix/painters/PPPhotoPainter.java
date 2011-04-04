@@ -26,7 +26,7 @@ import picpix.workers.PPColorExtractor;
 public class PPPhotoPainter extends Thread {
 
 	private BufferedImage source;
-	private ArrayList<File> selectedTracks;
+	private ArrayList<String> selectedFiles;
 	private ArrayList<PPImageRGB> artworksRGB;
 
 	private int imageWidth;
@@ -38,20 +38,20 @@ public class PPPhotoPainter extends Thread {
 	private String targetFilename;
 
 	public PPPhotoPainter(BufferedImage source,
-			ArrayList<File> selectedTracks, String targetFilename,
+			ArrayList<String> selectedFiles, String targetFilename,
 			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
 			throws PPException {
 
-		setProperties(source, selectedTracks, targetFilename, imageWidth,
+		setProperties(source, selectedFiles, targetFilename, imageWidth,
 				imageHeight, mosaicWidth, mosaicHeight);
 	}
 
 	public void setProperties(BufferedImage source,
-			ArrayList<File> selectedTracks, String targetFilename,
+			ArrayList<String> selectedFiles, String targetFilename,
 			int imageWidth, int imageHeight, int mosaicWidth, int mosaicHeight)
 			throws PPException {
 
-		this.selectedTracks = selectedTracks;
+		this.selectedFiles = selectedFiles;
 		this.source = source;
 		this.artworksRGB = new ArrayList<PPImageRGB>();
 
@@ -100,7 +100,7 @@ public class PPPhotoPainter extends Thread {
 		int done = 0;
 
 		PPColorExtractor colorExtractor = new PPColorExtractor(
-				selectedTracks, tileWidth, tileHeight);
+				selectedFiles, tileWidth, tileHeight);
 		colorExtractor.launch();
 
 		artworksRGB = colorExtractor.getArtworksRGB();
