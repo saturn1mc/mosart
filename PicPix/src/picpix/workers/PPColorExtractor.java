@@ -9,7 +9,7 @@ import picpix.tools.PPSupervisor;
 
 public class PPColorExtractor {
 
-	private static final int MAX_THREAD = 100;
+	private static final int MAX_THREAD = 1;
 
 	private ArrayList<PPImageRGB> artworksRGB;
 

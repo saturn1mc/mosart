@@ -129,7 +129,8 @@ public class PPPhotoPainter extends Thread {
 						.getAverageRGB(source, propX, propY, propW, propH));
 
 				PPPreviewFrame.getInstance().drawImage(image, tileX, tileY);
-
+				image.flush();
+				
 				tileY += tileHeight;
 
 				float progress = ((float) ++done)
