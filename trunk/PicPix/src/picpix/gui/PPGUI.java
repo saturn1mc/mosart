@@ -82,7 +82,7 @@ public class PPGUI extends JFrame {
 
 	private PPGUI() {
 
-		super("MosArt");
+		super("PicPix");
 
 		buildLaunchButton();
 		buildProgressBars();
@@ -347,7 +347,7 @@ public class PPGUI extends JFrame {
 		JPanel tWcountPanel = new JPanel();
 		tWcountPanel
 				.setLayout(new BoxLayout(tWcountPanel, BoxLayout.LINE_AXIS));
-		tWcountPanel.add(new JLabel("Covers on width : "));
+		tWcountPanel.add(new JLabel("Images on width : "));
 		tileWidthField = new JTextField();
 		tileWidthField.setText(Integer.toString(DEFAULT_TILE_COUNT));
 		tileWidthField.setPreferredSize(fieldDim);
@@ -357,7 +357,7 @@ public class PPGUI extends JFrame {
 		JPanel tHcountPanel = new JPanel();
 		tHcountPanel
 				.setLayout(new BoxLayout(tHcountPanel, BoxLayout.LINE_AXIS));
-		tHcountPanel.add(new JLabel("Covers on height : "));
+		tHcountPanel.add(new JLabel("Images on height : "));
 		tileHeightField = new JTextField();
 		tileHeightField.setText(Integer.toString(DEFAULT_TILE_COUNT));
 		tileHeightField.setPreferredSize(fieldDim);
