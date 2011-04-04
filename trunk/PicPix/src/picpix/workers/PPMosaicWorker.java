@@ -33,6 +33,7 @@ public class PPMosaicWorker extends Thread {
 	
 	public void kill(){
 		killed = true;
+		interrupt();
 	}
 
 	@Override

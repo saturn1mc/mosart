@@ -17,7 +17,7 @@ import picpix.workers.PPMosaicWorker;
 
 public class PPMosaicPainter extends Thread {
 
-	private static final int MAX_THREAD = 1;
+	private static final int MAX_THREAD = 10;
 
 	private ArrayList<String> selectedFiles;
 	private LinkedList<PPMosaicLoad> workLoad;
@@ -115,7 +115,6 @@ public class PPMosaicPainter extends Thread {
 
 		for (PPMosaicWorker worker : workers) {
 			worker.kill();
-			worker.interrupt();
 		}
 
 		notifyAll();
