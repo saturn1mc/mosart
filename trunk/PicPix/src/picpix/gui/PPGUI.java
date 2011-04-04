@@ -242,6 +242,7 @@ public class PPGUI extends JFrame {
 
 					if (returnVal == JFileChooser.APPROVE_OPTION) {
 						sourceField.setText(fc.getSelectedFile().getPath());
+						updateTargetDimension();
 					}
 				}
 			}
@@ -254,6 +255,15 @@ public class PPGUI extends JFrame {
 		Dimension fieldDim = new Dimension(PATH_FIELD_WIDTH, FIELD_HEIGHT);
 		sourceField.setPreferredSize(fieldDim);
 		sourceField.setMaximumSize(fieldDim);
+		
+		KeyAdapter sourceFieldkey = new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.getKeyCode() == KeyEvent.VK_ENTER){
+					updateTargetDimension();
+				}
+			}
+		};
 
 		// Source Panel
 		sourcePanel = new JPanel();
@@ -269,6 +279,16 @@ public class PPGUI extends JFrame {
 		container.add(sourcePanel);
 
 		return container;
+	}
+	
+	private void updateTargetDimension(){
+		try {
+			BufferedImage source = ImageIO.read(new File(sourceField.getText()));
+			imgWidthField.setText(Integer.toString(source.getWidth()));
+			imgHeightField.setText(Integer.toString(source.getHeight()));	
+		} catch (IOException e) {
+			// Nothing
+		}
 	}
 
 	private JButton buildLaunchButton() {
