@@ -1,28 +1,35 @@
 package picpix.painters;
 
 import java.awt.Image;
+import java.awt.Point;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 import javax.imageio.ImageIO;
 
 import picpix.gui.PPPreviewFrame;
 import picpix.tools.PPException;
 import picpix.tools.PPSupervisor;
-import picpix.workers.PPExtractor;
-
-
+import picpix.workers.PPMosaicLoad;
+import picpix.workers.PPMosaicWorker;
 
 public class PPMosaicPainter extends Thread {
 
+	private static final int MAX_THREAD = 1;
+
 	private ArrayList<String> selectedFiles;
+	private LinkedList<PPMosaicLoad> workLoad;
+	private LinkedList<PPMosaicWorker> workers;
 
 	private int imageWidth;
 	private int imageHeight;
 
 	private int mosaicWidth;
 	private int mosaicHeight;
+
+	private int done;
 
 	private String targetFilename;
 
@@ -39,6 +46,8 @@ public class PPMosaicPainter extends Thread {
 			int mosaicWidth, int mosaicHeight) throws PPException {
 
 		this.selectedFiles = selectedFiles;
+		this.workLoad = new LinkedList<PPMosaicLoad>();
+		this.workers = new LinkedList<PPMosaicWorker>();
 
 		this.imageWidth = imageWidth;
 		this.imageHeight = imageHeight;
@@ -49,27 +58,84 @@ public class PPMosaicPainter extends Thread {
 
 		if (targetFile.isDirectory()
 				|| (targetFile.exists() && !targetFile.canWrite())) {
-			throw new PPException("Can't write to : '" + targetFilename
-					+ "'");
+			throw new PPException("Can't write to : '" + targetFilename + "'");
 		}
 
 		this.targetFilename = targetFilename;
 	}
 
+	public synchronized void drawTile(Image image, int x, int y) {
+		PPPreviewFrame.getInstance().drawImage(image, x, y);
+		done++;
+		notifyAll();
+	}
+
+	public synchronized void watchProgress() {
+		while (!workLoad.isEmpty()) {
+			try {
+				PPSupervisor.getInstance().reportProgress(
+						"Painting...",
+						((float) done)
+								/ ((float) mosaicHeight * (float) mosaicWidth));
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public synchronized PPMosaicLoad getWork() {
+		while (workLoad.isEmpty()) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return workLoad.pop();
+	}
+
+	public synchronized void putWork(PPMosaicLoad load) {
+		workLoad.add(load);
+		notifyAll();
+	}
+
+	private void launchWorkers(int tileWidth, int tileHeight) {
+		for (int i = 0; i < MAX_THREAD; i++) {
+			PPMosaicWorker worker = new PPMosaicWorker(this, tileWidth,
+					tileHeight);
+			workers.add(worker);
+			worker.start();
+		}
+	}
+
+	private synchronized void stopWorkers() {
+		PPSupervisor.getInstance().reportTask("Interrupting threads");
+
+		for (PPMosaicWorker worker : workers) {
+			worker.kill();
+			worker.interrupt();
+		}
+
+		notifyAll();
+	}
+
 	private void createMosaic() throws IOException {
 
-		int tileWidth = (int)(Math.ceil((float)imageWidth / (float)mosaicWidth));
-		int tileHeight = (int)(Math.ceil((float)imageHeight / (float)mosaicHeight));
+		int tileWidth = (int) (Math.ceil((float) imageWidth
+				/ (float) mosaicWidth));
+		int tileHeight = (int) (Math.ceil((float) imageHeight
+				/ (float) mosaicHeight));
 		int tileX = 0;
 		int tileY = 0;
-		int done = 0;
-
-		PPExtractor extractor = new PPExtractor(selectedFiles,
-				mosaicHeight * mosaicWidth, tileWidth, tileHeight);
-		extractor.launch();
+		int index = 0;
+		done = 0;
 
 		PPPreviewFrame.getInstance().init(imageWidth, imageHeight);
 		PPPreviewFrame.getInstance().setVisible(true);
+
+		launchWorkers(tileWidth, tileHeight);
 
 		for (int i = 0; i < mosaicWidth; i++) {
 
@@ -77,26 +143,25 @@ public class PPMosaicPainter extends Thread {
 
 			for (int j = 0; j < mosaicHeight; j++) {
 
-				Image image = extractor.popScaledImage();
+				putWork(new PPMosaicLoad(selectedFiles.get(index
+						% selectedFiles.size()), new Point(tileX, tileY)));
 
-				PPPreviewFrame.getInstance().drawImage(image, tileX, tileY);
-				
+				index++;
 				tileY += tileHeight;
 
-				float progress = ((float) ++done)
-						/ ((float) mosaicHeight * (float) mosaicWidth);
-
-				PPSupervisor.getInstance().reportProgress(
-						"Adding tile to (" + tileX + "," + tileY + ")",
-						progress);
 			}
 
 			tileX += tileWidth;
 		}
 
+		watchProgress();
+
+		stopWorkers();
+
 		PPSupervisor.getInstance().reportMainProgress(
 				"Saving work to " + targetFilename, 0.66f);
-		ImageIO.write(PPPreviewFrame.getInstance().getImage(), "PNG", new File(targetFilename));
+		ImageIO.write(PPPreviewFrame.getInstance().getImage(), "PNG", new File(
+				targetFilename));
 
 		PPPreviewFrame.getInstance().diposeG2D();
 

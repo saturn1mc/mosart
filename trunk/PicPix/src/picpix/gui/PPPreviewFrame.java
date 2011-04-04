@@ -30,7 +30,7 @@ public class PPPreviewFrame extends JFrame {
 	private PPPreviewFrame() {
 		super("Preview");
 		setBackground(Color.BLACK);
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 
 	public static PPPreviewFrame getInstance() {
@@ -53,7 +53,7 @@ public class PPPreviewFrame extends JFrame {
 		prevHeight = imageHeight;
 	}
 
-	public void drawImage(Image toDraw, int x, int y) {
+	public synchronized void drawImage(Image toDraw, int x, int y) {
 		g2d.drawImage(toDraw, x, y, null);
 		drawPreview(toDraw, x, y);
 	}
@@ -62,20 +62,20 @@ public class PPPreviewFrame extends JFrame {
 		g2d.dispose();
 	}
 
-	public void drawPreview(Image toDraw, int x, int y) {
+	public synchronized void drawPreview(Image toDraw, int x, int y) {
 		if (this.isVisible()) {
 			BufferStrategy bf = getBufferStrategy();
 			if (bf != null) {
 				Graphics g = bf.getDrawGraphics();
 				g.translate(0, getInsets().top);
 				g.drawImage(toDraw, x, y, null);
-				
+
 				bf.show();
 			}
 		}
 	}
-	
-	public void targetPreview(int x, int y, int width, int height) {
+
+	public synchronized void targetPreview(int x, int y, int width, int height) {
 		if (this.isVisible()) {
 			BufferStrategy bf = getBufferStrategy();
 			if (bf != null) {
@@ -83,7 +83,7 @@ public class PPPreviewFrame extends JFrame {
 				g.translate(0, getInsets().top);
 				g.setColor(Color.GREEN);
 				g.drawRect(x, y, width, height);
-				
+
 				bf.show();
 			}
 		}
@@ -103,7 +103,7 @@ public class PPPreviewFrame extends JFrame {
 			this.setResizable(false);
 		}
 	}
-	
+
 	public BufferedImage getImage() {
 		return image;
 	}
