@@ -12,10 +12,10 @@ import javax.imageio.ImageIO;
 import picpix.gui.PPPreviewFrame;
 import picpix.tools.PPException;
 import picpix.tools.PPSupervisor;
-import picpix.workers.PPWorkerLoad;
 import picpix.workers.PPMosaicWorker;
+import picpix.workers.PPWorkerLoad;
 
-public class PPMosaicPainter extends Thread {
+public class PPMosaicPainter extends Thread implements PPPainter {
 
 	private static final int MAX_THREAD = 20;
 
@@ -73,7 +73,7 @@ public class PPMosaicPainter extends Thread {
 		notifyAll();
 	}
 
-	public synchronized void watchProgress() {
+	public synchronized void watchProgress() throws IOException {
 		while (!workLoad.isEmpty()) {
 			try {
 				wait();
@@ -81,6 +81,18 @@ public class PPMosaicPainter extends Thread {
 				e.printStackTrace();
 			}
 		}
+
+		stopWorkers();
+
+		PPSupervisor.getInstance().reportMainProgress(
+				"Saving work to " + targetFilename, 0.66f);
+
+		ImageIO.write(PPPreviewFrame.getInstance().getImage(), "PNG", new File(
+				targetFilename));
+
+		PPPreviewFrame.getInstance().diposeG2D();
+
+		PPSupervisor.getInstance().reportMainTaskFinished();
 	}
 
 	public synchronized PPWorkerLoad getWork() {
@@ -153,18 +165,6 @@ public class PPMosaicPainter extends Thread {
 		}
 
 		watchProgress();
-
-		stopWorkers();
-
-		PPSupervisor.getInstance().reportMainProgress(
-				"Saving work to " + targetFilename, 0.66f);
-
-		ImageIO.write(PPPreviewFrame.getInstance().getImage(), "PNG", new File(
-				targetFilename));
-
-		PPPreviewFrame.getInstance().diposeG2D();
-
-		PPSupervisor.getInstance().reportMainTaskFinished();
 	}
 
 	@Override
