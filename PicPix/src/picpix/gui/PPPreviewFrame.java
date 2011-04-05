@@ -30,8 +30,9 @@ public class PPPreviewFrame extends JFrame {
 	private PPPreviewFrame() {
 		super("Preview");
 		setBackground(Color.BLACK);
+		setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 	}
-
+	
 	public static PPPreviewFrame getInstance() {
 		if (singleton == null) {
 			singleton = new PPPreviewFrame();
@@ -41,15 +42,31 @@ public class PPPreviewFrame extends JFrame {
 	}
 
 	public void init(int imageWidth, int imageHeight) {
+		
+		reset();
+		
 		GraphicsEnvironment gEnv = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
+		
 		GraphicsDevice gDevice = gEnv.getDefaultScreenDevice();
 		GraphicsConfiguration gConf = gDevice.getDefaultConfiguration();
+		
 		image = gConf.createCompatibleImage(imageWidth, imageHeight);
 		g2d = image.createGraphics();
 
 		prevWidth = imageWidth;
 		prevHeight = imageHeight;
+	}
+	
+	private void reset(){
+		if(image != null){
+			image.flush();
+		}
+		
+		if(g2d != null){
+			g2d.dispose();
+			g2d.finalize();
+		}
 	}
 
 	public synchronized void drawImage(Image toDraw, int x, int y) {

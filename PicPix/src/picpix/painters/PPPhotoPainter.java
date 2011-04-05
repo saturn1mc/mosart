@@ -163,7 +163,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 	}
 
 	public synchronized PPWorkerLoad getWork() {
-		while (!analysisFinished ||workLoad.isEmpty()) {
+		while (!analysisFinished || workLoad.isEmpty()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -182,7 +182,9 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 				e.printStackTrace();
 			}
 		}
-
+		
+		notifyAll();
+		
 		return matchLoad.pop();
 	}
 	
@@ -212,7 +214,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		PPSupervisor.getInstance().reportProgress("Analysing color schemes", ((float)analyzed/(float)selectedFiles.size()));
 	}
 	
-	private void launchColorWorkers() {
+	private synchronized void launchColorWorkers() {
 		analysisFinished = false;
 		
 		for (int i = 0; i < MAX_THREAD; i++) {
@@ -222,7 +224,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		}
 	}
 	
-	private void launchMatchWorkers() {
+	private synchronized void launchMatchWorkers() {
 		
 		matchFinished = false;
 		
@@ -233,7 +235,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		}
 	}
 	
-	private void launchMosaicWorkers(int tileWidth, int tileHeight) {
+	private synchronized void launchMosaicWorkers(int tileWidth, int tileHeight) {
 		for (int i = 0; i < MAX_THREAD; i++) {
 			PPMosaicWorker worker = new PPMosaicWorker(this, tileWidth,
 					tileHeight);
@@ -298,17 +300,15 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 				/ (float) mosaicHeight));
 		int tileX = 0;
 		int tileY = 0;
+		
 		done = 0;
+		analysisLoad.addAll(selectedFiles);
 		
 		PPPreviewFrame.getInstance().init(imageWidth, imageHeight);
 		PPPreviewFrame.getInstance().setVisible(true);
-		PPPreviewFrame.getInstance().drawImage(
+		PPPreviewFrame.getInstance().drawPreview(
 				source.getScaledInstance(imageWidth, imageHeight,
 						Image.SCALE_FAST), 0, 0);
-		
-		analysisLoad.addAll(selectedFiles);
-		launchColorWorkers();
-		watchAnalysisProgress();
 		
 		for (int i = 0; i < mosaicWidth; i++) {
 
@@ -324,7 +324,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 				PPPreviewFrame.getInstance().targetPreview(tileX, tileY,
 						tileWidth, tileHeight);
 
-				PPSupervisor.getInstance().reportProgress("Analysing source", (float)((i*j)+1)/((float) (mosaicWidth*mosaicHeight)));
+				PPSupervisor.getInstance().reportProgress("Splitting source", (float)((i*j)+1)/((float) (mosaicWidth*mosaicHeight)));
 				matchLoad.add(new PPWorkerLoad(new Point(tileX, tileY), PPColorTools.getAverageRGB(source, propX, propY, propW, propH)));
 				
 				tileY += tileHeight;
@@ -332,6 +332,9 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 
 			tileX += tileWidth;
 		}
+		
+		launchColorWorkers();
+		watchAnalysisProgress();
 		
 		launchMatchWorkers();
 		launchMosaicWorkers(tileWidth, tileHeight);
