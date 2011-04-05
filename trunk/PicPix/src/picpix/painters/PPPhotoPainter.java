@@ -30,7 +30,7 @@ import picpix.workers.PPWorkerLoad;
  */
 public class PPPhotoPainter extends Thread implements PPPainter{
 
-	private static final int MAX_THREAD = 20;
+	private static final int MAX_THREAD = 2;
 	
 	private BufferedImage source;
 	private ArrayList<String> selectedFiles;
@@ -54,6 +54,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 	private int analyzed;
 	
 	private boolean analysisFinished;
+	private boolean matchFinished;
 
 	private String targetFilename;
 
@@ -110,7 +111,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 	}
 
 	public synchronized void watchProgress() throws IOException {
-		while (!workLoad.isEmpty()) {
+		while (!analysisFinished || !matchFinished || !workLoad.isEmpty()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -139,6 +140,9 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 				e.printStackTrace();
 			}
 		}
+		
+		matchFinished = true;
+		notifyAll();
 		
 		stopMatchWorkers();
 	}
@@ -202,6 +206,9 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 	public synchronized void putAnalysis(PPWorkerLoad load) {
 		analysisResults.add(load);
 		analyzed++;
+		
+		PPSupervisor.getInstance().reportProgress("Analysing color schemes", ((float)analyzed/(float)selectedFiles.size()));
+		
 		notifyAll();
 	}
 	
@@ -216,6 +223,9 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 	}
 	
 	private void launchMatchWorkers() {
+		
+		matchFinished = false;
+		
 		for (int i = 0; i < MAX_THREAD; i++) {
 			PPMatchWorker worker = new PPMatchWorker(this);
 			matchWorkers.add(worker);
@@ -324,6 +334,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		launchMatchWorkers();
 		launchMosaicWorkers(tileWidth, tileHeight);
 		
+		watchMatchProgress();
 		watchProgress();
 	}
 
