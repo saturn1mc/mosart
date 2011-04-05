@@ -72,6 +72,8 @@ public class PPGUI extends JFrame {
 	private JPanel sourcePanel;
 	private JTextField sourceField;
 	private JButton sourceButton;
+	
+	private BufferedImage source;
 
 	private JTextField imgWidthField;
 	private JTextField imgHeightField;
@@ -571,10 +573,12 @@ public class PPGUI extends JFrame {
 
 			@Override
 			protected Void doInBackground() throws Exception {
-
-				BufferedImage source = null;
-
+				
 				if (mode == PPLauncher.PHOTO_MODE) {
+					if(source != null){
+						source.flush();
+					}
+					
 					source = ImageIO.read(new File(sourceField.getText()));
 				}
 

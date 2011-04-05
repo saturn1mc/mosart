@@ -291,7 +291,7 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		return closest;
 	}
 
-	public void paintPhoto() throws IOException {
+	public void paintPhoto() throws IOException, InterruptedException {
 		float wRatio = (float) source.getWidth() / (float) imageWidth;
 		float hRatio = (float) source.getHeight() / (float) imageHeight;
 		int tileWidth = (int) (Math.ceil((float) imageWidth
@@ -306,7 +306,10 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		
 		PPPreviewFrame.getInstance().init(imageWidth, imageHeight);
 		PPPreviewFrame.getInstance().setVisible(true);
-		PPPreviewFrame.getInstance().drawPreview(
+		
+		sleep(100); //Give the JFrame time to display
+		
+		PPPreviewFrame.getInstance().drawImage(
 				source.getScaledInstance(imageWidth, imageHeight,
 						Image.SCALE_FAST), 0, 0);
 		
@@ -348,6 +351,8 @@ public class PPPhotoPainter extends Thread implements PPPainter{
 		try {
 			paintPhoto();
 		} catch (IOException e) {
+			PPSupervisor.getInstance().reportCrash(e.getMessage());
+		} catch (InterruptedException e) {
 			PPSupervisor.getInstance().reportCrash(e.getMessage());
 		}
 	}
