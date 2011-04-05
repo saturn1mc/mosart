@@ -1,75 +1,42 @@
 package picpix.workers;
 
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import picpix.painters.PPPhotoPainter;
 import picpix.tools.PPColorTools;
-import picpix.tools.PPImageRGB;
 import picpix.tools.PPSupervisor;
 
 public class PPColorWorker extends Thread {
 
-	private PPColorExtractor central;
+	private PPPhotoPainter central;
 
-	private ArrayList<String> files;
+	boolean killed;
 
-	private int targetWidth;
-	private int targetHeight;
-
-	public PPColorWorker(PPColorExtractor central, int id,
-			ArrayList<String> files, int targetWidth, int targetHeight) {
+	public PPColorWorker(PPPhotoPainter central) {
 
 		this.central = central;
-		this.files = files;
-
-		this.targetWidth = targetWidth;
-		this.targetHeight = targetHeight;
 	}
 
-	private Image extractScaledfileArtwork(String file, int targetWidth,
-			int targetHeight) throws IOException {
-
-		BufferedImage image = ImageIO.read(new File(file));
-
-		return image.getScaledInstance(targetWidth, targetHeight,
-				Image.SCALE_SMOOTH);
+	public void kill() {
+		killed = true;
 	}
 
 	@Override
 	public void run() {
 		try {
+			while (!killed) {
+				String file = central.getAnalysisWork();
+				BufferedImage image = ImageIO.read(new File(file));
 
-			ArrayList<PPImageRGB> aRGBs = new ArrayList<PPImageRGB>();
+				central.putAnalysis(new PPWorkerLoad(file, PPColorTools
+						.getAverageRGB(image)));
 
-			GraphicsEnvironment gEnv = GraphicsEnvironment
-					.getLocalGraphicsEnvironment();
-			GraphicsDevice gDevice = gEnv.getDefaultScreenDevice();
-			GraphicsConfiguration gConf = gDevice.getDefaultConfiguration();
-
-			for (String file : files) {
-				Image scaledImage = extractScaledfileArtwork(file,
-						targetWidth, targetHeight);
-
-				BufferedImage artwork = gConf.createCompatibleImage(
-						targetWidth, targetHeight);
-				Graphics2D g2d = artwork.createGraphics();
-				g2d.drawImage(scaledImage, 0, 0, null);
-
-				aRGBs.add(new PPImageRGB(artwork, PPColorTools
-						.getAverageRGB(artwork)));
+				image.flush();
 			}
-
-			central.putArtworkRGB(aRGBs);
-
 		} catch (IOException e) {
 			PPSupervisor.getInstance().reportCrash(e.getMessage());
 		}

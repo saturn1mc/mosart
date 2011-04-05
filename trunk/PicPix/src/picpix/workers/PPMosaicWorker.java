@@ -7,12 +7,12 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-import picpix.painters.PPMosaicPainter;
+import picpix.painters.PPPainter;
 import picpix.tools.PPSupervisor;
 
 public class PPMosaicWorker extends Thread {
 
-	private PPMosaicPainter central;
+	private PPPainter central;
 
 	boolean killed;
 	
@@ -20,7 +20,7 @@ public class PPMosaicWorker extends Thread {
 	private int targetHeight;
 
 
-	public PPMosaicWorker(PPMosaicPainter central, int targetWidth,
+	public PPMosaicWorker(PPPainter central, int targetWidth,
 			int targetHeight) {
 
 		this.central = central;
