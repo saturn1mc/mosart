@@ -10,8 +10,8 @@ public class PPMatchWorker extends Thread {
 	boolean killed;
 
 	public PPMatchWorker(PPPhotoPainter central) {
-
 		this.central = central;
+		this.killed = false;
 	}
 
 	public void kill() {

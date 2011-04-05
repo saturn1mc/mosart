@@ -17,8 +17,8 @@ public class PPColorWorker extends Thread {
 	boolean killed;
 
 	public PPColorWorker(PPPhotoPainter central) {
-
 		this.central = central;
+		this.killed = false;
 	}
 
 	public void kill() {
